@@ -12,8 +12,8 @@ REV := $(shell git rev-parse --short HEAD 2> /dev/null)
 all: test crucible
 
 # requires the following dependencies in $GOPATH
-#   https://github.com/dominikh/go-tools/tree/master/cmd/megacheck
-#   https://github.com/kisielk/errcheck
+#   honnef.co/go/tools/cmd/megacheck
+#   github.com/kisielk/errcheck
 check:
 	@${GO} vet lib/*.go
 	@${GOPATH}/bin/megacheck lib/*.go
