@@ -1,0 +1,336 @@
+---
+# i.MX53 Multimedia Applications Processor Reference Manual
+# iMX53RM Rev. 2.1, 06/2012
+#
+processor: IMX53
+reference: 2.1
+driver: nvmem-imx-iim
+
+registers:
+  BANK0_WORD0:
+    bank: 0
+    word: 0
+    fuses:
+      BOOT_LOCK:
+        offset: 0
+        len: 1
+      GP_LOCK:
+        offset: 1
+        len: 1
+      # The following fuses are mentioned iMX53RM at Table 2-2, but not
+      # detailed in Table 2-11. A description of their role can be found in
+      # i.MX25, i.MX35 IIM fusebox documentation.
+      TESTER_LOCK2:
+        offset: 2
+        len: 1
+      FBESP:
+        offset: 3
+        len: 1
+      TESTER_LOCK:
+        offset: 4
+        len: 1
+      FBRP:
+        offset: 5
+        len: 1
+      FBOP:
+        offset: 6
+        len: 1
+      FBWP:
+        offset: 7
+        len: 1
+
+  BANK0_WORD1:
+    bank: 0
+    word: 1
+    fuses:
+      JTAG_BP:
+        offset: 0
+        len: 1
+      SEC_JTAG_RE:
+        offset: 1
+        len: 1
+      KTE:
+        offset: 2
+        len: 1
+      JTAG_HEO:
+        offset: 3
+        len: 1
+      BT_FUSE_SEL:
+        offset: 4
+        len: 1
+      JTAG_SMODE:
+        offset: 5
+        len: 2
+
+  BANK0_WORD3:
+    bank: 0
+    word: 3
+    fuses:
+      BOOT_CFG1:
+        offset: 0
+        len: 8
+      BT_MMU_ENABLE:
+        offset: 0
+        len: 1
+      BT_FREQ:
+        offset: 1
+        len: 1
+
+  BANK0_WORD4:
+    bank: 0
+    word: 4
+    fuses:
+      BOOT_CFG2:
+        offset: 0
+        len: 8
+      SEC_CONFIG:
+        offset: 0
+        len: 2
+      NFC_FREQ_SEL:
+        offset: 2
+        len: 1
+      OSC_FREQ_SEL:
+        offset: 3
+        len: 1
+      AXI_DDR_FREQ_SEL:
+        offset: 4
+        len: 1
+
+  BANK0_WORD5:
+    bank: 0
+    word: 5
+    fuses:
+      BOOT_CFG3:
+        offset: 0
+        len: 8
+      DIR_BT_DIS:
+        offset: 0
+        len: 1
+
+  BANK0_WORD6:
+    bank: 0
+    word: 6
+    fuses:
+      WDOG_ENABLE:
+        offset: 0
+        len: 1
+      BT_LPB_POLARITY:
+        offset: 3
+        len: 1
+      BT_LPB:
+        offset: 4
+        len: 1
+      BT_LPB_DIV:
+        offset: 6
+        len: 2
+
+  BANK0_WORD8:
+    bank: 0
+    word: 8
+    fuses:
+      SJC_CHALL:
+        offset: 0
+        len: 64
+      UNIQUE_ID:
+        offset: 0
+        len: 64
+
+  BANK0_WORD16:
+    bank: 0
+    word: 16
+    fuses:
+      SRTC_SECMODE:
+        offset: 0
+        len: 2
+      LDO_DIS:
+        offset: 2
+        len: 2
+      SJC_DISABLE:
+        offset: 4
+        len: 1
+      SRTC_MCOUNT:
+        offset: 5
+        len: 3
+
+  BANK0_WORD17:
+    bank: 0
+    word: 17
+    fuses:
+      CSU_FA_COUNT:
+        offset: 0
+        len: 1
+      CSU_AM_DIS:
+        offset: 1
+        len: 2
+      CSU_FA_OUT:
+        offset: 3
+        len: 2
+
+  BANK0_WORD24:
+    bank: 0
+    word: 24
+    fuses:
+      GP7:
+        offset: 0
+        len: 8
+  BANK0_WORD25:
+    bank: 0
+    word: 25
+    fuses:
+      GP6:
+        offset: 0
+        len: 8
+  BANK0_WORD26:
+    bank: 0
+    word: 26
+    fuses:
+      GP5:
+        offset: 0
+        len: 8
+  BANK0_WORD27:
+    bank: 0
+    word: 27
+    fuses:
+      GP4:
+        offset: 0
+        len: 8
+  BANK0_WORD28:
+    bank: 0
+    word: 28
+    fuses:
+      GP3:
+        offset: 0
+        len: 8
+  BANK0_WORD29:
+    bank: 0
+    word: 29
+    fuses:
+      GP2:
+        offset: 0
+        len: 8
+  BANK0_WORD30:
+    bank: 0
+    word: 30
+    fuses:
+      GP1:
+        offset: 0
+        len: 8
+  BANK0_WORD31:
+    bank: 0
+    word: 31
+    fuses:
+      GP0:
+        offset: 0
+        len: 8
+
+  BANK1_WORD0:
+    bank: 1
+    word: 0
+    fuses:
+      SJC_RESP_LOCK:
+        offset: 1
+        len: 1
+      SRK_LOCK:
+        offset: 2
+        len: 1
+      MAC_ADDR_LOCK:
+        offset: 4
+        len: 1
+
+  BANK1_WORD1:
+    bank: 1
+    word: 1
+    fuses:
+      SRK_HASH0:
+        offset: 0
+        len: 8
+
+  BANK1_WORD2:
+    bank: 1
+    word: 2
+    fuses:
+      SJC_RESP:
+        offset: 0
+        len: 56
+
+  BANK1_WORD9:
+    bank: 1
+    word: 9
+    fuses:
+      MAC_ADDR:
+        offset: 0
+        len: 48
+
+  BANK3_WORD0:
+    bank: 3
+    word: 0
+    fuses:
+      SRK_LOCK160:
+        offset: 0
+        len: 1
+      SRK_LOCK88:
+        offset: 1
+        len: 1
+
+  BANK3_WORD1:
+    bank: 3
+    word: 1
+    fuses:
+      SRK_HASH1:
+        offset: 0
+        len: 248
+
+  BANK4_WORD2:
+    bank: 4
+    word: 2
+    fuses:
+      MMC_DLL_DL:
+        offset: 4
+        len: 3
+
+  BANK4_WORD3:
+    bank: 4
+    word: 3
+    fuses:
+      SATA_RST_SR:
+        offset: 0
+        len: 1
+      SATA_ALT_REF_CLK:
+        offset: 1
+        len: 2
+      NFC_DLL_DLY:
+        offset: 3
+        len: 3
+
+  BANK4_WORD4:
+    bank: 4
+    word: 4
+    fuses:
+      SRK_REVOKE:
+        offset: 0
+        len: 3
+      NFC_RD_ST_TIME:
+        offset: 3
+        len: 1
+
+  BANK4_WORD5:
+    bank: 4
+    word: 5
+    fuses:
+      GP10:
+        offset: 0
+        len: 8
+  BANK4_WORD6:
+    bank: 4
+    word: 6
+    fuses:
+      GP9:
+        offset: 0
+        len: 8
+  BANK4_WORD7:
+    bank: 4
+    word: 7
+    fuses:
+      GP8:
+        offset: 0
+        len: 8
