@@ -17,15 +17,15 @@ all: test crucible
 check: all
 	@GOPATH="${BUILD_GOPATH}" ${GO} vet crucible
 	@GOPATH="${BUILD_GOPATH}" ${GOPATH}/bin/megacheck crucible
-	@cd cmd && GOPATH="${BUILD_GOPATH}" ${GOPATH}/bin/megacheck crucible.go
+	@GOPATH="${BUILD_GOPATH}" ${GOPATH}/bin/megacheck crucible.go
 	@cd src/crucible && ${GOPATH}/bin/errcheck
 
 test:
 	@cd src/crucible && ${GO} test -cover
 
 crucible:
-	@cd cmd && GOPATH="${BUILD_GOPATH}" ${GO} build -v \
+	@GOPATH="${BUILD_GOPATH}" ${GO} build -v \
 		-gcflags=-trimpath=${CURDIR} -asmflags=-trimpath=${CURDIR} \
 		-ldflags "-s -w -X 'main.Revision=${REV}' -X 'main.Build=${BUILD}'" \
-		-o ../bin/crucible crucible.go
+		-o crucible crucible.go
 	@echo -e "compiled crucible ${REV} (${BUILD})"

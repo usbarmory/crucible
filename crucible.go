@@ -22,7 +22,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"crucible"
+	"github.com/inversepath/crucible/src/crucible"
 )
 
 // build information, initialized at compile time (see Makefile)
