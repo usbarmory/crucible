@@ -22,7 +22,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/inversepath/crucible/src/crucible"
+	"github.com/inversepath/crucible/lib"
 )
 
 // build information, initialized at compile time (see Makefile)
@@ -272,6 +272,7 @@ func main() {
 		logwriter, _ := syslog.New(syslog.LOG_INFO, "crucible")
 		log.SetOutput(logwriter)
 	} else {
+		log.SetOutput(os.Stdout)
 	}
 
 	if conf.list {

@@ -14,18 +14,24 @@ all: test crucible
 # requires the following dependencies in $GOPATH
 #   https://github.com/dominikh/go-tools/tree/master/cmd/megacheck
 #   https://github.com/kisielk/errcheck
-check: all
-	@GOPATH="${BUILD_GOPATH}" ${GO} vet crucible
-	@GOPATH="${BUILD_GOPATH}" ${GOPATH}/bin/megacheck crucible
-	@GOPATH="${BUILD_GOPATH}" ${GOPATH}/bin/megacheck crucible.go
-	@cd src/crucible && ${GOPATH}/bin/errcheck
+check:
+	@${GO} vet lib/*.go
+	@${GOPATH}/bin/megacheck lib/*.go
+	@${GOPATH}/bin/errcheck lib/*.go
 
 test:
-	@cd src/crucible && ${GO} test -cover
+	@cd lib && ${GO} test -cover
 
+# To allow a `go get` friendly repository that also supports a local make
+# command we need to pass through a temporary file to change the remote import
+# path to a local one for the `make` build.
 crucible:
+	$(eval TMP := $(shell mktemp ${CURDIR}/crucible-XXXXXX.go))
+	@cp crucible.go ${TMP}
+	@sed -i -e 's/github.com\/inversepath\/crucible\/lib/lib/' ${TMP}
 	@GOPATH="${BUILD_GOPATH}" ${GO} build -v \
 		-gcflags=-trimpath=${CURDIR} -asmflags=-trimpath=${CURDIR} \
 		-ldflags "-s -w -X 'main.Revision=${REV}' -X 'main.Build=${BUILD}'" \
-		-o crucible crucible.go
+		-o crucible ${TMP}
+	@rm ${TMP}
 	@echo -e "compiled crucible ${REV} (${BUILD})"

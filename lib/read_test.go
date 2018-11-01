@@ -30,7 +30,7 @@ func readTest(t *testing.T, devicePath string, fusemap FuseMap, name string, exp
 }
 
 func TestReadErrors(t *testing.T) {
-	fusemap, err := OpenFuseMap("../../fusemaps", "IMX53", "2.1")
+	fusemap, err := OpenFuseMap("../fusemaps", "IMX53", "2.1")
 
 	if err != nil {
 		t.Fatal(err)
@@ -44,13 +44,13 @@ func TestReadErrors(t *testing.T) {
 }
 
 func TestReadIMX53(t *testing.T) {
-	fusemap, err := OpenFuseMap("../../fusemaps", "IMX53", "2.1")
+	fusemap, err := OpenFuseMap("../fusemaps", "IMX53", "2.1")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	devicePath := "../../test/nvmem.IMX53"
+	devicePath := "../test/nvmem.IMX53"
 
 	// register
 	readTest(t, devicePath, fusemap, "BANK0_WORD0",[]byte{0x00, 0x10, 0x00, 0x10}, uint32(0x00))
@@ -69,13 +69,13 @@ func TestReadIMX53(t *testing.T) {
 }
 
 func TestReadIMX6UL(t *testing.T) {
-	fusemap, err := OpenFuseMap("../../fusemaps", "IMX6UL", "1")
+	fusemap, err := OpenFuseMap("../fusemaps", "IMX6UL", "1")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	devicePath := "../../test/nvmem.IMX6UL"
+	devicePath := "../test/nvmem.IMX6UL"
 
 	// register
 	readTest(t, devicePath, fusemap, "OCOTP_OTPMK0",[]byte{0xba, 0xda, 0xba, 0xda}, uint32(0x40))

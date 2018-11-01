@@ -25,7 +25,7 @@ driver: nvmem-imx-ocotp
 		t.Error("fusemap with missing reference should raise an error")
 	}
 
-	_, err = OpenFuseMap("../../fusemaps", "IMX53", "1")
+	_, err = OpenFuseMap("../fusemaps", "IMX53", "1")
 
 	if err == nil || err.Error() != "invalid reference" {
 		t.Error("fusemap with invalid reference should raise an error")

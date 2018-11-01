@@ -185,7 +185,7 @@ registers:
 }
 
 func TestBlowIMX6UL(t *testing.T) {
-	fusemap, err := OpenFuseMap("../../fusemaps", "IMX6UL", "1")
+	fusemap, err := OpenFuseMap("../fusemaps", "IMX6UL", "1")
 
 	if err != nil {
 		t.Fatal(err)
@@ -268,7 +268,7 @@ registers:
 }
 
 func TestBlowIMX53(t *testing.T) {
-	fusemap, err := OpenFuseMap("../../fusemaps", "IMX53", "2.1")
+	fusemap, err := OpenFuseMap("../fusemaps", "IMX53", "2.1")
 
 	if err != nil {
 		t.Fatal(err)
