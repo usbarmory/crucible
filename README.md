@@ -87,23 +87,23 @@ Example use:
 
 ```
 # blow hex value (note: confirmation prompt not shown)
-bin/crucible -m IMX6UL -r 1 -b 16 blow MAC1_ADDR 0x001f7b1007e3
+crucible -m IMX6UL -r 1 -b 16 blow MAC1_ADDR 0x001f7b1007e3
 IMX6UL ref:1 op:blow addr:0x88 off:0 len:48 val:0xe307107b1f000000
 
 # read hex value
-bin/crucible -m IMX6UL -r 1 -b 16 read MAC1_ADDR
+crucible -m IMX6UL -r 1 -b 16 read MAC1_ADDR
 IMX6UL ref:1 op:read addr:0x88 off:0 len:48 val:0x001f7b1007e3
 
 # read hex value with minimal standard output
-bin/crucible -s -m IMX6UL -r 1 -b 16 read MAC1_ADDR
+crucible -s -m IMX6UL -r 1 -b 16 read MAC1_ADDR
 001f7b1007e3
 
 # read binary value
-bin/crucible -m IMX6UL -r 1 -b 2 read MAC1_ADDR
+crucible -m IMX6UL -r 1 -b 2 read MAC1_ADDR
 IMX6UL ref:1 op:read addr:0x88 off:0 len:48 val:0b[00000000 00011111 01111011 00010000 00000111 11100011]
 
 # read binary value with minimal standard output
-bin/crucible -s -m IMX6UL -r 1 -b 2 read MAC1_ADDR
+crucible -s -m IMX6UL -r 1 -b 2 read MAC1_ADDR
 1111101111011000100000000011111100011
 ```
 
