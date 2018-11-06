@@ -22,15 +22,15 @@ type FuseMap struct {
 }
 
 type Gap struct {
-	Read    bool     `json:"read"`
-	Write   bool     `json:"write"`
-	Length  uint32   `json:"len"`
+	Read   bool   `json:"read"`
+	Write  bool   `json:"write"`
+	Length uint32 `json:"len"`
 }
 
 type Register struct {
+	Name         string
 	ReadAddress  uint32
 	WriteAddress uint32
-	Offset       uint32
 	Length       uint32
 	Bank         uint32           `json:"bank"`
 	Word         uint32           `json:"word"`
@@ -38,6 +38,7 @@ type Register struct {
 }
 
 type Fuse struct {
+	Name         string
 	ReadAddress  uint32
 	WriteAddress uint32
 	Offset       uint32 `json:"offset"`
@@ -57,7 +58,7 @@ func (fusemap *FuseMap) SetAddress(reg *Register) (err error) {
 	}
 
 	if reg.Word >= bankSize {
-		return fmt.Errorf("register word cannot exceed %d", bankSize - 1)
+		return fmt.Errorf("register word cannot exceed %d", bankSize-1)
 	}
 
 	reg.ReadAddress = (reg.Bank*bankSize + reg.Word) * wordSize
@@ -142,7 +143,7 @@ func (fusemap *FuseMap) Validate() (err error) {
 			continue
 		}
 
-		reg.Offset = 0
+		reg.Name = n1
 		reg.Length = 32
 
 		err = fusemap.SetAddress(reg)
@@ -169,6 +170,7 @@ func (fusemap *FuseMap) Validate() (err error) {
 				return fmt.Errorf("fuse length cannot exceed 512")
 			}
 
+			fuse.Name = n2
 			fuse.ReadAddress = reg.ReadAddress
 			fuse.WriteAddress = reg.WriteAddress
 		}

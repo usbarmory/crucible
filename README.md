@@ -58,9 +58,9 @@ Usage: crucible [options] [read|blow] [fuse/register name] [value]
     	value base/format (2,10,16)
   -f string
     	YAML fuse maps directory (default "fusemaps")
-  -l	list available fuse maps
+  -l	list fusemaps or fusemap contents (with -m and -r)
   -m string
-    	processor model (default "IMX6UL")
+    	processor model
   -n string
     	NVMEM device (default "/sys/bus/nvmem/devices/imx-ocotp0/nvmem")
   -r string
@@ -150,7 +150,7 @@ Supported drivers
 The following table summarizes the currently supported hardware in terms of
 driver and fusemap availability.
 
-| Vendor | Mod     | Linux driver    | Read  | Write | Fusemap |
+| Vendor | Model   | Linux driver    | Read  | Write | Fusemap |
 |--------|---------|-----------------|-------|-------|---------|
 | NXP    | i.MX53  | nvmem-imx-iim   | yes   | no    | Yes     |
 | NXP    | i.MX6Q  | nvmem-imx-ocotp | yes^  | yes   | No      |

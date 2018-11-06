@@ -99,12 +99,12 @@ func init() {
 	}
 
 	flag.BoolVar(&conf.force, "Y", false, "do not prompt for confirmation (DANGEROUS)")
-	flag.BoolVar(&conf.list, "l", false, "list available fuse maps")
+	flag.BoolVar(&conf.list, "l", false, "list fusemaps or fusemap registers (with -m and -r)")
 	flag.BoolVar(&conf.syslog, "s", false, "use syslog, print only result value to stdout")
 	flag.IntVar(&conf.base, "b", 0, "value base/format (2,10,16)")
 	flag.StringVar(&conf.device, "n", "/sys/bus/nvmem/devices/imx-ocotp0/nvmem", "NVMEM device")
 	flag.StringVar(&conf.fusemaps, "f", "fusemaps", "YAML fuse maps directory")
-	flag.StringVar(&conf.processor, "m", "IMX6UL", "processor model")
+	flag.StringVar(&conf.processor, "m", "", "processor model")
 	flag.StringVar(&conf.reference, "r", "", "reference manual revision")
 }
 
@@ -116,10 +116,23 @@ func confirm() bool {
 	return text == "YES\n"
 }
 
+func listFusemapRegisters() {
+	fusemap, err := crucible.OpenFuseMap(conf.fusemaps, conf.processor, conf.reference)
+
+	if err != nil {
+		log.Fatalf("error: could not open fuse map, %v", err)
+	}
+
+	for _, reg := range fusemap.RegistersByWriteAddress() {
+		fmt.Print(reg.BitMap())
+		fmt.Println()
+	}
+}
+
 func listFusemaps() {
 	t := tabwriter.NewWriter(os.Stdout, 16, 8, 0, '\t', tabwriter.TabIndent)
 
-	_, _ = fmt.Printf("Processor\tReference\tDriver\n")
+	_, _ = fmt.Printf("Model (-m)\tReference (-r)\tDriver\n")
 
 	_ = filepath.Walk(conf.fusemaps, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -276,21 +289,26 @@ func main() {
 	}
 
 	if conf.list {
-		listFusemaps()
+		if conf.processor != "" && conf.reference != "" {
+			listFusemapRegisters()
+		} else {
+			listFusemaps()
+		}
+
 		return
-	}
-
-	err := checkArguments()
-
-	if err != nil {
-		flag.Usage()
-		log.Fatalf("error: %v", err)
 	}
 
 	stat, err := os.Stat(conf.fusemaps)
 
 	if err != nil || !stat.IsDir() {
 		log.Fatalf("error: could not open fuse maps directory %s", conf.fusemaps)
+	}
+
+	err = checkArguments()
+
+	if err != nil {
+		flag.Usage()
+		log.Fatalf("error: %v", err)
 	}
 
 	stat, err = os.Stat(conf.device)

@@ -45,7 +45,7 @@ func (fusemap *FuseMap) Read(devicePath string, name string) (res []byte, addr u
 		return
 	}
 	// make errcheck happy
-	defer func(){ _ = device.Close() }()
+	defer func() { _ = device.Close() }()
 
 	_, err = device.Seek(int64(addr), 0)
 

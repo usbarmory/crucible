@@ -364,14 +364,14 @@ registers:
 	}
 
 	gap := fusemap.Registers["REG2"].ReadAddress - fusemap.Registers["REG1"].ReadAddress
-	expGap := 4 + uint32(0x100) / 4
+	expGap := 4 + uint32(0x100)/4
 
 	if gap != expGap {
 		t.Errorf("unexpected gap, %x != %x", gap, expGap)
 	}
 
 	gap2 := fusemap.Registers["REG3"].ReadAddress - fusemap.Registers["REG2"].ReadAddress
-	expGap2 := 4 + uint32(0x40) / 4
+	expGap2 := 4 + uint32(0x40)/4
 
 	if gap2 != expGap2 {
 		t.Errorf("unexpected gap, %x != %x", gap2, expGap2)

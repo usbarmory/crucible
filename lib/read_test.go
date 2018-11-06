@@ -53,7 +53,7 @@ func TestReadIMX53(t *testing.T) {
 	devicePath := "../test/nvmem.IMX53"
 
 	// register
-	readTest(t, devicePath, fusemap, "BANK0_WORD0",[]byte{0x00, 0x10, 0x00, 0x10}, uint32(0x00))
+	readTest(t, devicePath, fusemap, "BANK0_WORD0", []byte{0x00, 0x10, 0x00, 0x10}, uint32(0x00))
 
 	// fuses
 	readTest(t, devicePath, fusemap, "SRK_LOCK", []byte{0x01}, uint32(0x20))
@@ -78,7 +78,7 @@ func TestReadIMX6UL(t *testing.T) {
 	devicePath := "../test/nvmem.IMX6UL"
 
 	// register
-	readTest(t, devicePath, fusemap, "OCOTP_OTPMK0",[]byte{0xba, 0xda, 0xba, 0xda}, uint32(0x40))
+	readTest(t, devicePath, fusemap, "OCOTP_OTPMK0", []byte{0xba, 0xda, 0xba, 0xda}, uint32(0x40))
 
 	// fuses
 	readTest(t, devicePath, fusemap, "SRK_LOCK", []byte{0x01}, uint32(0x00))

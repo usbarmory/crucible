@@ -43,7 +43,7 @@ func (fusemap *FuseMap) Blow(devicePath string, name string, val []byte) (res []
 	case *Register:
 		reg := mapping.(*Register)
 		addr = reg.WriteAddress
-		off = reg.Offset
+		off = 0
 		size = reg.Length
 	case *Fuse:
 		fuse := mapping.(*Fuse)
