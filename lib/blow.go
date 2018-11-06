@@ -28,6 +28,11 @@ func (fusemap *FuseMap) Blow(devicePath string, name string, val []byte) (res []
 		return
 	}
 
+	if !fusemap.valid {
+		err = errors.New("fusemap has not been validated yet")
+		return
+	}
+
 	if fusemap.Driver != "nvmem-imx-ocotp" {
 		err = errors.New("driver does not support blow operation")
 		return

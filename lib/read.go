@@ -22,6 +22,11 @@ func (fusemap *FuseMap) Read(devicePath string, name string) (res []byte, addr u
 		return
 	}
 
+	if !fusemap.valid {
+		err = errors.New("fusemap has not been validated yet")
+		return
+	}
+
 	mapping, err := fusemap.Find(name)
 
 	if err != nil {

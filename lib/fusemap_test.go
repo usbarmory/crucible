@@ -12,6 +12,22 @@ import (
 	"testing"
 )
 
+func TestInvalidFuseMap(t *testing.T) {
+	fusemap := &FuseMap{}
+
+	_, _, _, _, err := fusemap.Blow("test", "test", []byte{0x00})
+
+	if err == nil || err.Error() != "fusemap has not been validated yet" {
+		t.Error("fusemap that has not been validated should raise an error")
+	}
+
+	_, _, _, _, err = fusemap.Read("test", "test")
+
+	if err == nil || err.Error() != "fusemap has not been validated yet" {
+		t.Error("fusemap that has not been validated should raise an error")
+	}
+}
+
 func TestInvalidReference(t *testing.T) {
 	y := `
 ---

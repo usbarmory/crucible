@@ -19,6 +19,8 @@ type FuseMap struct {
 	Driver    string               `json:"driver"`
 	Registers map[string]*Register `json:"registers"`
 	Gaps      map[string]*Gap      `json:"gaps"`
+
+	valid bool
 }
 
 type Gap struct {
@@ -198,11 +200,18 @@ func (fusemap *FuseMap) Validate() (err error) {
 		waddr[reg.WriteAddress] = true
 	}
 
+	fusemap.valid = true
+
 	return
 }
 
 // Find a fusemap entry and return its corresponding Register or Fuse mapping.
 func (fusemap *FuseMap) Find(name string) (mapping interface{}, err error) {
+	if !fusemap.valid {
+		err = errors.New("fusemap has not been validated yet")
+		return
+	}
+
 	for n1, reg := range fusemap.Registers {
 		if n1 == name {
 			return reg, nil
