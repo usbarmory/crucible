@@ -92,23 +92,23 @@ Example use:
 ```
 # blow hex value (note: confirmation prompt not shown)
 crucible -m IMX6UL -r 1 -b 16 -e big blow MAC1_ADDR 0x001f7b1007e3
-IMX6UL ref:1 op:blow addr:0x88 off:0 len:48 val:0x001f7b1007e3 res:0xe307107b1f000000
+soc:IMX6UL ref:1 otp:MAC1_ADDR op:blow addr:0x88 off:0 len:48 val:0x001f7b1007e3 res:0xe307107b1f000000
 
 # read hex value
 crucible -m IMX6UL -r 1 -b 16 read MAC1_ADDR
-IMX6UL ref:1 op:read addr:0x88 off:0 len:48 val:0x001f7b1007e3
+soc:IMX6UL ref:1 otp:MAC1_ADDR op:read addr:0x88 off:0 len:48 val:0x001f7b1007e3
 
 # read hex value with minimal standard output
 crucible -s -m IMX6UL -r 1 -b 16 read MAC1_ADDR
 001f7b1007e3
 
 # read binary value
-crucible -m IMX6UL -r 1 -b 2 read MAC1_ADDR
-IMX6UL ref:1 op:read addr:0x88 off:0 len:48 val:0b[00000000 00011111 01111011 00010000 00000111 11100011]
+crucible -m IMX6UL -r 1 -b 2 read OCOTP_LOCK
+soc:IMX6UL ref:1 otp:OCOTP_LOCK op:read addr:0x0 off:0 len:32 val:0b[00000000 01000000 00000000 00000000]
 
 # read binary value with minimal standard output
-crucible -s -m IMX6UL -r 1 -b 2 read MAC1_ADDR
-1111101111011000100000000011111100011
+crucible -s -m IMX6UL -r 1 -b 2 read OCOTP_LOCK
+10000000000000000000000
 ```
 
 Fusemap format
