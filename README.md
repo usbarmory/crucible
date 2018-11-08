@@ -70,15 +70,18 @@ Usage: crucible [options] [read|blow] [fuse/register name] [value]
   -s	use syslog, print only result value to stdout
 ```
 
-The value parameter base depends on the `-b` argument. For instance with base 2
-value arguments of 0b10 or 10 are treated as binary while base 16 means
-hexadecimal values such as 0x0a or 0a). The base argument also controls the
-output value format when reading.
+The `-b` option controls value argument base/format and must be explicitly set
+for all operations. For instance binary values like 0b10 or 10 are treated as
+binary with `-b 2`, while values such as 0x0a or 0a are treated as hexadecimal
+values with `-b 16`. Similarily the option controls the output value format
+when reading.
 
-The value parameter endianness depends on the `-e` argument. Typically most
-values should remain big-endian, however certain tools, such as the ones
-creating the `SRK_HASH` for secure boot purposes, may already prepare their
-output in little-endian format.
+The `-e` option controls value argument endianness and must be explicitly set
+for blow operations. Typically most values should remain big-endian, however
+certain tools, such as the ones creating the `SRK_HASH` for secure boot
+purposes, may prepare their output in little-endian format. On read operations
+the endianness is set to big-endian by default, however the option can be used
+to force big-endian interpretation.
 
 The syslog flag (`-s`) can be used to ease batch processing and limiting
 standard output to solely read or blown values while redirecting all logs to
@@ -89,7 +92,7 @@ Example use:
 ```
 # blow hex value (note: confirmation prompt not shown)
 crucible -m IMX6UL -r 1 -b 16 -e big blow MAC1_ADDR 0x001f7b1007e3
-IMX6UL ref:1 op:blow addr:0x88 off:0 len:48 val:0xe307107b1f000000
+IMX6UL ref:1 op:blow addr:0x88 off:0 len:48 val:0x001f7b1007e3 res:0xe307107b1f000000
 
 # read hex value
 crucible -m IMX6UL -r 1 -b 16 read MAC1_ADDR

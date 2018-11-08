@@ -197,6 +197,10 @@ func read(tag string, fusemap crucible.FuseMap, name string) (err error) {
 
 	tag = fmt.Sprintf("%s addr:%#x off:%d len:%d", tag, addr, off, size)
 
+	if conf.endianness == "little" {
+		res = crucible.SwitchEndianness(res)
+	}
+
 	switch conf.base {
 	case 2:
 		value = fmt.Sprintf("0b%.8b", res)
@@ -228,18 +232,20 @@ func read(tag string, fusemap crucible.FuseMap, name string) (err error) {
 }
 
 func blow(tag string, fusemap crucible.FuseMap, name string, val string) (err error) {
+	base := ""
 	n := new(big.Int)
 
 	switch conf.base {
 	case 2:
-		val = strings.TrimPrefix(flag.Arg(2), "0b")
+		base = "0b"
 	case 10:
 	case 16:
-		val = strings.TrimPrefix(flag.Arg(2), "0x")
+		base = "0x"
 	default:
 		return errors.New("internal error, invalid base")
 	}
 
+	val = strings.TrimPrefix(flag.Arg(2), base)
 	n, ok := n.SetString(val, conf.base)
 
 	if !ok {
@@ -256,7 +262,7 @@ func blow(tag string, fusemap crucible.FuseMap, name string, val string) (err er
 
 	if !conf.force {
 		log.Println(warning)
-		log.Printf("%s reg:%s base:%d val:%s %s-endian", tag, name, conf.base, val, conf.endianness)
+		log.Printf("%s reg:%s base:%d val:%s %s-endian\n\n", tag, name, conf.base, val, conf.endianness)
 
 		if !confirm() {
 			log.Fatal("you are not ready...")
@@ -269,7 +275,7 @@ func blow(tag string, fusemap crucible.FuseMap, name string, val string) (err er
 		return err
 	}
 
-	log.Printf("%s addr:%#x off:%d len:%d val:%#x", tag, addr, off, size, res)
+	log.Printf("%s addr:%#x off:%d len:%d val:%s%s res:%#x", tag, addr, off, size, base, val, res)
 
 	if conf.syslog {
 		fmt.Printf("%#x\n", res)
