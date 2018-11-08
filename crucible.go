@@ -331,7 +331,7 @@ func main() {
 
 	op := flag.Arg(0)
 	name := flag.Arg(1)
-	tag := fmt.Sprintf("%s ref:%s op:%s", conf.processor, conf.reference, op)
+	tag := fmt.Sprintf("soc:%s ref:%s otp:%s op:%s", conf.processor, conf.reference, name, op)
 
 	switch op {
 	case "read":
