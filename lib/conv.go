@@ -54,7 +54,7 @@ func PadBigInt(val *big.Int, size uint32) (res []byte) {
 }
 
 // Reverse a byte array to switch between big <> little endianess.
-func SwitchEndianess(val []byte) []byte {
+func SwitchEndianness(val []byte) []byte {
 	for i := len(val)/2 - 1; i >= 0; i-- {
 		rev := len(val) - 1 - i
 		val[i], val[rev] = val[rev], val[i]

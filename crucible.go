@@ -30,14 +30,15 @@ var Revision string
 var Build string
 
 type Config struct {
-	force     bool
-	list      bool
-	syslog    bool
-	base      int
-	device    string
-	fusemaps  string
-	processor string
-	reference string
+	force      bool
+	list       bool
+	syslog     bool
+	base       int
+	endianness string
+	device     string
+	fusemaps   string
+	processor  string
+	reference  string
 }
 
 var conf *Config
@@ -68,16 +69,6 @@ as cryptographic key material, might result in a **bricked** device.
 
 The use of this tool is therefore **at your own risk**.
 
-The input value is assumed to have *big endian* order, make sure this is what
-you expect.
-
-                                ** IMPORTANT **
-
-The value parameter endianness is always assumed to be big-endian, it is then
-converted to little-endian before writing, as required by the driver. Please
-note that certain tools, such as the ones creating the SRK_HASH for secure boot
-purposes, typically already prepare their output in little-endian format.
-
 ████████████████████████████████████████████████████████████████████████████████
 `
 
@@ -102,6 +93,7 @@ func init() {
 	flag.BoolVar(&conf.list, "l", false, "list fusemaps or fusemap registers (with -m and -r)")
 	flag.BoolVar(&conf.syslog, "s", false, "use syslog, print only result value to stdout")
 	flag.IntVar(&conf.base, "b", 0, "value base/format (2,10,16)")
+	flag.StringVar(&conf.endianness, "e", "", "value endianness (big,little)")
 	flag.StringVar(&conf.device, "n", "/sys/bus/nvmem/devices/imx-ocotp0/nvmem", "NVMEM device")
 	flag.StringVar(&conf.fusemaps, "f", "fusemaps", "YAML fuse maps directory")
 	flag.StringVar(&conf.processor, "m", "", "processor model")
@@ -254,9 +246,17 @@ func blow(tag string, fusemap crucible.FuseMap, name string, val string) (err er
 		return errors.New("invalid value argument")
 	}
 
+	switch conf.endianness {
+	case "big":
+	case "little":
+		n = n.SetBytes(crucible.SwitchEndianness(n.Bytes()))
+	default:
+		return errors.New("you must specify a valid endianness")
+	}
+
 	if !conf.force {
-		log.Printf("%s reg:%s base:%d val:%s confirm?", tag, name, conf.base, val)
 		log.Println(warning)
+		log.Printf("%s reg:%s base:%d val:%s %s-endian", tag, name, conf.base, val, conf.endianness)
 
 		if !confirm() {
 			log.Fatal("you are not ready...")

@@ -22,6 +22,11 @@ import (
 //
 // An empty NVMEM device path is allowed to simulate the operation and test
 // returned values.
+//
+// The value parameter endianness must be set as, while typically big-endian by
+// the driver. Please note that certain tools, such as the ones creating the
+// `SRK_HASH` for secure boot purposes, typically already prepare their output
+// in little-endian format.
 func (fusemap *FuseMap) Blow(devicePath string, name string, val []byte) (res []byte, addr uint32, off uint32, size uint32, err error) {
 	if len(val) == 0 {
 		err = errors.New("null value")
@@ -104,7 +109,7 @@ func ConvertWriteValue(off uint32, size uint32, val []byte) (res []byte, err err
 
 	res = PadBigInt(v, size)
 	// big-endian > little-endian
-	res = SwitchEndianess(res)
+	res = SwitchEndianness(res)
 
 	return
 }

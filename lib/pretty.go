@@ -63,7 +63,7 @@ func (reg *Register) BitMap() (m string) {
 			fill = fill[0:fillCount]
 		}
 
-		copy(bitMap[off:], SwitchEndianess(fill))
+		copy(bitMap[off:], SwitchEndianness(fill))
 
 		indent := len(regMap) - int(off) - fillCount
 
@@ -91,7 +91,7 @@ func (reg *Register) BitMap() (m string) {
 		lines = append(lines, fmt.Sprintf("%s %s\n", line, fuseName))
 	}
 
-	bitMap = SwitchEndianess(bitMap)
+	bitMap = SwitchEndianness(bitMap)
 	bitMap = bytes.Replace(bitMap, bitSepFixed, []byte(bitSep), -1)
 	bitMap = append(bitMap, []byte(bitSep)...)
 
