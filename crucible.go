@@ -90,7 +90,7 @@ func init() {
 	}
 
 	flag.BoolVar(&conf.force, "Y", false, "do not prompt for confirmation (DANGEROUS)")
-	flag.BoolVar(&conf.list, "l", false, "list fusemaps or fusemap registers (with -m and -r)")
+	flag.BoolVar(&conf.list, "l", false, "list fusemaps\nvisualize fusemap registers (with -m and -r)\nvisualize read value (with read operation on a register)")
 	flag.BoolVar(&conf.syslog, "s", false, "use syslog, print only result value to stdout")
 	flag.IntVar(&conf.base, "b", 0, "value base/format (2,10,16)")
 	flag.StringVar(&conf.endianness, "e", "", "value endianness (big,little)")
@@ -116,7 +116,7 @@ func listFusemapRegisters() {
 	}
 
 	for _, reg := range fusemap.RegistersByWriteAddress() {
-		fmt.Print(reg.BitMap())
+		fmt.Print(reg.BitMap(nil))
 		fmt.Println()
 	}
 }
@@ -192,40 +192,43 @@ func read(tag string, fusemap crucible.FuseMap, name string) (err error) {
 		return
 	}
 
-	var value string
-	var stdout string
-
 	tag = fmt.Sprintf("%s addr:%#x off:%d len:%d", tag, addr, off, size)
 
 	if conf.endianness == "little" {
 		res = crucible.SwitchEndianness(res)
 	}
 
+	n := new(big.Int)
+	n.SetBytes(res)
+
+	var base string
+	var format string
+	var value string
+
 	switch conf.base {
 	case 2:
-		value = fmt.Sprintf("0b%.8b", res)
-
-		n := new(big.Int)
-		n.SetBytes(res)
-
-		stdout = fmt.Sprintf("%b", n)
+		base = "0b"
+		format = "%0" + fmt.Sprintf("%d", size) + "b"
+		value = fmt.Sprintf(format, n)
 	case 10:
-		n := new(big.Int)
-		n.SetBytes(res)
-
 		value = fmt.Sprintf("%d", n)
-		stdout = value
 	case 16:
-		value = fmt.Sprintf("%#x", res)
-		stdout = fmt.Sprintf("%x", res)
+		base = "0x"
+		format = "%0" + fmt.Sprintf("%d", (size+3)/4) + "x"
+		value = fmt.Sprintf(format, n)
 	default:
 		return errors.New("internal error, invalid base")
 	}
 
-	log.Printf("%s val:%s", tag, value)
+	log.Printf("%s val:%s%s", tag, base, value)
 
 	if conf.syslog {
-		fmt.Println(stdout)
+		fmt.Println(value)
+	} else if conf.list {
+		if reg, ok := fusemap.Registers[name]; ok {
+			log.Println()
+			log.Print(reg.BitMap(res))
+		}
 	}
 
 	return
@@ -294,7 +297,7 @@ func main() {
 		log.SetOutput(os.Stdout)
 	}
 
-	if conf.list {
+	if conf.list && len(flag.Args()) < 2 {
 		if conf.processor != "" && conf.reference != "" {
 			listFusemapRegisters()
 		} else {

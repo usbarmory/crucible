@@ -60,7 +60,9 @@ Usage: crucible [options] [read|blow] [fuse/register name] [value]
     	value endianness (big,little)
   -f string
     	YAML fuse maps directory (default "fusemaps")
-  -l	list fusemaps or fusemap registers (with -m and -r)
+  -l	list fusemaps
+    	visualize fusemap registers (with -m and -r)
+    	visualize read value (with read operation on a register)
   -m string
     	processor model
   -n string
@@ -103,12 +105,23 @@ crucible -s -m IMX6UL -r 1 -b 16 read MAC1_ADDR
 001f7b1007e3
 
 # read binary value
-crucible -m IMX6UL -r 1 -b 2 read OCOTP_LOCK
-soc:IMX6UL ref:1 otp:OCOTP_LOCK op:read addr:0x0 off:0 len:32 val:0b[00000000 01000000 00000000 00000000]
+crucible -m IMX6UL -r 1 -b 2 read SI_REV
+soc:IMX6UL ref:1 otp:SI_REV op:read addr:0xc off:16 len:4 val:0b0001
 
 # read binary value with minimal standard output
-crucible -s -m IMX6UL -r 1 -b 2 read OCOTP_LOCK
-10000000000000000000000
+crucible -s -m IMX6UL -r 1 -b 2 read SI_REV
+0001
+
+# read register value with bit map visualization
+crucible -l -m IMX6UL -r 1 -b 16 read OCOTP_CFG2
+soc:IMX6UL ref:1 otp:OCOTP_CFG2 op:read addr:0xc off:0 len:32 val:0x703100ec
+
+ 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00  OCOTP_CFG2
+┏━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┓ Bank:0 Word:3
+┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃1  1 ┃0  0  0  1 ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃ R: 0x0000000c
+┗━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━┛ W: 0x0000000c
+                               21 20 ───────────────────────────────────────────────────────────  TAMPER_PIN_DISABLE
+                                     19 ┄┄ ┄┄ 16 ───────────────────────────────────────────────  SI_REV
 ```
 
 Fusemap format

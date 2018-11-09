@@ -78,7 +78,7 @@ func (fusemap *FuseMap) Read(devicePath string, name string) (res []byte, addr u
 }
 
 // Convert read value, shifted accordingly to its register offset and size, to
-// a big endian array of 32-bit registers.
+// a big endian byte array.
 func ConvertReadValue(off uint32, size uint32, val []byte) (res []byte) {
 	// little-endian > big-endian
 	res = SwitchEndianness(val)

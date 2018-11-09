@@ -20,6 +20,17 @@ const topSep = "┏━━┳━━┳━━┳━━┳━━┳━━┳━━�
 const bitSep = "┃"
 const lowSep = "┗━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━┛"
 
+// Convert a byte array to a bit map compatible binary string representation
+// (e.g. []byte{0x55, 0x55} => []byte("0  1  0  1  0  1  0  1  0  1  0  1  0  1 0  1")
+func byteArrayToBitMap(val []byte, offset uint32, size uint32) (m []byte) {
+	m = []byte(fmt.Sprintf("%.8b", ConvertReadValue(offset, size, SwitchEndianness(val))))
+	m = bytes.Replace(m[1:len(m)-1], []byte(" "), nil, -1)
+	m = bytes.Replace(m[len(m)-int(size):], []byte("0"), []byte("0  "), -1)
+	m = bytes.Replace(m, []byte("1"), []byte("1  "), -1)
+
+	return
+}
+
 // Pretty print register bit map.
 //
 // The function operates on a single register, this means that fuses which
@@ -27,7 +38,10 @@ const lowSep = "┗━━┻━━┻━━┻━━┻━━┻━━┻━━�
 //
 // "Alias" fuses which overlaps across each other result in an overlapping bit
 // map, individual fuse description remains accurate.
-func (reg *Register) BitMap() (m string) {
+//
+// An optional byte array can be passed to visualize read values, opposed to
+// fuse names, within the bit map representation.
+func (reg *Register) BitMap(res []byte) (m string) {
 	if reg == nil {
 		return
 	}
@@ -44,7 +58,13 @@ func (reg *Register) BitMap() (m string) {
 	// list which maps fuses to register bits
 	var lines []string
 
+	if len(reg.Fuses) == 0 && res != nil {
+		desc := byteArrayToBitMap(res, 0, 32)
+		copy(bitMap, SwitchEndianness(desc[0:len(desc)-1]))
+	}
+
 	for fuseName, fuse := range reg.Fuses {
+		var desc []byte
 		size := fuse.Length
 
 		// trim a fuse that falls outside the register
@@ -53,19 +73,23 @@ func (reg *Register) BitMap() (m string) {
 		}
 
 		off := int(fuse.Offset) * len(bitBox)
+		descSize := int(size)*2 + int(size) - 1
 
-		fillCount := int(size)*2 + int(size) - 1
-		fill := []byte(fuseName)
-
-		if len(fill) < fillCount {
-			fill = append(fill, bytes.Repeat([]byte(" "), fillCount-len(fill))...)
+		if res != nil {
+			desc = byteArrayToBitMap(res, fuse.Offset, size)
 		} else {
-			fill = fill[0:fillCount]
+			desc = []byte(fuseName)
 		}
 
-		copy(bitMap[off:], SwitchEndianness(fill))
+		if len(desc) < descSize {
+			desc = append(desc, bytes.Repeat([]byte(" "), descSize-len(desc))...)
+		} else {
+			desc = desc[0:descSize]
+		}
 
-		indent := len(regMap) - int(off) - fillCount
+		copy(bitMap[off:], SwitchEndianness(desc))
+
+		indent := len(regMap) - int(off) - descSize
 
 		// We track and increase line length separately to account for
 		// UTF-8 charlen being > 1 bytes.
