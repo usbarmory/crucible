@@ -142,6 +142,27 @@ registers:
       UNIQUE_ID:
         offset: 0
         len: 64
+  BANK0_WORD9:
+    bank: 0
+    word: 9
+  BANK0_WORD10:
+    bank: 0
+    word: 10
+  BANK0_WORD11:
+    bank: 0
+    word: 11
+  BANK0_WORD12:
+    bank: 0
+    word: 12
+  BANK0_WORD13:
+    bank: 0
+    word: 13
+  BANK0_WORD14:
+    bank: 0
+    word: 14
+  BANK0_WORD15:
+    bank: 0
+    word: 15
 
   BANK0_WORD16:
     bank: 0
@@ -260,6 +281,24 @@ registers:
       SJC_RESP:
         offset: 0
         len: 56
+  BANK1_WORD3:
+    bank: 1
+    word: 3
+  BANK1_WORD4:
+    bank: 1
+    word: 4
+  BANK1_WORD5:
+    bank: 1
+    word: 5
+  BANK1_WORD6:
+    bank: 1
+    word: 6
+  BANK1_WORD7:
+    bank: 1
+    word: 7
+  BANK1_WORD8:
+    bank: 1
+    word: 8
 
   BANK1_WORD9:
     bank: 1
@@ -268,6 +307,21 @@ registers:
       MAC_ADDR:
         offset: 0
         len: 48
+  BANK1_WORD10:
+    bank: 1
+    word: 10
+  BANK1_WORD11:
+    bank: 1
+    word: 11
+  BANK1_WORD12:
+    bank: 1
+    word: 12
+  BANK1_WORD13:
+    bank: 1
+    word: 13
+  BANK1_WORD14:
+    bank: 1
+    word: 14
 
   BANK3_WORD0:
     bank: 3
@@ -287,6 +341,96 @@ registers:
       SRK_HASH1:
         offset: 0
         len: 248
+  BANK3_WORD2:
+    bank: 3
+    word: 2
+  BANK3_WORD3:
+    bank: 3
+    word: 3
+  BANK3_WORD4:
+    bank: 3
+    word: 4
+  BANK3_WORD5:
+    bank: 3
+    word: 5
+  BANK3_WORD6:
+    bank: 3
+    word: 6
+  BANK3_WORD7:
+    bank: 3
+    word: 7
+  BANK3_WORD8:
+    bank: 3
+    word: 8
+  BANK3_WORD9:
+    bank: 3
+    word: 9
+  BANK3_WORD10:
+    bank: 3
+    word: 10
+  BANK3_WORD11:
+    bank: 3
+    word: 11
+  BANK3_WORD12:
+    bank: 3
+    word: 12
+  BANK3_WORD13:
+    bank: 3
+    word: 13
+  BANK3_WORD14:
+    bank: 3
+    word: 14
+  BANK3_WORD15:
+    bank: 3
+    word: 15
+  BANK3_WORD16:
+    bank: 3
+    word: 16
+  BANK3_WORD17:
+    bank: 3
+    word: 17
+  BANK3_WORD18:
+    bank: 3
+    word: 18
+  BANK3_WORD19:
+    bank: 3
+    word: 19
+  BANK3_WORD20:
+    bank: 3
+    word: 20
+  BANK3_WORD21:
+    bank: 3
+    word: 21
+  BANK3_WORD22:
+    bank: 3
+    word: 22
+  BANK3_WORD23:
+    bank: 3
+    word: 23
+  BANK3_WORD24:
+    bank: 3
+    word: 24
+  BANK3_WORD25:
+    bank: 3
+    word: 25
+  BANK3_WORD26:
+    bank: 3
+    word: 26
+  BANK3_WORD27:
+    bank: 3
+    word: 27
+  BANK3_WORD28:
+    bank: 3
+    word: 28
+  BANK3_WORD29:
+    bank: 3
+    word: 29
+  BANK3_WORD30:
+    bank: 3
+    word: 30
+  BANK3_WORD31:
+    bank: 3
+    word: 31
 
   BANK4_WORD2:
     bank: 4

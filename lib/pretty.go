@@ -15,10 +15,46 @@ import (
 	"strings"
 )
 
-const regMap = " 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00"
-const topSep = "┏━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┓"
 const bitSep = "┃"
-const lowSep = "┗━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━┛"
+
+// ┏━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳ .. ┳━━┓
+func genTopSep(size uint32) (s string) {
+	s = "┏"
+
+	for i := 1; i < int(size); i++ {
+		s += "━━┳"
+	}
+
+	s += "━━┓"
+
+	return
+}
+
+// ┗━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻ .. ┻━━┛
+func genLowSep(size uint32) (s string) {
+	s = "┗"
+
+	for i := 1; i < int(size); i++ {
+		if i % 8 == 0 {
+			s += "━━╋"
+		} else {
+			s += "━━┻"
+		}
+	}
+
+	s += "━━┛"
+
+	return
+}
+
+// .. 07 06 05 04 03 02 01 00
+func genRegMap(size uint32) (s string) {
+	for i := 1; i <= int(size); i++ {
+		s += fmt.Sprintf(" %.2d", int(size) - i)
+	}
+
+	return
+}
 
 // Convert a byte array to a bit map compatible binary string representation
 // (e.g. []byte{0x55, 0x55} => []byte("0  1  0  1  0  1  0  1  0  1  0  1  0  1 0  1")
@@ -46,6 +82,10 @@ func (reg *Register) BitMap(res []byte) (m string) {
 		return
 	}
 
+	topSep := genTopSep(reg.Length)
+	regMap := genRegMap(reg.Length)
+	lowSep := genLowSep(reg.Length)
+
 	// UTF-8 charlen (> 1 bytes) affects the math used to create the
 	// bitMap, therefore we replace 8-bit chars with fancy UTF-8 ones only
 	// as last step.
@@ -59,7 +99,7 @@ func (reg *Register) BitMap(res []byte) (m string) {
 	var lines []string
 
 	if len(reg.Fuses) == 0 && res != nil {
-		desc := byteArrayToBitMap(res, 0, 32)
+		desc := byteArrayToBitMap(res, 0, reg.Length)
 		copy(bitMap, SwitchEndianness(desc[0:len(desc)-1]))
 	}
 
@@ -68,8 +108,8 @@ func (reg *Register) BitMap(res []byte) (m string) {
 		size := fuse.Length
 
 		// trim a fuse that falls outside the register
-		if fuse.Offset+size > 32 {
-			size = 32 - fuse.Offset
+		if fuse.Offset+size > reg.Length {
+			size = reg.Length - fuse.Offset
 		}
 
 		off := int(fuse.Offset) * len(bitBox)

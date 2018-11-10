@@ -12,7 +12,55 @@ import (
 	"testing"
 )
 
-func TestFuseBitMap(t *testing.T) {
+func TestFuseBitMap8(t *testing.T) {
+	y := `
+---
+reference: test
+driver: nvmem-imx-iim
+registers:
+  REG1:
+    bank: 0
+    word: 0
+    fuses:
+      OTP1:
+        offset: 0
+        len: 1
+      OTP2:
+        offset: 1
+        len: 1
+      OTP3:
+        offset: 2
+        len: 2
+      OTP4:
+        offset: 4
+        len: 4
+...
+`
+
+	exp := ` 07 06 05 04 03 02 01 00  REG1
+┏━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┓ Bank:0 Word:0
+┃OTP4       ┃OTP3 ┃OT┃OT┃ R: 0x00000000
+┗━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━┛ W: 0x00000000
+ 07 ┄┄ ┄┄ 04 ───────────  OTP4
+             03 02 ─────  OTP3
+                   01 ──  OTP2
+                      00  OTP1
+`
+
+	fusemap, err := ParseFuseMap([]byte(y))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	m := fusemap.Registers["REG1"].BitMap(nil)
+
+	if m != exp {
+		t.Errorf("unexpected map\n%s\n  !=\n%s", m, exp)
+	}
+}
+
+func TestFuseBitMap32(t *testing.T) {
 	y := `
 ---
 reference: test
@@ -99,7 +147,44 @@ registers:
 	}
 }
 
-func TestReadBitMap(t *testing.T) {
+func TestReadBitMap8(t *testing.T) {
+	exp := ` 07 06 05 04 03 02 01 00  BANK0_WORD0
+┏━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┓ Bank:0 Word:0
+┃0 ┃0 ┃0 ┃1 ┃0 ┃0 ┃0 ┃0 ┃ R: 0x00000000
+┗━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━┛ W: 0x00000000
+ 07 ────────────────────  FBWP
+    06 ─────────────────  FBOP
+       05 ──────────────  FBRP
+          04 ───────────  TESTER_LOCK
+             03 ────────  FBESP
+                02 ─────  TESTER_LOCK2
+                   01 ──  GP_LOCK
+                      00  BOOT_LOCK
+`
+
+	fusemap, err := OpenFuseMap("../fusemaps", "IMX53", "2.1")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	devicePath := "../test/nvmem.IMX53"
+	name := "BANK0_WORD0"
+
+	res, _, _, _, err := fusemap.Read(devicePath, name)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	m := fusemap.Registers[name].BitMap(res)
+
+	if m != exp {
+		t.Errorf("unexpected map\n%s\n  !=\n%s", m, exp)
+	}
+}
+
+func TestReadBitMap32(t *testing.T) {
 	exp := ` 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00  OCOTP_CFG1
 ┏━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┓ Bank:0 Word:2
 ┃0  0  1  0  0  1  1  1 ┃0  0  0  1  0  0  0  0 ┃0  1  0  0  0 ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃  ┃ R: 0x00000008

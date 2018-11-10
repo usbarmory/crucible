@@ -33,11 +33,19 @@ func (fusemap *FuseMap) Read(devicePath string, name string) (res []byte, addr u
 		return
 	}
 
+	wordSize, _, err := driverParams(fusemap.Driver)
+
+	if err != nil {
+		return
+	}
+
+	regSize := 8 * wordSize
+
 	switch mapping.(type) {
 	case *Register:
 		addr = mapping.(*Register).ReadAddress
 		off = 0
-		size = uint32(32)
+		size = regSize
 	case *Fuse:
 		addr = mapping.(*Fuse).ReadAddress
 		off = mapping.(*Fuse).Offset
@@ -58,14 +66,14 @@ func (fusemap *FuseMap) Read(devicePath string, name string) (res []byte, addr u
 		return
 	}
 
-	numRegisters := 1 + (off+size)/32
+	numRegisters := 1 + (off+size)/regSize
 
 	// normalize
-	if (off+size)%32 == 0 {
+	if (off+size)%regSize == 0 {
 		numRegisters -= 1
 	}
 
-	val := make([]byte, numRegisters*4)
+	val := make([]byte, numRegisters*wordSize)
 	_, err = device.Read(val)
 
 	if err != nil {

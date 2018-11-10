@@ -135,6 +135,12 @@ func (fusemap *FuseMap) Validate() (err error) {
 		return errors.New("missing driver")
 	}
 
+	wordSize, _, err := driverParams(fusemap.Driver)
+
+	if err != nil {
+		return
+	}
+
 	for n1, reg := range fusemap.Registers {
 		if _, ok := names[n1]; ok {
 			return fmt.Errorf("register/fuse names must be unique, double entry for %s", n1)
@@ -146,7 +152,7 @@ func (fusemap *FuseMap) Validate() (err error) {
 		}
 
 		reg.Name = n1
-		reg.Length = 32
+		reg.Length = 8 * wordSize
 
 		err = fusemap.SetAddress(reg)
 
