@@ -139,30 +139,85 @@ registers:
       SJC_CHALL:
         offset: 0
         len: 64
+      SJC_CHALL[63:56]:
+        offset: 0
+        len: 8
       UNIQUE_ID:
         offset: 0
         len: 64
+      UNIQUE_ID[63:56]:
+        offset: 0
+        len: 8
   BANK0_WORD9:
     bank: 0
     word: 9
+    fuses:
+      SJC_CHALL[55:48]:
+        offset: 0
+        len: 8
+      UNIQUE_ID[55:48]:
+        offset: 0
+        len: 8
   BANK0_WORD10:
     bank: 0
     word: 10
+    fuses:
+      SJC_CHALL[47:40]:
+        offset: 0
+        len: 8
+      UNIQUE_ID[47:40]:
+        offset: 0
+        len: 8
   BANK0_WORD11:
     bank: 0
     word: 11
+    fuses:
+      SJC_CHALL[39:32]:
+        offset: 0
+        len: 8
+      UNIQUE_ID[39:32]:
+        offset: 0
+        len: 8
   BANK0_WORD12:
     bank: 0
     word: 12
+    fuses:
+      SJC_CHALL[31:24]:
+        offset: 0
+        len: 8
+      UNIQUE_ID[31:24]:
+        offset: 0
+        len: 8
   BANK0_WORD13:
     bank: 0
     word: 13
+    fuses:
+      SJC_CHALL[23:16]:
+        offset: 0
+        len: 8
+      UNIQUE_ID[23:16]:
+        offset: 0
+        len: 8
   BANK0_WORD14:
     bank: 0
     word: 14
+    fuses:
+      SJC_CHALL[15:8]:
+        offset: 0
+        len: 8
+      UNIQUE_ID[15:8]:
+        offset: 0
+        len: 8
   BANK0_WORD15:
     bank: 0
     word: 15
+    fuses:
+      SJC_CHALL[7:0]:
+        offset: 0
+        len: 8
+      UNIQUE_ID[7:0]:
+        offset: 0
+        len: 8
 
   BANK0_WORD16:
     bank: 0
@@ -199,56 +254,59 @@ registers:
     bank: 0
     word: 24
     fuses:
-      GP7:
+      GP[63:0]:
+        offset: 0
+        len: 64
+      GP[63:56]:
         offset: 0
         len: 8
   BANK0_WORD25:
     bank: 0
     word: 25
     fuses:
-      GP6:
+      GP[55:48]:
         offset: 0
         len: 8
   BANK0_WORD26:
     bank: 0
     word: 26
     fuses:
-      GP5:
+      GP[47:40]:
         offset: 0
         len: 8
   BANK0_WORD27:
     bank: 0
     word: 27
     fuses:
-      GP4:
+      GP[39:32]:
         offset: 0
         len: 8
   BANK0_WORD28:
     bank: 0
     word: 28
     fuses:
-      GP3:
+      GP[31:24]:
         offset: 0
         len: 8
   BANK0_WORD29:
     bank: 0
     word: 29
     fuses:
-      GP2:
+      GP[23:16]:
         offset: 0
         len: 8
   BANK0_WORD30:
     bank: 0
     word: 30
     fuses:
-      GP1:
+      GP[15:8]:
         offset: 0
         len: 8
   BANK0_WORD31:
     bank: 0
     word: 31
     fuses:
-      GP0:
+      GP[7:0]:
         offset: 0
         len: 8
 
@@ -270,7 +328,7 @@ registers:
     bank: 1
     word: 1
     fuses:
-      SRK_HASH0:
+      SRK_HASH[255:248]:
         offset: 0
         len: 8
 
@@ -281,24 +339,51 @@ registers:
       SJC_RESP:
         offset: 0
         len: 56
+      SJC_RESP[55:48]:
+        offset: 0
+        len: 8
   BANK1_WORD3:
     bank: 1
     word: 3
+    fuses:
+      SJC_RESP[47:40]:
+        offset: 0
+        len: 8
   BANK1_WORD4:
     bank: 1
     word: 4
+    fuses:
+      SJC_RESP[39:32]:
+        offset: 0
+        len: 8
   BANK1_WORD5:
     bank: 1
     word: 5
+    fuses:
+      SJC_RESP[31:24]:
+        offset: 0
+        len: 8
   BANK1_WORD6:
     bank: 1
     word: 6
+    fuses:
+      SJC_RESP[23:16]:
+        offset: 0
+        len: 8
   BANK1_WORD7:
     bank: 1
     word: 7
+    fuses:
+      SJC_RESP[15:8]:
+        offset: 0
+        len: 8
   BANK1_WORD8:
     bank: 1
     word: 8
+    fuses:
+      SJC_RESP[7:0]:
+        offset: 0
+        len: 8
 
   BANK1_WORD9:
     bank: 1
@@ -307,21 +392,44 @@ registers:
       MAC_ADDR:
         offset: 0
         len: 48
+      MAC_ADDR[47:40]:
+        offset: 0
+        len: 48
   BANK1_WORD10:
     bank: 1
     word: 10
+    fuses:
+      MAC_ADDR[39:32]:
+        offset: 0
+        len: 48
   BANK1_WORD11:
     bank: 1
     word: 11
+    fuses:
+      MAC_ADDR[31:24]:
+        offset: 0
+        len: 48
   BANK1_WORD12:
     bank: 1
     word: 12
+    fuses:
+      MAC_ADDR[23:16]:
+        offset: 0
+        len: 48
   BANK1_WORD13:
     bank: 1
     word: 13
+    fuses:
+      MAC_ADDR[15:8]:
+        offset: 0
+        len: 48
   BANK1_WORD14:
     bank: 1
     word: 14
+    fuses:
+      MAC_ADDR[7:0]:
+        offset: 0
+        len: 48
 
   BANK3_WORD0:
     bank: 3
@@ -338,99 +446,222 @@ registers:
     bank: 3
     word: 1
     fuses:
-      SRK_HASH1:
+      SRK_HASH[247:0]:
         offset: 0
         len: 248
+      SRK_HASH[247:240]:
+        offset: 0
+        len: 8
   BANK3_WORD2:
     bank: 3
     word: 2
+    fuses:
+      SRK_HASH[239:232]:
+        offset: 0
+        len: 8
   BANK3_WORD3:
     bank: 3
     word: 3
+    fuses:
+      SRK_HASH[231:224]:
+        offset: 0
+        len: 8
   BANK3_WORD4:
     bank: 3
     word: 4
+    fuses:
+      SRK_HASH[223:216]:
+        offset: 0
+        len: 8
   BANK3_WORD5:
     bank: 3
     word: 5
+    fuses:
+      SRK_HASH[215:208]:
+        offset: 0
+        len: 8
   BANK3_WORD6:
     bank: 3
     word: 6
+    fuses:
+      SRK_HASH[207:200]:
+        offset: 0
+        len: 8
   BANK3_WORD7:
     bank: 3
     word: 7
+    fuses:
+      SRK_HASH[199:192]:
+        offset: 0
+        len: 8
   BANK3_WORD8:
     bank: 3
     word: 8
+    fuses:
+      SRK_HASH[191:184]:
+        offset: 0
+        len: 8
   BANK3_WORD9:
     bank: 3
     word: 9
+    fuses:
+      SRK_HASH[183:176]:
+        offset: 0
+        len: 8
   BANK3_WORD10:
     bank: 3
     word: 10
+    fuses:
+      SRK_HASH[175:168]:
+        offset: 0
+        len: 8
   BANK3_WORD11:
     bank: 3
     word: 11
+    fuses:
+      SRK_HASH[167:160]:
+        offset: 0
+        len: 8
   BANK3_WORD12:
     bank: 3
     word: 12
+    fuses:
+      SRK_HASH[159:152]:
+        offset: 0
+        len: 8
   BANK3_WORD13:
     bank: 3
     word: 13
+    fuses:
+      SRK_HASH[151:144]:
+        offset: 0
+        len: 8
   BANK3_WORD14:
     bank: 3
     word: 14
+    fuses:
+      SRK_HASH[143:136]:
+        offset: 0
+        len: 8
   BANK3_WORD15:
     bank: 3
     word: 15
+    fuses:
+      SRK_HASH[135:128]:
+        offset: 0
+        len: 8
   BANK3_WORD16:
     bank: 3
     word: 16
+    fuses:
+      SRK_HASH[127:120]:
+        offset: 0
+        len: 8
   BANK3_WORD17:
     bank: 3
     word: 17
+    fuses:
+      SRK_HASH[119:112]:
+        offset: 0
+        len: 8
   BANK3_WORD18:
     bank: 3
     word: 18
+    fuses:
+      SRK_HASH[111:104]:
+        offset: 0
+        len: 8
   BANK3_WORD19:
     bank: 3
     word: 19
+    fuses:
+      SRK_HASH[103:96]:
+        offset: 0
+        len: 8
   BANK3_WORD20:
     bank: 3
     word: 20
+    fuses:
+      SRK_HASH[95:88]:
+        offset: 0
+        len: 8
   BANK3_WORD21:
     bank: 3
     word: 21
+    fuses:
+      SRK_HASH[87:80]:
+        offset: 0
+        len: 8
   BANK3_WORD22:
     bank: 3
     word: 22
+    fuses:
+      SRK_HASH[79:72]:
+        offset: 0
+        len: 8
   BANK3_WORD23:
     bank: 3
     word: 23
+    fuses:
+      SRK_HASH[71:64]:
+        offset: 0
+        len: 8
   BANK3_WORD24:
     bank: 3
     word: 24
+    fuses:
+      SRK_HASH[63:56]:
+        offset: 0
+        len: 8
   BANK3_WORD25:
     bank: 3
     word: 25
+    fuses:
+      SRK_HASH[55:48]:
+        offset: 0
+        len: 8
   BANK3_WORD26:
     bank: 3
     word: 26
+    fuses:
+      SRK_HASH[47:40]:
+        offset: 0
+        len: 8
   BANK3_WORD27:
     bank: 3
     word: 27
+    fuses:
+      SRK_HASH[39:32]:
+        offset: 0
+        len: 8
   BANK3_WORD28:
     bank: 3
     word: 28
+    fuses:
+      SRK_HASH[31:24]:
+        offset: 0
+        len: 8
   BANK3_WORD29:
     bank: 3
     word: 29
+    fuses:
+      SRK_HASH[23:16]:
+        offset: 0
+        len: 8
   BANK3_WORD30:
     bank: 3
     word: 30
+    fuses:
+      SRK_HASH[15:8]:
+        offset: 0
+        len: 8
   BANK3_WORD31:
     bank: 3
     word: 31
+    fuses:
+      SRK_HASH[7:0]:
+        offset: 0
+        len: 8
 
   BANK4_WORD2:
     bank: 4
@@ -469,20 +700,20 @@ registers:
     bank: 4
     word: 5
     fuses:
-      GP10:
+      GP[87:80]:
         offset: 0
         len: 8
   BANK4_WORD6:
     bank: 4
     word: 6
     fuses:
-      GP9:
+      GP[79:72]:
         offset: 0
         len: 8
   BANK4_WORD7:
     bank: 4
     word: 7
     fuses:
-      GP8:
+      GP[71:64]:
         offset: 0
         len: 8

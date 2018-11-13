@@ -70,10 +70,12 @@ func byteArrayToBitMap(val []byte, offset uint32, size uint32) (m []byte) {
 // Pretty print register bit map.
 //
 // The function operates on a single register, this means that fuses which
-// start in other registers are not shown.
+// start in other registers are not shown (to overcome this fusemaps can
+// include fuse definitions to alias their register range).
 //
-// "Alias" fuses which overlaps across each other result in an overlapping bit
-// map, individual fuse description remains accurate.
+// Additionally fuse definitions which overlaps across each other (e.g.
+// aliases) result in an overlapping bit map, individual fuse description
+// remains accurate.
 //
 // An optional byte array can be passed to visualize read values, opposed to
 // fuse names, within the bit map representation.
@@ -103,7 +105,7 @@ func (reg *Register) BitMap(res []byte) (m string) {
 		copy(bitMap, SwitchEndianness(desc[0:len(desc)-1]))
 	}
 
-	for fuseName, fuse := range reg.Fuses {
+	for _, fuse := range reg.FusesByOffset() {
 		var desc []byte
 		size := fuse.Length
 
@@ -118,7 +120,7 @@ func (reg *Register) BitMap(res []byte) (m string) {
 		if res != nil {
 			desc = byteArrayToBitMap(res, fuse.Offset, size)
 		} else {
-			desc = []byte(fuseName)
+			desc = []byte(fuse.Name)
 		}
 
 		if len(desc) < descSize {
@@ -128,6 +130,13 @@ func (reg *Register) BitMap(res []byte) (m string) {
 		}
 
 		copy(bitMap[off:], SwitchEndianness(desc))
+
+		if off > 0 {
+			// Restore separator as it might have been overwritten
+			// by a longer fuse alias displayed earlier (per
+			// sorting rules).
+			copy(bitMap[off-1:], bitSepFixed)
+		}
 
 		indent := len(regMap) - int(off) - descSize
 
@@ -152,7 +161,7 @@ func (reg *Register) BitMap(res []byte) (m string) {
 			line += fmt.Sprintf("%s ", strings.Repeat("─", len(regMap)-lineLen))
 		}
 
-		lines = append(lines, fmt.Sprintf("%s %s\n", line, fuseName))
+		lines = append(lines, fmt.Sprintf("%s %s\n", line, fuse.Name))
 	}
 
 	bitMap = SwitchEndianness(bitMap)

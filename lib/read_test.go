@@ -57,8 +57,8 @@ func TestReadIMX53(t *testing.T) {
 
 	// fuses
 	readTest(t, devicePath, fusemap, "SRK_LOCK", []byte{0x01}, uint32(0x20))
-	readTest(t, devicePath, fusemap, "SRK_HASH0", []byte{0x5d}, uint32(0x21))
-	readTest(t, devicePath, fusemap, "SRK_HASH1",
+	readTest(t, devicePath, fusemap, "SRK_HASH[255:248]", []byte{0x5d}, uint32(0x21))
+	readTest(t, devicePath, fusemap, "SRK_HASH[247:0]",
 		[]byte{
 			0x85, 0xe5, 0xaf, 0x63, 0xd0, 0xb6, 0x6c, 0xb4,
 			0x6e, 0x18, 0x09, 0x3e, 0x94, 0xad, 0x70, 0x94,

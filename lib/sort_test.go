@@ -21,6 +21,16 @@ registers:
   REG1:
     bank: 0
     word: 0
+    fuses:
+      OTP1:
+        offset: 0
+        len: 32
+      OTP2:
+        offset: 0
+        len: 8
+      OTP3:
+        offset: 8
+        len: 16
   REG2:
     bank: 0
     word: 1
@@ -47,6 +57,14 @@ registers:
 	for i, reg := range fusemap.RegistersByWriteAddress() {
 		if exp[i] != reg.Name {
 			t.Errorf("unexpected order, %s != %s", reg.Name, exp[i])
+		}
+	}
+
+	exp = []string{"OTP1", "OTP2", "OTP3"}
+
+	for i, fuse := range fusemap.Registers["REG1"].FusesByOffset() {
+		if exp[i] != fuse.Name {
+			t.Errorf("unexpected order, %s != %s", fuse.Name, exp[i])
 		}
 	}
 }

@@ -113,14 +113,26 @@ registers:
       UNIQUE_ID:
         offset: 0
         len: 64
+      UNIQUE_ID[31:0]:
+        offset: 0
+        len: 32
       LOT_NO_ENC:
         offset: 0
         len: 43
+      LOT_NO_ENC[31:0]:
+        offset: 0
+        len: 32
 
   OCOTP_CFG1:
     bank: 0
     word: 2
     fuses:
+      UNIQUE_ID[63:32]:
+        offset: 0
+        len: 32
+      LOT_NO_ENC[42:32]:
+        offset: 0
+        len: 11
       WAFER_NO:
         offset: 11
         len: 5
@@ -356,27 +368,58 @@ registers:
       SRK_HASH:
         offset: 0
         len: 256
+      SRK_HASH[255:224]:
+        offset: 0
+        len: 32
   OCOTP_SRK1:
     bank: 3
     word: 1
+    fuses:
+      SRK_HASH[223:192]:
+        offset: 0
+        len: 32
   OCOTP_SRK2:
     bank: 3
     word: 2
+    fuses:
+      SRK_HASH[191:160]:
+        offset: 0
+        len: 32
   OCOTP_SRK3:
     bank: 3
     word: 3
+    fuses:
+      SRK_HASH[159:128]:
+        offset: 0
+        len: 32
   OCOTP_SRK4:
     bank: 3
     word: 4
+    fuses:
+      SRK_HASH[127:96]:
+        offset: 0
+        len: 32
   OCOTP_SRK5:
     bank: 3
     word: 5
+    fuses:
+      SRK_HASH[95:64]:
+        offset: 0
+        len: 32
   OCOTP_SRK6:
     bank: 3
     word: 6
+    fuses:
+      SRK_HASH[63:32]:
+        offset: 0
+        len: 32
   OCOTP_SRK7:
     bank: 3
     word: 7
+    fuses:
+      SRK_HASH[31:0]:
+        offset: 0
+        len: 32
 
   OCOTP_SJC_RESP0:
     bank: 4
@@ -385,9 +428,16 @@ registers:
       SJC_RESP:
         offset: 0
         len: 56
+      SJC_RESP[55:24]:
+        offset: 0
+        len: 32
   OCOTP_SJC_RESP1:
     bank: 4
     word: 1
+    fuses:
+      SJC_RESP[23:0]:
+        offset: 0
+        len: 24
 
   OCOTP_MAC0:
     bank: 4
@@ -396,9 +446,17 @@ registers:
       MAC1_ADDR:
         offset: 0
         len: 48
+      MAC1_ADDR[47:16]:
+        offset: 0
+        len: 32
   OCOTP_MAC1:
     bank: 4
     word: 3
+    fuses:
+      MAC1_ADDR[15:0]:
+        offset: 0
+        len: 16
+
   OCOTP_MAC:
     bank: 4
     word: 4
@@ -429,18 +487,37 @@ registers:
       SW_GP:
         offset: 0
         len: 160
+      SW_GP[159:128]:
+        offset: 0
+        len: 32
   OCOTP_SW_GP1:
     bank: 5
     word: 1
+    fuses:
+      SW_GP[127:96]:
+        offset: 0
+        len: 32
   OCOTP_SW_GP2:
     bank: 5
     word: 2
+    fuses:
+      SW_GP[95:64]:
+        offset: 0
+        len: 32
   OCOTP_SW_GP3:
     bank: 5
     word: 3
+    fuses:
+      SW_GP[63:32]:
+        offset: 0
+        len: 32
   OCOTP_SW_GP4:
     bank: 5
     word: 4
+    fuses:
+      SW_GP[31:0]:
+        offset: 0
+        len: 32
 
   OCOTP_MISC_CONF:
     bank: 5
@@ -536,51 +613,114 @@ registers:
       GP3:
         offset: 0
         len: 512
+      GP3[511:480]:
+        offset: 0
+        len: 32
   OCOTP_GP31:
     bank: 8
     word: 1
+    fuses:
+      GP3[479:448]:
+        offset: 0
+        len: 32
   OCOTP_GP32:
     bank: 8
     word: 2
+    fuses:
+      GP3[447:416]:
+        offset: 0
+        len: 32
   OCOTP_GP33:
     bank: 8
     word: 3
+    fuses:
+      GP3[415:384]:
+        offset: 0
+        len: 32
   OCOTP_GP34:
     bank: 8
     word: 4
+    fuses:
+      GP3[383:352]:
+        offset: 0
+        len: 32
   OCOTP_GP35:
     bank: 8
     word: 5
+    fuses:
+      GP3[351:320]:
+        offset: 0
+        len: 32
   OCOTP_GP36:
     bank: 8
     word: 6
+    fuses:
+      GP3[319:288]:
+        offset: 0
+        len: 32
   OCOTP_GP37:
     bank: 8
     word: 7
+    fuses:
+      GP3[287:256]:
+        offset: 0
+        len: 32
   OCOTP_GP38:
     bank: 9
     word: 0
+    fuses:
+      GP3[255:224]:
+        offset: 0
+        len: 32
   OCOTP_GP39:
     bank: 9
     word: 1
+    fuses:
+      GP3[223:192]:
+        offset: 0
+        len: 32
   OCOTP_GP310:
     bank: 9
     word: 2
+    fuses:
+      GP3[191:160]:
+        offset: 0
+        len: 32
   OCOTP_GP311:
     bank: 9
     word: 3
+    fuses:
+      GP3[159:128]:
+        offset: 0
+        len: 32
   OCOTP_GP312:
     bank: 9
     word: 4
+    fuses:
+      GP3[127:96]:
+        offset: 0
+        len: 32
   OCOTP_GP313:
     bank: 9
     word: 5
+    fuses:
+      GP3[95:64]:
+        offset: 0
+        len: 32
   OCOTP_GP314:
     bank: 9
     word: 6
+    fuses:
+      GP3[63:32]:
+        offset: 0
+        len: 32
   OCOTP_GP315:
     bank: 9
     word: 7
+    fuses:
+      GP3[31:0]:
+        offset: 0
+        len: 32
 
   OCOTP_GP40:
     bank: 10
@@ -589,51 +729,114 @@ registers:
       GP4:
         offset: 0
         len: 512
+      GP4[511:480]:
+        offset: 0
+        len: 32
   OCOTP_GP41:
     bank: 10
     word: 1
+    fuses:
+      GP4[479:448]:
+        offset: 0
+        len: 32
   OCOTP_GP42:
     bank: 10
     word: 2
+    fuses:
+      GP4[447:416]:
+        offset: 0
+        len: 32
   OCOTP_GP43:
     bank: 10
     word: 3
+    fuses:
+      GP4[415:384]:
+        offset: 0
+        len: 32
   OCOTP_GP44:
     bank: 10
     word: 4
+    fuses:
+      GP4[383:352]:
+        offset: 0
+        len: 32
   OCOTP_GP45:
     bank: 10
     word: 5
+    fuses:
+      GP4[351:320]:
+        offset: 0
+        len: 32
   OCOTP_GP46:
     bank: 10
     word: 6
+    fuses:
+      GP4[319:288]:
+        offset: 0
+        len: 32
   OCOTP_GP47:
     bank: 10
     word: 7
+    fuses:
+      GP4[287:256]:
+        offset: 0
+        len: 32
   OCOTP_GP48:
     bank: 11
     word: 0
+    fuses:
+      GP4[255:224]:
+        offset: 0
+        len: 32
   OCOTP_GP49:
     bank: 11
     word: 1
+    fuses:
+      GP4[223:192]:
+        offset: 0
+        len: 32
   OCOTP_GP410:
     bank: 11
     word: 2
+    fuses:
+      GP4[191:160]:
+        offset: 0
+        len: 32
   OCOTP_GP411:
     bank: 11
     word: 3
+    fuses:
+      GP4[159:128]:
+        offset: 0
+        len: 32
   OCOTP_GP412:
     bank: 11
     word: 4
+    fuses:
+      GP4[127:96]:
+        offset: 0
+        len: 32
   OCOTP_GP413:
     bank: 11
     word: 5
+    fuses:
+      GP4[95:64]:
+        offset: 0
+        len: 32
   OCOTP_GP414:
     bank: 11
     word: 6
+    fuses:
+      GP4[63:32]:
+        offset: 0
+        len: 32
   OCOTP_GP415:
     bank: 11
     word: 7
+    fuses:
+      GP4[31:0]:
+        offset: 0
+        len: 32
 
   OCOTP_GP50:
     bank: 12
@@ -642,51 +845,114 @@ registers:
       GP5:
         offset: 0
         len: 512
+      GP5[511:480]:
+        offset: 0
+        len: 32
   OCOTP_GP51:
     bank: 12
     word: 1
+    fuses:
+      GP5[479:448]:
+        offset: 0
+        len: 32
   OCOTP_GP52:
     bank: 12
     word: 2
+    fuses:
+      GP5[447:416]:
+        offset: 0
+        len: 32
   OCOTP_GP53:
     bank: 12
     word: 3
+    fuses:
+      GP5[415:384]:
+        offset: 0
+        len: 32
   OCOTP_GP54:
     bank: 12
     word: 4
+    fuses:
+      GP5[383:352]:
+        offset: 0
+        len: 32
   OCOTP_GP55:
     bank: 12
     word: 5
+    fuses:
+      GP5[351:320]:
+        offset: 0
+        len: 32
   OCOTP_GP56:
     bank: 12
     word: 6
+    fuses:
+      GP5[319:288]:
+        offset: 0
+        len: 32
   OCOTP_GP57:
     bank: 12
     word: 7
+    fuses:
+      GP5[287:256]:
+        offset: 0
+        len: 32
   OCOTP_GP58:
     bank: 13
     word: 0
+    fuses:
+      GP5[255:224]:
+        offset: 0
+        len: 32
   OCOTP_GP59:
     bank: 13
     word: 1
+    fuses:
+      GP5[223:192]:
+        offset: 0
+        len: 32
   OCOTP_GP510:
     bank: 13
     word: 2
+    fuses:
+      GP5[191:160]:
+        offset: 0
+        len: 32
   OCOTP_GP511:
     bank: 13
     word: 3
+    fuses:
+      GP5[159:128]:
+        offset: 0
+        len: 32
   OCOTP_GP512:
     bank: 13
     word: 4
+    fuses:
+      GP5[127:96]:
+        offset: 0
+        len: 32
   OCOTP_GP513:
     bank: 13
     word: 5
+    fuses:
+      GP5[95:64]:
+        offset: 0
+        len: 32
   OCOTP_GP514:
     bank: 13
     word: 6
+    fuses:
+      GP5[63:32]:
+        offset: 0
+        len: 32
   OCOTP_GP515:
     bank: 13
     word: 7
+    fuses:
+      GP5[31:0]:
+        offset: 0
+        len: 32
 
   OCOTP_GP60:
     bank: 14
@@ -695,27 +961,58 @@ registers:
       GP6:
         offset: 0
         len: 256
+      GP6[255:224]:
+        offset: 0
+        len: 32
   OCOTP_GP61:
     bank: 14
     word: 1
+    fuses:
+      GP6[223:192]:
+        offset: 0
+        len: 32
   OCOTP_GP62:
     bank: 14
     word: 2
+    fuses:
+      GP6[191:160]:
+        offset: 0
+        len: 32
   OCOTP_GP63:
     bank: 14
     word: 3
+    fuses:
+      GP6[159:128]:
+        offset: 0
+        len: 32
   OCOTP_GP64:
     bank: 14
     word: 4
+    fuses:
+      GP6[127:96]:
+        offset: 0
+        len: 32
   OCOTP_GP65:
     bank: 14
     word: 5
+    fuses:
+      GP6[95:64]:
+        offset: 0
+        len: 32
   OCOTP_GP66:
     bank: 14
     word: 6
+    fuses:
+      GP6[63:32]:
+        offset: 0
+        len: 32
   OCOTP_GP67:
     bank: 14
     word: 7
+    fuses:
+      GP6[31:0]:
+        offset: 0
+        len: 32
 
   OCOTP_GP70:
     bank: 15
@@ -724,15 +1021,30 @@ registers:
       GP7:
         offset: 0
         len: 128
+      GP7[127:96]:
+        offset: 0
+        len: 32
   OCOTP_GP71:
     bank: 15
     word: 1
+    fuses:
+      GP7[95:64]:
+        offset: 0
+        len: 32
   OCOTP_GP72:
     bank: 15
     word: 2
+    fuses:
+      GP7[63:32]:
+        offset: 0
+        len: 32
   OCOTP_GP73:
     bank: 15
     word: 3
+    fuses:
+      GP7[31:0]:
+        offset: 0
+        len: 32
 
   OCOTP_GP80:
     bank: 15
@@ -741,12 +1053,27 @@ registers:
       GP8:
         offset: 0
         len: 128
+      GP8[127:96]:
+        offset: 0
+        len: 32
   OCOTP_GP81:
     bank: 15
     word: 5
+    fuses:
+      GP8[95:64]:
+        offset: 0
+        len: 32
   OCOTP_GP82:
     bank: 15
     word: 6
+    fuses:
+      GP8[63:32]:
+        offset: 0
+        len: 32
   OCOTP_GP83:
     bank: 15
     word: 7
+    fuses:
+      GP8[31:0]:
+        offset: 0
+        len: 32
