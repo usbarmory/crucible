@@ -83,7 +83,13 @@ func init() {
 			return
 		}
 
-		log.Printf("crucible - One-Time-Programmable (OTP) fusing tool %s (%s)", Revision, Build)
+		tags := ""
+
+		if Revision != "" && Build != "" {
+			tags = fmt.Sprintf("%s (%s)", Revision, Build)
+		}
+
+		log.Printf("crucible - One-Time-Programmable (OTP) fusing tool %s", tags)
 		log.Println(splash)
 		log.Printf("Usage: crucible [options] [read|blow] [fuse/register name] [value]\n")
 		flag.PrintDefaults()
