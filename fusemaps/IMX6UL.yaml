@@ -13,8 +13,8 @@
 processor: IMX6UL
 reference: 1
 
-# On the IMX6UL a gap is present between OTP Bank5 Word7 (0x21B_C6F0) and OTP
-# Bank6 Word0 (21B_C800).
+# On the IMX6UL a gap is present between OTP Bank5 Word7 (21B_C6F0h) and OTP
+# Bank6 Word0 (21B_C800h).
 #
 # The nvmem-imx-ocotp driver does not handle addressing gaps between OTP banks,
 # the fusemap supports gap information specifically to work this problem around
