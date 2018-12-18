@@ -220,8 +220,11 @@ git clone https://github.com/inversepath/crucible
 cd crucible && make
 ```
 
-To cross compile for an ARM target it is sufficient to pass `GOARCH=arm` when
-compiling.
+The tool can be cross compiled for an ARM target as follows:
+
+```
+make crucible GOARCH=arm
+```
 
 The default compilation target automatically runs all available unit tests.
 
