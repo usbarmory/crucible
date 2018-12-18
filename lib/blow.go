@@ -57,7 +57,7 @@ func (fusemap *FuseMap) Blow(devicePath string, name string, val []byte) (res []
 		size = reg.Length
 	case *Fuse:
 		fuse := mapping.(*Fuse)
-		addr = fuse.WriteAddress
+		addr = fuse.Register.WriteAddress
 		off = fuse.Offset
 		size = fuse.Length
 	}

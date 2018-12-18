@@ -43,13 +43,15 @@ func (fusemap *FuseMap) Read(devicePath string, name string) (res []byte, addr u
 
 	switch mapping.(type) {
 	case *Register:
-		addr = mapping.(*Register).ReadAddress
+		reg := mapping.(*Register)
+		addr = reg.ReadAddress
 		off = 0
 		size = regSize
 	case *Fuse:
-		addr = mapping.(*Fuse).ReadAddress
-		off = mapping.(*Fuse).Offset
-		size = mapping.(*Fuse).Length
+		fuse := mapping.(*Fuse)
+		addr = fuse.Register.ReadAddress
+		off = fuse.Offset
+		size = fuse.Length
 	}
 
 	device, err := os.OpenFile(devicePath, os.O_RDONLY|os.O_EXCL|os.O_SYNC, 0600)

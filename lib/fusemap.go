@@ -41,10 +41,9 @@ type Register struct {
 
 type Fuse struct {
 	Name         string
-	ReadAddress  uint32
-	WriteAddress uint32
 	Offset       uint32 `json:"offset"`
 	Length       uint32 `json:"len"`
+	Register     *Register
 }
 
 // Set register addressing.
@@ -179,8 +178,7 @@ func (fusemap *FuseMap) Validate() (err error) {
 			}
 
 			fuse.Name = n2
-			fuse.ReadAddress = reg.ReadAddress
-			fuse.WriteAddress = reg.WriteAddress
+			fuse.Register = reg
 		}
 	}
 
