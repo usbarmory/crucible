@@ -12,11 +12,11 @@ REV := $(shell git rev-parse --short HEAD 2> /dev/null)
 all: test crucible
 
 # requires the following dependencies in $GOPATH
-#   honnef.co/go/tools/cmd/megacheck
+#   honnef.co/go/tools/cmd/staticcheck
 #   github.com/kisielk/errcheck
 check:
 	@${GO} vet lib/*.go
-	@${GOPATH}/bin/megacheck lib/*.go
+	@${GOPATH}/bin/staticcheck lib/*.go
 	@${GOPATH}/bin/errcheck lib/*.go
 
 test:

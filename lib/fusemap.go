@@ -98,7 +98,7 @@ func (fusemap *FuseMap) ApplyGaps() (err error) {
 				return errors.New("invalid gap, missing operation")
 			}
 
-			if gap.Length <= 0 {
+			if gap.Length == 0 {
 				return errors.New("invalid gap, missing length")
 			}
 

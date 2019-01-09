@@ -49,14 +49,20 @@ func (fusemap *FuseMap) Blow(devicePath string, name string, val []byte) (res []
 		return
 	}
 
-	switch mapping.(type) {
+	wordSize, _, err := driverParams(fusemap.Driver)
+
+	if err != nil {
+		return
+	}
+
+	switch m := mapping.(type) {
 	case *Register:
-		reg := mapping.(*Register)
+		reg := m
 		addr = reg.WriteAddress
 		off = 0
 		size = reg.Length
 	case *Fuse:
-		fuse := mapping.(*Fuse)
+		fuse := m
 		addr = fuse.Register.WriteAddress
 		off = fuse.Offset
 		size = fuse.Length
@@ -75,12 +81,6 @@ func (fusemap *FuseMap) Blow(devicePath string, name string, val []byte) (res []
 	}
 
 	device, err := os.OpenFile(devicePath, os.O_WRONLY|os.O_EXCL|os.O_SYNC, 0600)
-
-	if err != nil {
-		return
-	}
-
-	wordSize, _, err := driverParams(fusemap.Driver)
 
 	if err != nil {
 		return

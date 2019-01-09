@@ -41,14 +41,14 @@ func (fusemap *FuseMap) Read(devicePath string, name string) (res []byte, addr u
 
 	regSize := 8 * wordSize
 
-	switch mapping.(type) {
+	switch m := mapping.(type) {
 	case *Register:
-		reg := mapping.(*Register)
+		reg := m
 		addr = reg.ReadAddress
 		off = 0
 		size = regSize
 	case *Fuse:
-		fuse := mapping.(*Fuse)
+		fuse := m
 		addr = fuse.Register.ReadAddress
 		off = fuse.Offset
 		size = fuse.Length
