@@ -40,10 +40,10 @@ type Register struct {
 }
 
 type Fuse struct {
-	Name         string
-	Offset       uint32 `json:"offset"`
-	Length       uint32 `json:"len"`
-	Register     *Register
+	Name     string
+	Offset   uint32 `json:"offset"`
+	Length   uint32 `json:"len"`
+	Register *Register
 }
 
 // Set register addressing.
@@ -120,7 +120,7 @@ func (fusemap *FuseMap) ApplyGaps() (err error) {
 	return
 }
 
-// Validate a fuse map and populate address values.
+// Validate a fusemap and populate address values.
 func (fusemap *FuseMap) Validate() (err error) {
 	names := make(map[string]bool)
 	raddr := make(map[uint32]bool)

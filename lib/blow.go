@@ -88,14 +88,14 @@ func (fusemap *FuseMap) Blow(devicePath string, name string, val []byte) (res []
 
 	// nvmem-imx-ocotp allows only one complete OTP word write at a time
 	for i := 0; i < len(res); i += int(wordSize) {
-		_, err = device.Seek(int64(addr) + int64(i), 0)
+		_, err = device.Seek(int64(addr)+int64(i), 0)
 
 		if err != nil {
 			_ = device.Close()
 			return
 		}
 
-		_, err = device.Write(res[i:i+int(wordSize)])
+		_, err = device.Write(res[i : i+int(wordSize)])
 	}
 
 	_ = device.Close()

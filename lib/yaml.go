@@ -16,7 +16,7 @@ import (
 	"github.com/ghodss/yaml"
 )
 
-// Open a fuse map YAML file, validate it and convert it to a FuseMap
+// Open a fusemap YAML file, validate it and convert it to a FuseMap
 // structure.
 func OpenFuseMap(dir string, processor string, reference string) (fusemap FuseMap, err error) {
 	path := path.Join(dir, processor+".yaml")
@@ -45,7 +45,7 @@ func OpenFuseMap(dir string, processor string, reference string) (fusemap FuseMa
 	return
 }
 
-// Parse a fuse map YAML file, validate it and convert it to a FuseMap
+// Parse a fusemap YAML file, validate it and convert it to a FuseMap
 // structure.
 func ParseFuseMap(y []byte) (fusemap FuseMap, err error) {
 	fusemap = FuseMap{}

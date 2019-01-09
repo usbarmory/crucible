@@ -59,7 +59,7 @@ Usage: crucible [options] [read|blow] [fuse/register name] [value]
   -e string
     	value endianness (big,little)
   -f string
-    	YAML fuse maps directory (default "fusemaps")
+    	YAML fusemaps directory (default "fusemaps")
   -l	list fusemaps
     	visualize fusemap registers (with -m and -r)
     	visualize read value (with read operation on a register)

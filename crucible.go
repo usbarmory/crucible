@@ -13,11 +13,13 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"go/build"
 	"io/ioutil"
 	"log"
 	"log/syslog"
 	"math/big"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"text/tabwriter"
@@ -101,9 +103,13 @@ func init() {
 	flag.IntVar(&conf.base, "b", 0, "value base/format (2,10,16)")
 	flag.StringVar(&conf.endianness, "e", "", "value endianness (big,little)")
 	flag.StringVar(&conf.device, "n", "/sys/bus/nvmem/devices/imx-ocotp0/nvmem", "NVMEM device")
-	flag.StringVar(&conf.fusemaps, "f", "fusemaps", "YAML fuse maps directory")
+	flag.StringVar(&conf.fusemaps, "f", "", "YAML fusemaps directory")
 	flag.StringVar(&conf.processor, "m", "", "processor model")
 	flag.StringVar(&conf.reference, "r", "", "reference manual revision")
+
+	if conf.fusemaps == "" {
+		conf.fusemaps = path.Join(build.Default.GOPATH, "src/github.com/inversepath/crucible/fusemaps")
+	}
 }
 
 func confirm() bool {
@@ -118,7 +124,7 @@ func listFusemapRegisters() {
 	fusemap, err := crucible.OpenFuseMap(conf.fusemaps, conf.processor, conf.reference)
 
 	if err != nil {
-		log.Fatalf("error: could not open fuse map, %v", err)
+		log.Fatalf("error: could not open fusemap, %v", err)
 	}
 
 	for _, reg := range fusemap.RegistersByWriteAddress() {
@@ -130,7 +136,7 @@ func listFusemapRegisters() {
 func listFusemaps() {
 	t := tabwriter.NewWriter(os.Stdout, 16, 8, 0, '\t', tabwriter.TabIndent)
 
-	_, _ = fmt.Printf("Model (-m)\tReference (-r)\tDriver\n")
+	_, _ = fmt.Println("Model (-m)\tReference (-r)\tDriver")
 
 	_ = filepath.Walk(conf.fusemaps, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -163,6 +169,7 @@ func listFusemaps() {
 	})
 
 	_ = t.Flush()
+	_, _ = fmt.Printf("\nfusemaps directory: %s\n", conf.fusemaps)
 }
 
 func checkArguments() error {
@@ -316,7 +323,7 @@ func main() {
 	stat, err := os.Stat(conf.fusemaps)
 
 	if err != nil || !stat.IsDir() {
-		log.Fatalf("error: could not open fuse maps directory %s", conf.fusemaps)
+		log.Fatalf("error: could not open fusemaps directory %s", conf.fusemaps)
 	}
 
 	err = checkArguments()
@@ -335,7 +342,7 @@ func main() {
 	fusemap, err := crucible.OpenFuseMap(conf.fusemaps, conf.processor, conf.reference)
 
 	if err != nil {
-		log.Fatalf("error: could not open fuse map, %v", err)
+		log.Fatalf("error: could not open fusemap, %v", err)
 	}
 
 	op := flag.Arg(0)
