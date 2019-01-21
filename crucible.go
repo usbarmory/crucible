@@ -24,12 +24,8 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/inversepath/crucible/lib"
+	"github.com/inversepath/crucible/internal"
 )
-
-// build information, initialized at compile time (see Makefile)
-var Revision string
-var Build string
 
 type Config struct {
 	force      bool
@@ -87,8 +83,8 @@ func init() {
 
 		tags := ""
 
-		if Revision != "" && Build != "" {
-			tags = fmt.Sprintf("%s (%s)", Revision, Build)
+		if crucible.Revision != "" && crucible.Build != "" {
+			tags = fmt.Sprintf("%s (%s)", crucible.Revision, crucible.Build)
 		}
 
 		log.Printf("crucible - One-Time-Programmable (OTP) fusing tool %s", tags)
@@ -261,7 +257,7 @@ func blow(tag string, fusemap crucible.FuseMap, name string, val string) (err er
 		return errors.New("internal error, invalid base")
 	}
 
-	val = strings.TrimPrefix(flag.Arg(2), base)
+	val = strings.TrimPrefix(val, base)
 	n, ok := n.SetString(val, conf.base)
 
 	if !ok {

@@ -35,7 +35,7 @@ func genLowSep(size uint32) (s string) {
 	s = "┗"
 
 	for i := 1; i < int(size); i++ {
-		if i % 8 == 0 {
+		if i%8 == 0 {
 			s += "━━╋"
 		} else {
 			s += "━━┻"
@@ -50,7 +50,7 @@ func genLowSep(size uint32) (s string) {
 // .. 07 06 05 04 03 02 01 00
 func genRegMap(size uint32) (s string) {
 	for i := 1; i <= int(size); i++ {
-		s += fmt.Sprintf(" %.2d", int(size) - i)
+		s += fmt.Sprintf(" %.2d", int(size)-i)
 	}
 
 	return

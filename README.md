@@ -209,13 +209,12 @@ You can automatically download, compile and install the package, under your
 GOPATH, as follows:
 
 ```
-go get -u github.com/inversepath/crucible
+go get github.com/inversepath/crucible
 ```
 
 Alternatively you can manually compile it from source:
 
 ```
-go get -u github.com/ghodss/yaml
 git clone https://github.com/inversepath/crucible
 cd crucible && make
 ```

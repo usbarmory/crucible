@@ -6,6 +6,7 @@ BUILD_HOST := $(shell hostname)
 BUILD_DATE := $(shell /bin/date -u "+%Y-%m-%d %H:%M:%S")
 BUILD := ${BUILD_USER}@${BUILD_HOST} on ${BUILD_DATE}
 REV := $(shell git rev-parse --short HEAD 2> /dev/null)
+PKG = "github.com/inversepath/crucible"
 
 .PHONY: crucible test
 
@@ -15,23 +16,16 @@ all: test crucible
 #   honnef.co/go/tools/cmd/staticcheck
 #   github.com/kisielk/errcheck
 check:
-	@${GO} vet lib/*.go
-	@${GOPATH}/bin/staticcheck lib/*.go
-	@${GOPATH}/bin/errcheck lib/*.go
+	@${GO} vet ./...
+	@${GOPATH}/bin/staticcheck ./...
+	@${GOPATH}/bin/errcheck ./...
 
 test:
-	@cd lib && ${GO} test -cover
+	@cd internal && ${GO} test -cover
 
-# To allow a `go get` friendly repository that also supports a local make
-# command we need to pass through a temporary file to change the remote import
-# path to a local one for the `make` build.
 crucible:
-	$(eval TMP := $(shell mktemp ${CURDIR}/crucible-XXXXXX.go))
-	@cp crucible.go ${TMP}
-	@sed -i -e 's/github.com\/inversepath\/crucible\/lib/lib/' ${TMP}
 	@GOPATH="${BUILD_GOPATH}" ${GO} build -v \
-		-gcflags=-trimpath=${CURDIR} -asmflags=-trimpath=${CURDIR} \
-		-ldflags "-s -w -X 'main.Revision=${REV}' -X 'main.Build=${BUILD}'" \
-		-o crucible ${TMP}
-	@rm ${TMP}
+	  -gcflags=-trimpath=${CURDIR} -asmflags=-trimpath=${CURDIR} \
+	  -ldflags "-s -w -X '${PKG}/internal.Revision=${REV}' -X '${PKG}/internal.Build=${BUILD}'" \
+	  crucible.go
 	@echo -e "compiled crucible ${REV} (${BUILD})"
