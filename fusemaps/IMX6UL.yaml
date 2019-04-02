@@ -175,7 +175,7 @@ registers:
       BOOT_CFG3:
         offset: 16
         len: 8
-      BOOT_CFG3:
+      BOOT_CFG4:
         offset: 24
         len: 8
 
