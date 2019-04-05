@@ -1,0 +1,642 @@
+---
+# crucible
+# One-Time-Programmable (OTP) fusing tool
+#
+# Copyright (c) F-Secure Corporation
+#
+# Use of this source code is governed by the license
+# that can be found in the LICENSE file.
+
+# i.MX 6ULL Applications Processor Reference Manual
+# iMX6ULLRM Rev. 1, 11/2017
+#
+processor: IMX6ULL
+reference: 1
+
+# On the IMX6ULL a gap is present between OTP Bank5 Word7 (21B_C6F0h) and OTP
+# Bank6 Word0 (21B_C800h).
+#
+# The nvmem-imx-ocotp driver does not handle addressing gaps between OTP banks,
+# the fusemap supports gap information specifically to work this problem around
+# and ensure correct reads (writes are unaffected). Such driver limitation
+# however does not allow for the entire fusemap to be read as its maximum size
+# is computed without accounting for the gaps.
+#
+# For this specific fusemap banks 14 and 15, while defined, are not available
+# for read operation because of the aforementioned driver issues.
+#
+# The gap definition below is required to ensure correct read operations for
+# all registers beyond the gap.
+#
+driver: nvmem-imx-ocotp
+gaps:
+  OCOTP_ROM_PATCH0:
+    read: true
+    len: 0x100
+
+registers:
+  OCOTP_LOCK:
+    bank: 0
+    word: 0
+    fuses:
+      TESTER_LOCK:
+        offset: 0
+        len: 2
+      BOOT_CFG_LOCK:
+        offset: 2
+        len: 2
+      MEM_TRIM_LOCK:
+        offset: 4
+        len: 2
+      SJC_RESP_LOCK:
+        offset: 6
+        len: 1
+      MAC_ADDR_LOCK:
+        offset: 8
+        len: 2
+      GP1_LOCK:
+        offset: 10
+        len: 2
+      GP2_LOCK:
+        offset: 12
+        len: 2
+      SRK_LOCK:
+        offset: 14
+        len: 1
+      GP3_LOCK:
+        offset: 15
+        len: 1
+      SW_GP_LOCK:
+        offset: 16
+        len: 1
+      OTPMK_LOCK:
+        offset: 17
+        len: 1
+      ANALOG_LOCK:
+        offset: 18
+        len: 2
+      OTPMK_CRC_LOCK:
+        offset: 20
+        len: 1
+      ROM_PATCH_LOCK:
+        offset: 21
+        len: 1
+      MISC_CONF_LOCK:
+        offset: 22
+        len: 1
+      GP4_LOCK:
+        offset: 23
+        len: 1
+      PIN_LOCK:
+        offset: 25
+        len: 1
+      GP4_RLOCK:
+        offset: 30
+        len: 1
+      GP3_RLOCK:
+        offset: 31
+        len: 1
+
+  OCOTP_CFG0:
+    bank: 0
+    word: 1
+    fuses:
+      SJC_CHALLENGE:
+        offset: 0
+        len: 64
+      UNIQUE_ID:
+        offset: 0
+        len: 64
+      UNIQUE_ID[31:0]:
+        offset: 0
+        len: 32
+      LOT_NO_ENC:
+        offset: 0
+        len: 43
+      LOT_NO_ENC[31:0]:
+        offset: 0
+        len: 32
+
+  OCOTP_CFG1:
+    bank: 0
+    word: 2
+    fuses:
+      UNIQUE_ID[63:32]:
+        offset: 0
+        len: 32
+      LOT_NO_ENC[42:32]:
+        offset: 0
+        len: 11
+      WAFER_NO:
+        offset: 11
+        len: 5
+      DIE-Y-CORDINATE:
+        offset: 16
+        len: 8
+      DIE-X-CORDINATE:
+        offset: 24
+        len: 8
+
+  OCOTP_CFG2:
+    bank: 0
+    word: 3
+    fuses:
+      SI_REV:
+        offset: 16
+        len: 4
+      TAMPER_PIN_DISABLE:
+        offset: 20
+        len: 2
+
+  OCOTP_CFG3:
+    bank: 0
+    word: 4
+    fuses:
+      SPEED_GRADING:
+        offset: 16
+        len: 2
+
+  OCOTP_CFG4:
+    bank: 0
+    word: 5
+    fuses:
+      BOOT_CFG1:
+        offset: 0
+        len: 8
+      BOOT_CFG2:
+        offset: 8
+        len: 8
+      BOOT_CFG3:
+        offset: 16
+        len: 8
+      BOOT_CFG4:
+        offset: 24
+        len: 8
+
+  OCOTP_CFG5:
+    bank: 0
+    word: 6
+    fuses:
+      SEC_CONFIG:
+        offset: 0
+        len: 2
+      DIR_BT_DIS:
+        offset: 3
+        len: 1
+      BT_FUSE_SEL:
+        offset: 4
+        len: 1
+      FORCE_COLD_BOOT:
+        offset: 5
+        len: 1
+      # Referenced in i.MX 6ULZ RM, 0 – ULL part. 1 - ULZ part.
+      ULZ_MARK:
+        offset: 6
+        len: 1
+      DDR3_CONFIG:
+        offset: 8
+        len: 8
+      FORCE_INTERNAL_BOOT:
+        offset: 16
+        len: 1
+      SDP_DISABLE:
+        offset: 17
+        len: 1
+      SDP_READ_DISABLE:
+        offset: 18
+        len: 1
+      SJC_DISABLE:
+        offset: 20
+        len: 1
+      WDOG_ENABLE:
+        offset: 21
+        len: 1
+      JTAG_SMODE:
+        offset: 22
+        len: 2
+      DLL_ENABLE:
+        offset: 24
+        len: 1
+      KTE:
+        offset: 26
+        len: 1
+      JTAG_HEO:
+        offset: 27
+        len: 1
+      TZASC_ENABLE:
+        offset: 28
+        len: 1
+      PWR_STABLE_CYCLE_SELECTION:
+        offset: 29
+        len: 1
+
+  OCOTP_CFG6:
+    bank: 0
+    word: 7
+    fuses:
+      OVERRIDE_SD_PAD_SETTINGS:
+        offset: 0
+        len: 1
+      BT_MMU_DISABLE:
+        offset: 1
+        len: 1
+      L1_I-CACHE_DISABLE:
+        offset: 2
+        len: 1
+      DISABLE_SDMMC_MANUFACTURE_MODE:
+        offset: 3
+        len: 1
+      UART_SERIAL_DOWNLOAD_DISABLE:
+        offset: 4
+        len: 1
+      SD2_VOLTAGE_SELECTION:
+        offset: 5
+        len: 1
+      SD1_RST_POLARITY_SELECT:
+        offset: 6
+        len: 1
+      DLL_OVERRIDE:
+        offset: 7
+        len: 1
+      USDHC_IOMUX_SRE_ENABLE:
+        offset: 8
+        len: 1
+      USDHC_IOMUX_SION_BIT_ENABLE:
+        offset: 9
+        len: 1
+      BOOT_FAILURE_INDICATOR_PIN_SELECT1:
+        offset: 10
+        len: 1
+      ENABLE_EMMC_2_2K_PULLUP:
+        offset: 11
+        len: 1
+      USDHC_PAD_PULL_DOWN:
+        offset: 12
+        len: 1
+      OVERRIDE_HYS_BIT_FOR_SD-MMC_PADS:
+        offset: 13
+        len: 1
+      EMMC-4.4_RESET_TO_PRE-IDLE_STATE:
+        offset: 14
+        len: 1
+      SD2_RST_POLARITY_SELECT:
+        offset: 15
+        len: 1
+      BOOT_FAILURE_INDICATOR_PIN_SELECT0:
+        offset: 16
+        len: 4
+      BT_LPB_POLARITY:
+        offset: 20
+        len: 1
+      LPB_BOOT:
+        offset: 21
+        len: 2
+      MMC_DLL_DLY:
+        offset: 24
+        len: 7
+      OVERRIDE_NAND_PAD_SETTINGS:
+        offset: 31
+        len: 1
+
+  OCOTP_MEM0:
+    bank: 1
+    word: 0
+  OCOTP_MEM1:
+    bank: 1
+    word: 1
+  OCOTP_MEM2:
+    bank: 1
+    word: 2
+  OCOTP_MEM3:
+    bank: 1
+    word: 3
+  OCOTP_MEM4:
+    bank: 1
+    word: 4
+
+  OCOTP_ANA0:
+    bank: 1
+    word: 5
+  OCOTP_ANA1:
+    bank: 1
+    word: 6
+  OCOTP_ANA2:
+    bank: 1
+    word: 7
+    fuses:
+      USB_VID:
+        offset: 0
+        len: 16
+      USB_PID:
+        offset: 16
+        len: 16
+
+  OCOTP_OTPMK0:
+    bank: 2
+    word: 0
+  OCOTP_OTPMK1:
+    bank: 2
+    word: 1
+  OCOTP_OTPMK2:
+    bank: 2
+    word: 2
+  OCOTP_OTPMK3:
+    bank: 2
+    word: 3
+  OCOTP_OTPMK4:
+    bank: 2
+    word: 4
+  OCOTP_OTPMK5:
+    bank: 2
+    word: 5
+  OCOTP_OTPMK6:
+    bank: 2
+    word: 6
+  OCOTP_OTPMK7:
+    bank: 2
+    word: 7
+
+  OCOTP_SRK0:
+    bank: 3
+    word: 0
+    fuses:
+      SRK_HASH:
+        offset: 0
+        len: 256
+      SRK_HASH[255:224]:
+        offset: 0
+        len: 32
+  OCOTP_SRK1:
+    bank: 3
+    word: 1
+    fuses:
+      SRK_HASH[223:192]:
+        offset: 0
+        len: 32
+  OCOTP_SRK2:
+    bank: 3
+    word: 2
+    fuses:
+      SRK_HASH[191:160]:
+        offset: 0
+        len: 32
+  OCOTP_SRK3:
+    bank: 3
+    word: 3
+    fuses:
+      SRK_HASH[159:128]:
+        offset: 0
+        len: 32
+  OCOTP_SRK4:
+    bank: 3
+    word: 4
+    fuses:
+      SRK_HASH[127:96]:
+        offset: 0
+        len: 32
+  OCOTP_SRK5:
+    bank: 3
+    word: 5
+    fuses:
+      SRK_HASH[95:64]:
+        offset: 0
+        len: 32
+  OCOTP_SRK6:
+    bank: 3
+    word: 6
+    fuses:
+      SRK_HASH[63:32]:
+        offset: 0
+        len: 32
+  OCOTP_SRK7:
+    bank: 3
+    word: 7
+    fuses:
+      SRK_HASH[31:0]:
+        offset: 0
+        len: 32
+
+  OCOTP_SJC_RESP0:
+    bank: 4
+    word: 0
+    fuses:
+      SJC_RESP:
+        offset: 0
+        len: 56
+      SJC_RESP[55:24]:
+        offset: 0
+        len: 32
+  OCOTP_SJC_RESP1:
+    bank: 4
+    word: 1
+    fuses:
+      SJC_RESP[23:0]:
+        offset: 0
+        len: 24
+
+  OCOTP_MAC0:
+    bank: 4
+    word: 2
+    fuses:
+      MAC1_ADDR:
+        offset: 0
+        len: 48
+      MAC1_ADDR[47:16]:
+        offset: 0
+        len: 32
+  OCOTP_MAC1:
+    bank: 4
+    word: 3
+    fuses:
+      MAC1_ADDR[15:0]:
+        offset: 0
+        len: 16
+
+  OCOTP_MAC:
+    bank: 4
+    word: 4
+
+  OCOTP_CRC:
+    bank: 4
+    word: 5
+
+  OCOTP_GP1:
+    bank: 4
+    word: 6
+    fuses:
+      GP1:
+        offset: 0
+        len: 32
+  OCOTP_GP2:
+    bank: 4
+    word: 7
+    fuses:
+      GP2:
+        offset: 0
+        len: 32
+
+  OCOTP_SW_GP0:
+    bank: 5
+    word: 0
+    fuses:
+      SW_GP:
+        offset: 0
+        len: 160
+      SW_GP[159:128]:
+        offset: 0
+        len: 32
+  OCOTP_SW_GP1:
+    bank: 5
+    word: 1
+    fuses:
+      SW_GP[127:96]:
+        offset: 0
+        len: 32
+  OCOTP_SW_GP2:
+    bank: 5
+    word: 2
+    fuses:
+      SW_GP[95:64]:
+        offset: 0
+        len: 32
+  OCOTP_SW_GP3:
+    bank: 5
+    word: 3
+    fuses:
+      SW_GP[63:32]:
+        offset: 0
+        len: 32
+  OCOTP_SW_GP4:
+    bank: 5
+    word: 4
+    fuses:
+      SW_GP[31:0]:
+        offset: 0
+        len: 32
+
+  OCOTP_MISC_CONF:
+    bank: 5
+    word: 5
+    fuses:
+      PAD_SETTINGS:
+        offset: 0
+        len: 6
+      USB_VBUS_EVENT_HANDLER_EN:
+        offset: 6
+        len: 1
+      ENABLE_BOOT_FAILURE_INDICATION_PIN:
+        offset: 7
+        len: 1
+      READ_RETRY_SEQ_ID:
+        offset: 8
+        len: 4
+      WDOG_TIMEOUT_SELECT:
+        offset: 13
+        len: 3
+      NAND_READ_CMD_CODE1:
+        offset: 16
+        len: 8
+      NAND_READ_CMD_CODE2:
+        offset: 24
+        len: 8
+
+  OCOTP_FIELD_RETURN:
+    bank: 5
+    word: 6
+    fuses:
+      FIELD_RETURN:
+        offset: 0
+        len: 1
+
+  OCOTP_SRK_REVOKE:
+    bank: 5
+    word: 7
+
+  OCOTP_ROM_PATCH0:
+    bank: 6
+    word: 0
+  OCOTP_ROM_PATCH1:
+    bank: 6
+    word: 1
+  OCOTP_ROM_PATCH2:
+    bank: 6
+    word: 2
+  OCOTP_ROM_PATCH3:
+    bank: 6
+    word: 3
+  OCOTP_ROM_PATCH4:
+    bank: 6
+    word: 4
+  OCOTP_ROM_PATCH5:
+    bank: 6
+    word: 5
+  OCOTP_ROM_PATCH6:
+    bank: 6
+    word: 6
+  OCOTP_ROM_PATCH7:
+    bank: 6
+    word: 7
+
+  OCOTP_GP3_0:
+    bank: 7
+    word: 0
+    fuses:
+      GP3:
+        offset: 0
+        len: 128
+      GP3[127:96]:
+        offset: 0
+        len: 32
+  OCOTP_GP3_1:
+    bank: 7
+    word: 1
+    fuses:
+      GP3[95:64]:
+        offset: 0
+        len: 32
+  OCOTP_GP3_2:
+    bank: 7
+    word: 2
+    fuses:
+      GP3[63:32]:
+        offset: 0
+        len: 32
+  OCOTP_GP3_3:
+    bank: 7
+    word: 3
+    fuses:
+      GP3[31:0]:
+        offset: 0
+        len: 32
+
+  OCOTP_GP4_0:
+    bank: 7
+    word: 4
+    fuses:
+      GP4:
+        offset: 0
+        len: 128
+      GP4[127:96]:
+        offset: 0
+        len: 32
+  OCOTP_GP4_1:
+    bank: 7
+    word: 5
+    fuses:
+      GP4[95:64]:
+        offset: 0
+        len: 32
+  OCOTP_GP4_2:
+    bank: 7
+    word: 6
+    fuses:
+      GP4[63:32]:
+        offset: 0
+        len: 32
+  OCOTP_GP4_3:
+    bank: 7
+    word: 7
+    fuses:
+      GP4[31:0]:
+        offset: 0
+        len: 32
