@@ -18,12 +18,7 @@ reference: 1
 #
 # The nvmem-imx-ocotp driver does not handle addressing gaps between OTP banks,
 # the fusemap supports gap information specifically to work this problem around
-# and ensure correct reads (writes are unaffected). Such driver limitation
-# however does not allow for the entire fusemap to be read as its maximum size
-# is computed without accounting for the gaps.
-#
-# For this specific fusemap banks 14 and 15, while defined, are not available
-# for read operation because of the aforementioned driver issues.
+# and ensure correct reads (writes are unaffected).
 #
 # The gap definition below is required to ensure correct read operations for
 # all registers beyond the gap.
