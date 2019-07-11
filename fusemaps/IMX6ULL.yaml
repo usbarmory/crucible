@@ -99,6 +99,9 @@ registers:
       SJC_CHALLENGE:
         offset: 0
         len: 64
+      SJC_CHALLENGE[31:0]:
+        offset: 0
+        len: 32
       UNIQUE_ID:
         offset: 0
         len: 64
@@ -116,6 +119,9 @@ registers:
     bank: 0
     word: 2
     fuses:
+      SJC_CHALLENGE[63:32]:
+        offset: 0
+        len: 32
       UNIQUE_ID[63:32]:
         offset: 0
         len: 32
@@ -418,14 +424,14 @@ registers:
       SJC_RESP:
         offset: 0
         len: 56
-      SJC_RESP[55:24]:
+      SJC_RESP[31:0]:
         offset: 0
         len: 32
   OCOTP_SJC_RESP1:
     bank: 4
     word: 1
     fuses:
-      SJC_RESP[23:0]:
+      SJC_RESP[55:32]:
         offset: 0
         len: 24
 
@@ -436,14 +442,14 @@ registers:
       MAC1_ADDR:
         offset: 0
         len: 48
-      MAC1_ADDR[47:16]:
+      MAC1_ADDR[31:0]:
         offset: 0
         len: 32
   OCOTP_MAC1:
     bank: 4
     word: 3
     fuses:
-      MAC1_ADDR[15:0]:
+      MAC1_ADDR[47:32]:
         offset: 0
         len: 16
 
