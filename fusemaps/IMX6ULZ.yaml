@@ -59,6 +59,7 @@ registers:
       SRK_LOCK:
         offset: 14
         len: 1
+      # See ERR011163 and later fusemap comment on OCOTP_GP3_*.
       GP3_LOCK:
         offset: 15
         len: 1
@@ -80,6 +81,7 @@ registers:
       MISC_CONF_LOCK:
         offset: 22
         len: 1
+      # See ERR011163 and later fusemap comment on OCOTP_GP4_*.
       GP4_LOCK:
         offset: 23
         len: 1
@@ -521,66 +523,70 @@ registers:
     bank: 5
     word: 7
 
-  OCOTP_GP3_0:
-    bank: 7
-    word: 0
-    fuses:
-      GP3:
-        offset: 0
-        len: 128
-      GP3[127:96]:
-        offset: 0
-        len: 32
-  OCOTP_GP3_1:
-    bank: 7
-    word: 1
-    fuses:
-      GP3[95:64]:
-        offset: 0
-        len: 32
-  OCOTP_GP3_2:
-    bank: 7
-    word: 2
-    fuses:
-      GP3[63:32]:
-        offset: 0
-        len: 32
-  OCOTP_GP3_3:
-    bank: 7
-    word: 3
-    fuses:
-      GP3[31:0]:
-        offset: 0
-        len: 32
-
-  OCOTP_GP4_0:
-    bank: 7
-    word: 4
-    fuses:
-      GP4:
-        offset: 0
-        len: 128
-      GP4[127:96]:
-        offset: 0
-        len: 32
-  OCOTP_GP4_1:
-    bank: 7
-    word: 5
-    fuses:
-      GP4[95:64]:
-        offset: 0
-        len: 32
-  OCOTP_GP4_2:
-    bank: 7
-    word: 6
-    fuses:
-      GP4[63:32]:
-        offset: 0
-        len: 32
-  OCOTP_GP4_3:
-    bank: 7
-    word: 7
-    fuses:
-      GP4[31:0]:
-        offset: 0
-        len: 32
+# NXP i.MX6ULZ Chip Errata ERR011163: on the i.MX6ULZ the GP3 or GP4 cannot be
+# programmed as they are mistakenly controlled by ROM_PATCH_LOCK (opposed to
+# GP3_LOCK, GP4_LOCK).
+#
+# OCOTP_GP3_0:
+#   bank: 7
+#   word: 0
+#   fuses:
+#     GP3:
+#       offset: 0
+#       len: 128
+#     GP3[127:96]:
+#       offset: 0
+#       len: 32
+# OCOTP_GP3_1:
+#   bank: 7
+#   word: 1
+#   fuses:
+#     GP3[95:64]:
+#       offset: 0
+#       len: 32
+# OCOTP_GP3_2:
+#   bank: 7
+#   word: 2
+#   fuses:
+#     GP3[63:32]:
+#       offset: 0
+#       len: 32
+# OCOTP_GP3_3:
+#   bank: 7
+#   word: 3
+#   fuses:
+#     GP3[31:0]:
+#       offset: 0
+#       len: 32
+#
+# OCOTP_GP4_0:
+#   bank: 7
+#   word: 4
+#   fuses:
+#     GP4:
+#       offset: 0
+#       len: 128
+#     GP4[127:96]:
+#       offset: 0
+#       len: 32
+# OCOTP_GP4_1:
+#   bank: 7
+#   word: 5
+#   fuses:
+#     GP4[95:64]:
+#       offset: 0
+#       len: 32
+# OCOTP_GP4_2:
+#   bank: 7
+#   word: 6
+#   fuses:
+#     GP4[63:32]:
+#       offset: 0
+#       len: 32
+# OCOTP_GP4_3:
+#   bank: 7
+#   word: 7
+#   fuses:
+#     GP4[31:0]:
+#       offset: 0
+#       len: 32
