@@ -189,8 +189,8 @@ driver and fusemap availability.
 | Vendor | Model    | Linux driver    | Read  | Write | Fusemap |
 |--------|----------|-----------------|-------|-------|---------|
 | NXP    | i.MX53   | nvmem-imx-iim   | yes   | no    | yes     |
-| NXP    | i.MX6Q   | nvmem-imx-ocotp | yes   | yes   | no      |
 | NXP    | i.MX6DL  | nvmem-imx-ocotp | yes   | yes   | yes     |
+| NXP    | i.MX6DQ  | nvmem-imx-ocotp | yes   | yes   | yes     |
 | NXP    | i.MX6SL  | nvmem-imx-ocotp | yes   | yes   | no      |
 | NXP    | i.MX6SLL | nvmem-imx-ocotp | yes   | yes   | no      |
 | NXP    | i.MX6SX  | nvmem-imx-ocotp | yes^  | yes   | no      |
