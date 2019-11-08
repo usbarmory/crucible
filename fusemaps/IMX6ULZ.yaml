@@ -25,11 +25,6 @@ reference: 0
 # all registers beyond the gap.
 #
 driver: nvmem-imx-ocotp
-gaps:
-  OCOTP_GP3_0:
-    read: true
-    len: 0x100
-
 registers:
   OCOTP_LOCK:
     bank: 0
@@ -526,6 +521,11 @@ registers:
 # NXP i.MX6ULZ Chip Errata ERR011163: on the i.MX6ULZ the GP3 or GP4 cannot be
 # programmed as they are mistakenly controlled by ROM_PATCH_LOCK (opposed to
 # GP3_LOCK, GP4_LOCK).
+#
+#gaps:
+# OCOTP_GP3_0:
+#   read: true
+#   len: 0x100
 #
 # OCOTP_GP3_0:
 #   bank: 7
