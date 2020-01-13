@@ -1,7 +1,7 @@
 One-Time-Programmable (OTP) fusing tool
 =======================================
 
-crucible | https://github.com/inversepath/crucible  
+crucible | https://github.com/f-secure-foundry/crucible  
 Copyright (c) F-Secure Corporation
 
 ```
@@ -214,13 +214,13 @@ You can automatically download, compile and install the package, under your
 GOPATH, as follows:
 
 ```
-go get github.com/inversepath/crucible
+go get github.com/f-secure-foundry/crucible
 ```
 
 Alternatively you can manually compile it from source:
 
 ```
-git clone https://github.com/inversepath/crucible
+git clone https://github.com/f-secure-foundry/crucible
 cd crucible && make
 ```
 
@@ -235,7 +235,7 @@ The default compilation target automatically runs all available unit tests.
 License
 =======
 
-crucible | https://github.com/inversepath/crucible  
+crucible | https://github.com/f-secure-foundry/crucible  
 Copyright (c) F-Secure Corporation
 
 This program is free software: you can redistribute it and/or modify it under

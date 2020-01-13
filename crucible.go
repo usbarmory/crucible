@@ -24,7 +24,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/inversepath/crucible/internal"
+	"github.com/f-secure-foundry/crucible/internal"
 )
 
 type Config struct {
@@ -104,7 +104,7 @@ func init() {
 	flag.StringVar(&conf.reference, "r", "", "reference manual revision")
 
 	if conf.fusemaps == "" {
-		conf.fusemaps = path.Join(build.Default.GOPATH, "src/github.com/inversepath/crucible/fusemaps")
+		conf.fusemaps = path.Join(build.Default.GOPATH, "src/github.com/f-secure-foundry/crucible/fusemaps")
 	}
 }
 
