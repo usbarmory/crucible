@@ -23,7 +23,6 @@ func Pad4(val []byte) (res []byte) {
 	}
 
 	pad := numRegisters*4 - len(val)
-	res = val
 
 	for i := 0; i < pad; i++ {
 		val = append(val, 0x00)
