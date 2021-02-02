@@ -31,7 +31,7 @@ func Pad4(val []byte) (res []byte) {
 	return val
 }
 
-// Pad a bit.Int value to account for the fact that big.Bytes() returns the
+// Pad a big.Int value to account for the fact that big.Bytes() returns the
 // absolute value, therefore leading 0x00 bytes are not returned and 0x00
 // values are empty.
 func PadBigInt(val *big.Int, size uint32) (res []byte) {
