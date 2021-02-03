@@ -6,6 +6,8 @@
 // Use of this source code is governed by the license
 // that can be found in the LICENSE file.
 
+// Package fusemap implements a register definition format to describe
+// One-Time-Programmable (OTP) registers and fuses.
 package fusemap
 
 import (
@@ -13,8 +15,8 @@ import (
 	"fmt"
 )
 
-// FuseMap imlements registers definition for One-Time-Programmable (OTP fuses
-// read and write operations.
+// FuseMap represents a collection of One-Time-Programmable (OTP) registers and
+// fuses for a given processor.
 type FuseMap struct {
 	Processor string               `json:"processor"`
 	Reference string               `json:"reference"`

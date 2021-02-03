@@ -6,6 +6,8 @@
 // Use of this source code is governed by the license
 // that can be found in the LICENSE file.
 
+// Package util provides conversion functions for One-Time-Programmable (OTP)
+// register values.
 package util
 
 import (
