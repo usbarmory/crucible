@@ -6,13 +6,15 @@
 // Use of this source code is governed by the license
 // that can be found in the LICENSE file.
 
-package crucible
+package fusemap
 
 import (
 	"bytes"
 	"fmt"
 	"sort"
 	"strings"
+
+	"github.com/f-secure-foundry/crucible/util"
 )
 
 const bitSep = "┃"
@@ -59,7 +61,7 @@ func genRegMap(size uint32) (s string) {
 // Convert a byte array to a bit map compatible binary string representation
 // (e.g. []byte{0x55, 0x55} => []byte("0  1  0  1  0  1  0  1  0  1  0  1  0  1 0  1")
 func byteArrayToBitMap(val []byte, offset uint32, size uint32) (m []byte) {
-	m = []byte(fmt.Sprintf("%.8b", ConvertReadValue(offset, size, SwitchEndianness(val))))
+	m = []byte(fmt.Sprintf("%.8b", util.ConvertReadValue(offset, size, util.SwitchEndianness(val))))
 	m = bytes.Replace(m[1:len(m)-1], []byte(" "), nil, -1)
 	m = bytes.Replace(m[len(m)-int(size):], []byte("0"), []byte("0  "), -1)
 	m = bytes.Replace(m, []byte("1"), []byte("1  "), -1)
@@ -102,7 +104,7 @@ func (reg *Register) BitMap(res []byte) (m string) {
 
 	if len(reg.Fuses) == 0 && res != nil {
 		desc := byteArrayToBitMap(res, 0, reg.Length)
-		copy(bitMap, SwitchEndianness(desc[0:len(desc)-1]))
+		copy(bitMap, util.SwitchEndianness(desc[0:len(desc)-1]))
 	}
 
 	for _, fuse := range reg.FusesByOffset() {
@@ -129,7 +131,7 @@ func (reg *Register) BitMap(res []byte) (m string) {
 			desc = desc[0:descSize]
 		}
 
-		copy(bitMap[off:], SwitchEndianness(desc))
+		copy(bitMap[off:], util.SwitchEndianness(desc))
 
 		if off > 0 {
 			// Restore separator as it might have been overwritten
@@ -164,7 +166,7 @@ func (reg *Register) BitMap(res []byte) (m string) {
 		lines = append(lines, fmt.Sprintf("%s %s\n", line, fuse.Name))
 	}
 
-	bitMap = SwitchEndianness(bitMap)
+	bitMap = util.SwitchEndianness(bitMap)
 	bitMap = bytes.Replace(bitMap, bitSepFixed, []byte(bitSep), -1)
 	bitMap = append(bitMap, []byte(bitSep)...)
 

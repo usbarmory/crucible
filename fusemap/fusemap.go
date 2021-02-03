@@ -6,7 +6,7 @@
 // Use of this source code is governed by the license
 // that can be found in the LICENSE file.
 
-package crucible
+package fusemap
 
 import (
 	"errors"
@@ -19,6 +19,9 @@ type FuseMap struct {
 	Driver    string               `json:"driver"`
 	Registers map[string]*Register `json:"registers"`
 	Gaps      map[string]*Gap      `json:"gaps"`
+
+	WordSize uint32
+	BankSize uint32
 
 	valid bool
 }
@@ -46,49 +49,41 @@ type Fuse struct {
 	Register *Register
 }
 
+func (f *FuseMap) Valid() bool {
+	return f.valid
+}
+
 // Set register addressing.
-func (fusemap *FuseMap) SetAddress(reg *Register) (err error) {
+func (f *FuseMap) SetAddress(reg *Register) (err error) {
 	if reg == nil {
 		return
 	}
 
-	wordSize, bankSize, err := driverParams(fusemap.Driver)
-
-	if err != nil {
-		return
+	if reg.Word >= f.BankSize {
+		return fmt.Errorf("register word cannot exceed %d", f.BankSize-1)
 	}
 
-	if reg.Word >= bankSize {
-		return fmt.Errorf("register word cannot exceed %d", bankSize-1)
-	}
-
-	reg.ReadAddress = (reg.Bank*bankSize + reg.Word) * wordSize
+	reg.ReadAddress = (reg.Bank*f.BankSize + reg.Word) * f.WordSize
 	reg.WriteAddress = reg.ReadAddress
 
 	return
 }
 
 // Apply gap information to register addressing.
-func (fusemap *FuseMap) ApplyGaps() (err error) {
-	wordSize, _, err := driverParams(fusemap.Driver)
-
-	if err != nil {
-		return
-	}
-
+func (f *FuseMap) ApplyGaps() (err error) {
 	raddr := make(map[string]uint32)
 	waddr := make(map[string]uint32)
 
-	for name, reg := range fusemap.Registers {
+	for name, reg := range f.Registers {
 		raddr[name] = reg.ReadAddress
 		waddr[name] = reg.WriteAddress
 
-		for gapRegName, gap := range fusemap.Gaps {
-			if _, ok := fusemap.Registers[gapRegName]; !ok {
+		for gapRegName, gap := range f.Gaps {
+			if _, ok := f.Registers[gapRegName]; !ok {
 				return fmt.Errorf("invalid gap register (%s)", gapRegName)
 			}
 
-			gapReg := fusemap.Registers[gapRegName]
+			gapReg := f.Registers[gapRegName]
 
 			if gap == nil {
 				continue
@@ -103,16 +98,16 @@ func (fusemap *FuseMap) ApplyGaps() (err error) {
 			}
 
 			if gap.Read && reg.ReadAddress >= gapReg.ReadAddress {
-				raddr[name] += gap.Length / wordSize
+				raddr[name] += gap.Length / f.WordSize
 			}
 
 			if gap.Write && reg.WriteAddress >= gapReg.WriteAddress {
-				waddr[name] += gap.Length / wordSize
+				waddr[name] += gap.Length / f.WordSize
 			}
 		}
 	}
 
-	for name, reg := range fusemap.Registers {
+	for name, reg := range f.Registers {
 		reg.ReadAddress = raddr[name]
 		reg.WriteAddress = waddr[name]
 	}
@@ -121,26 +116,26 @@ func (fusemap *FuseMap) ApplyGaps() (err error) {
 }
 
 // Validate a fusemap and populate address values.
-func (fusemap *FuseMap) Validate() (err error) {
+func (f *FuseMap) Validate() (err error) {
 	names := make(map[string]bool)
 	raddr := make(map[uint32]bool)
 	waddr := make(map[uint32]bool)
 
-	if fusemap.Reference == "" {
+	if f.Reference == "" {
 		return errors.New("missing reference")
 	}
 
-	if fusemap.Driver == "" {
+	if f.Driver == "" {
 		return errors.New("missing driver")
 	}
 
-	wordSize, _, err := driverParams(fusemap.Driver)
+	f.WordSize, f.BankSize, err = f.driverParams()
 
 	if err != nil {
 		return
 	}
 
-	for n1, reg := range fusemap.Registers {
+	for n1, reg := range f.Registers {
 		if _, ok := names[n1]; ok {
 			return fmt.Errorf("register/fuse names must be unique, double entry for %s", n1)
 		}
@@ -151,9 +146,9 @@ func (fusemap *FuseMap) Validate() (err error) {
 		}
 
 		reg.Name = n1
-		reg.Length = 8 * wordSize
+		reg.Length = 8 * f.WordSize
 
-		err = fusemap.SetAddress(reg)
+		err = f.SetAddress(reg)
 
 		if err != nil {
 			return
@@ -182,13 +177,13 @@ func (fusemap *FuseMap) Validate() (err error) {
 		}
 	}
 
-	err = fusemap.ApplyGaps()
+	err = f.ApplyGaps()
 
 	if err != nil {
 		return
 	}
 
-	for n1, reg := range fusemap.Registers {
+	for n1, reg := range f.Registers {
 		if reg == nil {
 			continue
 		}
@@ -204,19 +199,19 @@ func (fusemap *FuseMap) Validate() (err error) {
 		waddr[reg.WriteAddress] = true
 	}
 
-	fusemap.valid = true
+	f.valid = true
 
 	return
 }
 
 // Find a fusemap entry and return its corresponding Register or Fuse mapping.
-func (fusemap *FuseMap) Find(name string) (mapping interface{}, err error) {
-	if !fusemap.valid {
+func (f *FuseMap) Find(name string) (mapping interface{}, err error) {
+	if !f.valid {
 		err = errors.New("fusemap has not been validated yet")
 		return
 	}
 
-	for n1, reg := range fusemap.Registers {
+	for n1, reg := range f.Registers {
 		if n1 == name {
 			return reg, nil
 		}

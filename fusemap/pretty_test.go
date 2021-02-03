@@ -6,7 +6,7 @@
 // Use of this source code is governed by the license
 // that can be found in the LICENSE file.
 
-package crucible
+package fusemap
 
 import (
 	"testing"
@@ -47,13 +47,13 @@ registers:
                       00  OTP1
 `
 
-	fusemap, err := ParseFuseMap([]byte(y))
+	f, err := Parse([]byte(y))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	m := fusemap.Registers["REG1"].BitMap(nil)
+	m := f.Registers["REG1"].BitMap(nil)
 
 	if m != exp {
 		t.Errorf("unexpected map\n%s\n  !=\n%s", m, exp)
@@ -95,13 +95,13 @@ registers:
                                                                                               00  OTP1
 `
 
-	fusemap, err := ParseFuseMap([]byte(y))
+	f, err := Parse([]byte(y))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	m := fusemap.Registers["REG1"].BitMap(nil)
+	m := f.Registers["REG1"].BitMap(nil)
 
 	if m != exp {
 		t.Errorf("unexpected map\n%s\n  !=\n%s", m, exp)
@@ -134,13 +134,13 @@ registers:
                                                                                            01 00  TESTER_LOCK
 `
 
-	fusemap, err = OpenFuseMap("../fusemaps", "IMX6UL", "1")
+	f, err = Find("../fusemaps", "IMX6UL", "1")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	m = fusemap.Registers["OCOTP_LOCK"].BitMap(nil)
+	m = f.Registers["OCOTP_LOCK"].BitMap(nil)
 
 	if m != exp {
 		t.Errorf("unexpected map\n%s\n  !=\n%s", m, exp)
@@ -158,79 +158,7 @@ registers:
                                                                 10 ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ 00  LOT_NO_ENC[42:32]
 `
 
-	m = fusemap.Registers["OCOTP_CFG1"].BitMap(nil)
-
-	if m != exp {
-		t.Errorf("unexpected map\n%s\n  !=\n%s", m, exp)
-	}
-}
-
-func TestReadBitMap8(t *testing.T) {
-	exp := ` 07 06 05 04 03 02 01 00  BANK0_WORD0
-┏━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┓ Bank:0 Word:0
-┃0 ┃0 ┃0 ┃1 ┃0 ┃0 ┃0 ┃0 ┃ R: 0x00000000
-┗━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━┛ W: 0x00000000
- 07 ────────────────────  FBWP
-    06 ─────────────────  FBOP
-       05 ──────────────  FBRP
-          04 ───────────  TESTER_LOCK
-             03 ────────  FBESP
-                02 ─────  TESTER_LOCK2
-                   01 ──  GP_LOCK
-                      00  BOOT_LOCK
-`
-
-	fusemap, err := OpenFuseMap("../fusemaps", "IMX53", "2.1")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	devicePath := "../test/nvmem.IMX53"
-	name := "BANK0_WORD0"
-
-	res, _, _, _, err := fusemap.Read(devicePath, name)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	m := fusemap.Registers[name].BitMap(res)
-
-	if m != exp {
-		t.Errorf("unexpected map\n%s\n  !=\n%s", m, exp)
-	}
-}
-
-func TestReadBitMap32(t *testing.T) {
-	exp := ` 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00  OCOTP_CFG1
-┏━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┓ Bank:0 Word:2
-┃0  0  1  0  0  1  1  1 ┃0  0  0  1  0  0  0  0 ┃0  1  0  0  0 ┃0  0  1  1  1  0  1  0  1  0  0 ┃ R: 0x00000008
-┗━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━┛ W: 0x00000008
- 31 ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ 00  UNIQUE_ID[63:32]
- 31 ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ 00  SJC_CHALLENGE[63:32]
- 31 ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ 24 ───────────────────────────────────────────────────────────────────────  DIE-X-CORDINATE
-                         23 ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ 16 ───────────────────────────────────────────────  DIE-Y-CORDINATE
-                                                 15 ┄┄ ┄┄ ┄┄ 11 ────────────────────────────────  WAFER_NO
-                                                                10 ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ 00  LOT_NO_ENC[42:32]
-`
-
-	fusemap, err := OpenFuseMap("../fusemaps", "IMX6UL", "1")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	devicePath := "../test/nvmem.IMX6UL"
-	name := "OCOTP_CFG1"
-
-	res, _, _, _, err := fusemap.Read(devicePath, name)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	m := fusemap.Registers[name].BitMap(res)
+	m = f.Registers["OCOTP_CFG1"].BitMap(nil)
 
 	if m != exp {
 		t.Errorf("unexpected map\n%s\n  !=\n%s", m, exp)

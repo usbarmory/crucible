@@ -6,7 +6,7 @@
 // Use of this source code is governed by the license
 // that can be found in the LICENSE file.
 
-package crucible
+package fusemap
 
 import (
 	"testing"
@@ -40,7 +40,7 @@ registers:
 ...
 `
 
-	fusemap, err := ParseFuseMap([]byte(y))
+	f, err := Parse([]byte(y))
 
 	if err != nil {
 		t.Fatal(err)
@@ -48,13 +48,13 @@ registers:
 
 	exp := []string{"REG1", "REG2", "REG3"}
 
-	for i, reg := range fusemap.RegistersByReadAddress() {
+	for i, reg := range f.RegistersByReadAddress() {
 		if exp[i] != reg.Name {
 			t.Errorf("unexpected order, %s != %s", reg.Name, exp[i])
 		}
 	}
 
-	for i, reg := range fusemap.RegistersByWriteAddress() {
+	for i, reg := range f.RegistersByWriteAddress() {
 		if exp[i] != reg.Name {
 			t.Errorf("unexpected order, %s != %s", reg.Name, exp[i])
 		}
@@ -62,7 +62,7 @@ registers:
 
 	exp = []string{"OTP1", "OTP2", "OTP3"}
 
-	for i, fuse := range fusemap.Registers["REG1"].FusesByOffset() {
+	for i, fuse := range f.Registers["REG1"].FusesByOffset() {
 		if exp[i] != fuse.Name {
 			t.Errorf("unexpected order, %s != %s", fuse.Name, exp[i])
 		}

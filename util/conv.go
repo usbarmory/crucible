@@ -6,10 +6,12 @@
 // Use of this source code is governed by the license
 // that can be found in the LICENSE file.
 
-package crucible
+package util
 
 import (
+	"fmt"
 	"math/big"
+	"math/bits"
 )
 
 // Pad a byte array to ensure that it always represents one or more 4-byte
@@ -60,4 +62,44 @@ func SwitchEndianness(val []byte) []byte {
 	}
 
 	return val
+}
+
+// Convert read value, shifted accordingly to its register offset and size, to
+// a big endian byte array.
+func ConvertReadValue(off uint32, size uint32, val []byte) (res []byte) {
+	// little-endian > big-endian
+	res = SwitchEndianness(val)
+
+	v := new(big.Int)
+	v.SetBytes(res)
+	v.Rsh(v, uint(off))
+
+	// get only the bits that we care about
+	mask := big.NewInt((1 << size) - 1)
+	v.And(v, mask)
+
+	res = PadBigInt(v, size)
+
+	return
+}
+
+// Convert value to be written, shifted accordingly to its register offset and
+// size, to a little endian array of 32-bit registers.
+func ConvertWriteValue(off uint32, size uint32, val []byte) (res []byte, err error) {
+	bitLen := bits.Len(uint(val[0])) + (len(val)-1)*8
+
+	if bitLen > int(size) {
+		err = fmt.Errorf("value bit size %d exceeds %d", bitLen, size)
+		return
+	}
+
+	v := new(big.Int)
+	v.SetBytes(val)
+	v.Lsh(v, uint(off))
+
+	res = PadBigInt(v, size)
+	// big-endian > little-endian
+	res = SwitchEndianness(res)
+
+	return
 }

@@ -20,11 +20,12 @@ check:
 	@${GOPATH}/bin/errcheck ./...
 
 test:
-	@cd internal && ${GO} test -cover
+	@cd fusemap && ${GO} test -cover
+	@cd otp && ${GO} test -cover
 
 crucible:
 	${GO} build -v \
 	  -gcflags=-trimpath=${CURDIR} -asmflags=-trimpath=${CURDIR} \
-	  -ldflags "-s -w -X '${PKG}/internal.Revision=${REV}' -X '${PKG}/internal.Build=${BUILD}'" \
+	  -ldflags "-s -w -X 'main.Revision=${REV}' -X 'main.Build=${BUILD}'" \
 	  crucible.go
 	@echo -e "compiled crucible ${REV} (${BUILD})"

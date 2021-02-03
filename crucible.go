@@ -24,7 +24,9 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/f-secure-foundry/crucible/internal"
+	"github.com/f-secure-foundry/crucible/fusemap"
+	"github.com/f-secure-foundry/crucible/otp"
+	"github.com/f-secure-foundry/crucible/util"
 )
 
 type Config struct {
@@ -38,6 +40,10 @@ type Config struct {
 	processor  string
 	reference  string
 }
+
+// build information, initialized at compile time (see Makefile)
+var Revision string
+var Build string
 
 var conf *Config
 
@@ -83,8 +89,8 @@ func init() {
 
 		tags := ""
 
-		if crucible.Revision != "" && crucible.Build != "" {
-			tags = fmt.Sprintf("%s (%s)", crucible.Revision, crucible.Build)
+		if Revision != "" && Build != "" {
+			tags = fmt.Sprintf("%s (%s)", Revision, Build)
 		}
 
 		log.Printf("crucible - One-Time-Programmable (OTP) fusing tool %s", tags)
@@ -117,13 +123,13 @@ func confirm() bool {
 }
 
 func listFusemapRegisters() {
-	fusemap, err := crucible.OpenFuseMap(conf.fusemaps, conf.processor, conf.reference)
+	f, err := fusemap.Find(conf.fusemaps, conf.processor, conf.reference)
 
 	if err != nil {
 		log.Fatalf("error: could not open fusemap, %v", err)
 	}
 
-	for _, reg := range fusemap.RegistersByWriteAddress() {
+	for _, reg := range f.RegistersByWriteAddress() {
 		fmt.Print(reg.BitMap(nil))
 		fmt.Println()
 	}
@@ -153,13 +159,13 @@ func listFusemaps() {
 			return err
 		}
 
-		fusemap, err := crucible.ParseFuseMap(y)
+		f, err := fusemap.Parse(y)
 
 		if err != nil {
 			return err
 		}
 
-		_, _ = fmt.Fprintf(t, "%s\t%s\t%s\n", fusemap.Processor, fusemap.Reference, fusemap.Driver)
+		_, _ = fmt.Fprintf(t, "%s\t%s\t%s\n", f.Processor, f.Reference, f.Driver)
 
 		return nil
 	})
@@ -194,8 +200,8 @@ func checkArguments() error {
 	return nil
 }
 
-func read(tag string, fusemap crucible.FuseMap, name string) (err error) {
-	res, addr, off, size, err := fusemap.Read(conf.device, name)
+func read(tag string, f *fusemap.FuseMap, name string) (err error) {
+	res, addr, off, size, err := otp.Read(conf.device, f, name)
 
 	if err != nil {
 		return
@@ -204,7 +210,7 @@ func read(tag string, fusemap crucible.FuseMap, name string) (err error) {
 	tag = fmt.Sprintf("%s addr:%#x off:%d len:%d", tag, addr, off, size)
 
 	if conf.endianness == "little" {
-		res = crucible.SwitchEndianness(res)
+		res = util.SwitchEndianness(res)
 	}
 
 	n := new(big.Int)
@@ -234,7 +240,7 @@ func read(tag string, fusemap crucible.FuseMap, name string) (err error) {
 	if conf.syslog {
 		fmt.Println(value)
 	} else if conf.list {
-		if reg, ok := fusemap.Registers[name]; ok {
+		if reg, ok := f.Registers[name]; ok {
 			log.Println()
 			log.Print(reg.BitMap(res))
 		}
@@ -243,7 +249,7 @@ func read(tag string, fusemap crucible.FuseMap, name string) (err error) {
 	return
 }
 
-func blow(tag string, fusemap crucible.FuseMap, name string, val string) (err error) {
+func blow(tag string, f *fusemap.FuseMap, name string, val string) (err error) {
 	base := ""
 	n := new(big.Int)
 
@@ -267,7 +273,7 @@ func blow(tag string, fusemap crucible.FuseMap, name string, val string) (err er
 	switch conf.endianness {
 	case "big":
 	case "little":
-		n = n.SetBytes(crucible.SwitchEndianness(n.Bytes()))
+		n = n.SetBytes(util.SwitchEndianness(n.Bytes()))
 	default:
 		return errors.New("you must specify a valid endianness")
 	}
@@ -281,7 +287,7 @@ func blow(tag string, fusemap crucible.FuseMap, name string, val string) (err er
 		}
 	}
 
-	res, addr, off, size, err := fusemap.Blow(conf.device, name, n.Bytes())
+	res, addr, off, size, err := otp.Blow(conf.device, f, name, n.Bytes())
 
 	if err != nil {
 		return err
@@ -335,7 +341,7 @@ func main() {
 		log.Fatalf("error: could not open NVMEM device %s", conf.device)
 	}
 
-	fusemap, err := crucible.OpenFuseMap(conf.fusemaps, conf.processor, conf.reference)
+	f, err := fusemap.Find(conf.fusemaps, conf.processor, conf.reference)
 
 	if err != nil {
 		log.Fatalf("error: could not open fusemap, %v", err)
@@ -347,7 +353,7 @@ func main() {
 
 	switch op {
 	case "read":
-		err = read(tag, fusemap, name)
+		err = read(tag, f, name)
 	case "blow":
 		if len(flag.Args()) != 3 {
 			log.Fatal("error: missing arguments")
@@ -357,7 +363,7 @@ func main() {
 			log.Fatalf("error: forced operation is required when using syslog output")
 		}
 
-		err = blow(tag, fusemap, name, flag.Arg(2))
+		err = blow(tag, f, name, flag.Arg(2))
 	default:
 		log.Fatal("error: invalid operation")
 	}

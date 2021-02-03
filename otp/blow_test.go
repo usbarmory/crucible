@@ -6,7 +6,7 @@
 // Use of this source code is governed by the license
 // that can be found in the LICENSE file.
 
-package crucible
+package otp
 
 import (
 	"bytes"
@@ -14,10 +14,12 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/f-secure-foundry/crucible/fusemap"
 )
 
-func blowTest(t *testing.T, fusemap FuseMap, path string, name string, val []byte, expRes []byte, expAddr uint32) {
-	res, addr, _, _, err := fusemap.Blow(path, name, val)
+func blowTest(t *testing.T, f *fusemap.FuseMap, path string, name string, val []byte, expRes []byte, expAddr uint32) {
+	res, addr, _, _, err := Blow(path, f, name, val)
 
 	if err != nil {
 		t.Fatal(err)
@@ -29,6 +31,22 @@ func blowTest(t *testing.T, fusemap FuseMap, path string, name string, val []byt
 
 	if addr != expAddr {
 		t.Errorf("blown register %s with unexpected address, %x != %x", name, addr, expAddr)
+	}
+}
+
+func TestInvalidFuseMap(t *testing.T) {
+	f := &fusemap.FuseMap{}
+
+	_, _, _, _, err := Blow("test", f, "test", []byte{0x00})
+
+	if err == nil || err.Error() != "fusemap has not been validated yet" {
+		t.Error("fusemap that has not been validated should raise an error")
+	}
+
+	_, _, _, _, err = Read("test", f, "test")
+
+	if err == nil || err.Error() != "fusemap has not been validated yet" {
+		t.Error("fusemap that has not been validated should raise an error")
 	}
 }
 
@@ -46,25 +64,25 @@ registers:
 ...
 `
 
-	fusemap, err := ParseFuseMap([]byte(testYAML))
+	f, err := fusemap.Parse([]byte(testYAML))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, _, _, _, err = fusemap.Blow("", "OTP1", []byte{})
+	_, _, _, _, err = Blow("", f, "OTP1", []byte{})
 
 	if err == nil || err.Error() != "null value" {
 		t.Error("tripping a fuse with null length should raise an error")
 	}
 
-	_, _, _, _, err = fusemap.Blow("", "OTP2", []byte{0xff})
+	_, _, _, _, err = Blow("", f, "OTP2", []byte{0xff})
 
 	if err == nil || err.Error() != "could not find any register/fuse named OTP2" {
 		t.Error("tripping an invalid fuse should raise an error")
 	}
 
-	_, _, _, _, err = fusemap.Blow("invalid_file", "OTP1", []byte{0x00})
+	_, _, _, _, err = Blow("invalid_file", f, "OTP1", []byte{0x00})
 
 	if err == nil || err.Error() != "open invalid_file: no such file or directory" {
 		t.Error("tripping a fuse with an invalid device should raise an error")
@@ -85,31 +103,31 @@ registers:
 ...
 `
 
-	fusemap, err := ParseFuseMap([]byte(testYAML))
+	f, err := fusemap.Parse([]byte(testYAML))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, _, _, _, err = fusemap.Blow("", "OTP1", []byte{0xff})
+	_, _, _, _, err = Blow("", f, "OTP1", []byte{0xff})
 
 	if err == nil || err.Error() != "value bit size 8 exceeds 4" {
 		t.Error("tripping a fuse with a value exceeding its size should raise an error")
 	}
 
-	_, _, _, _, err = fusemap.Blow("", "OTP1", []byte{0x02})
+	_, _, _, _, err = Blow("", f, "OTP1", []byte{0x02})
 
 	if err != nil {
 		t.Errorf("tripping a fuse with a value not exceeding its size should not raise an error (%v)", err)
 	}
 
-	_, _, _, _, err = fusemap.Blow("", "REG1", []byte{0xaa, 0xbb, 0xcc, 0xdd, 0xee})
+	_, _, _, _, err = Blow("", f, "REG1", []byte{0xaa, 0xbb, 0xcc, 0xdd, 0xee})
 
 	if err == nil || err.Error() != "value bit size 40 exceeds 32" {
 		t.Error("tripping a register with a value exceeding its size should raise an error")
 	}
 
-	_, _, _, _, err = fusemap.Blow("", "REG1", []byte{0xaa, 0xbb, 0xcc, 0xdd})
+	_, _, _, _, err = Blow("", f, "REG1", []byte{0xaa, 0xbb, 0xcc, 0xdd})
 
 	if err != nil {
 		t.Errorf("tripping a register with a value not exceeding its size should not raise an error (%v)", err)
@@ -152,51 +170,51 @@ registers:
 ...
 `
 
-	fusemap, err := ParseFuseMap([]byte(y))
+	f, err := fusemap.Parse([]byte(y))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	blowTest(t, fusemap, "", "REG1",
+	blowTest(t, f, "", "REG1",
 		[]byte{0x03},
 		[]byte{0x03, 0x00, 0x00, 0x00},
 		uint32(0x08*4))
 
-	blowTest(t, fusemap, "", "OTP1",
+	blowTest(t, f, "", "OTP1",
 		[]byte{0x03},
 		[]byte{0x06, 0x00, 0x00, 0x00},
 		uint32(0x09*4))
 
-	blowTest(t, fusemap, "", "OTP2",
+	blowTest(t, f, "", "OTP2",
 		[]byte{0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff},
 		[]byte{0xf0, 0xef, 0xde, 0xcd, 0xbc, 0xab, 0x0a, 0x00},
 		uint32(0x09*4))
 
-	blowTest(t, fusemap, "", "OTP3",
+	blowTest(t, f, "", "OTP3",
 		[]byte{0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff},
 		[]byte{0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x00, 0x00},
 		uint32(0x0a*4))
 
-	blowTest(t, fusemap, "", "OTP4",
+	blowTest(t, f, "", "OTP4",
 		[]byte{0x0f, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0xaa},
 		[]byte{0xa0, 0xfa, 0xef, 0xde, 0xcd, 0xbc, 0xab, 0xfa},
 		uint32(0x0b*4))
 }
 
 func TestBlowIMX6UL(t *testing.T) {
-	fusemap, err := OpenFuseMap("../fusemaps", "IMX6UL", "1")
+	f, err := fusemap.Find("../fusemaps", "IMX6UL", "1")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	blowTest(t, fusemap, "", "SRK_LOCK",
+	blowTest(t, f, "", "SRK_LOCK",
 		[]byte{0x01},
 		[]byte{0x00, 0x40, 0x00, 0x00},
 		uint32(0x00))
 
-	blowTest(t, fusemap, "", "MAC1_ADDR",
+	blowTest(t, f, "", "MAC1_ADDR",
 		[]byte{0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff},
 		[]byte{0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x00, 0x00},
 		uint32(0x22*4))
@@ -224,7 +242,7 @@ registers:
 		nvram = append(nvram, 0xaa)
 	}
 
-	fusemap, err := ParseFuseMap([]byte(y))
+	f, err := fusemap.Parse([]byte(y))
 
 	if err != nil {
 		t.Fatal(err)
@@ -265,18 +283,18 @@ registers:
 
 	expAddr := uint32(0x00)
 
-	blowTest(t, fusemap, tempFile, "OTP1", val, expRes, expAddr)
-	readTest(t, tempFile, fusemap, "OTP1", val, expAddr)
+	blowTest(t, f, tempFile, "OTP1", val, expRes, expAddr)
+	readTest(t, tempFile, f, "OTP1", val, expAddr)
 }
 
 func TestBlowIMX53(t *testing.T) {
-	fusemap, err := OpenFuseMap("../fusemaps", "IMX53", "2.1")
+	f, err := fusemap.Find("../fusemaps", "IMX53", "2.1")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, _, _, _, err = fusemap.Blow("", "SRK_LOCK", []byte{0xff})
+	_, _, _, _, err = Blow("", f, "SRK_LOCK", []byte{0xff})
 
 	if err == nil || err.Error() != "driver does not support blow operation" {
 		t.Errorf("tripping a fuse on a read/only driver should raise an error")

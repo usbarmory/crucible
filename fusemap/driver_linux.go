@@ -8,14 +8,14 @@
 //
 // +build linux
 
-package crucible
+package fusemap
 
 import (
 	"errors"
 )
 
-func driverParams(name string) (wordSize uint32, bankSize uint32, err error) {
-	switch name {
+func (f *FuseMap) driverParams() (wordSize uint32, bankSize uint32, err error) {
+	switch f.Driver {
 	case "nvmem-imx-iim":
 		wordSize = 1
 		bankSize = 32
