@@ -20,10 +20,10 @@ import (
 const bitSep = "┃"
 
 // ┏━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳ .. ┳━━┓
-func genTopSep(size uint32) (s string) {
+func genTopSep(size int) (s string) {
 	s = "┏"
 
-	for i := 1; i < int(size); i++ {
+	for i := 1; i < size; i++ {
 		s += "━━┳"
 	}
 
@@ -33,10 +33,10 @@ func genTopSep(size uint32) (s string) {
 }
 
 // ┗━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻ .. ┻━━┛
-func genLowSep(size uint32) (s string) {
+func genLowSep(size int) (s string) {
 	s = "┗"
 
-	for i := 1; i < int(size); i++ {
+	for i := 1; i < size; i++ {
 		if i%8 == 0 {
 			s += "━━╋"
 		} else {
@@ -50,9 +50,9 @@ func genLowSep(size uint32) (s string) {
 }
 
 // .. 07 06 05 04 03 02 01 00
-func genRegMap(size uint32) (s string) {
-	for i := 1; i <= int(size); i++ {
-		s += fmt.Sprintf(" %.2d", int(size)-i)
+func genRegMap(size int) (s string) {
+	for i := 1; i <= size; i++ {
+		s += fmt.Sprintf(" %.2d", size-i)
 	}
 
 	return
@@ -60,16 +60,16 @@ func genRegMap(size uint32) (s string) {
 
 // Convert a byte array to a bit map compatible binary string representation
 // (e.g. []byte{0x55, 0x55} => []byte("0  1  0  1  0  1  0  1  0  1  0  1  0  1 0  1")
-func byteArrayToBitMap(val []byte, offset uint32, size uint32) (m []byte) {
-	m = []byte(fmt.Sprintf("%.8b", util.ConvertReadValue(offset, size, util.SwitchEndianness(val))))
+func byteArrayToBitMap(val []byte, off int, size int) (m []byte) {
+	m = []byte(fmt.Sprintf("%.8b", util.ConvertReadValue(off, size, util.SwitchEndianness(val))))
 	m = bytes.Replace(m[1:len(m)-1], []byte(" "), nil, -1)
-	m = bytes.Replace(m[len(m)-int(size):], []byte("0"), []byte("0  "), -1)
+	m = bytes.Replace(m[len(m)-size:], []byte("0"), []byte("0  "), -1)
 	m = bytes.Replace(m, []byte("1"), []byte("1  "), -1)
 
 	return
 }
 
-// Pretty print register bit map.
+// BitMap pretty prints a register bit map.
 //
 // The function operates on a single register, this means that fuses which
 // start in other registers are not shown (to overcome this fusemaps can
@@ -116,8 +116,8 @@ func (reg *Register) BitMap(res []byte) (m string) {
 			size = reg.Length - fuse.Offset
 		}
 
-		off := int(fuse.Offset) * len(bitBox)
-		descSize := int(size)*2 + int(size) - 1
+		off := fuse.Offset * len(bitBox)
+		descSize := size*2 + size - 1
 
 		if res != nil {
 			desc = byteArrayToBitMap(res, fuse.Offset, size)
@@ -140,7 +140,7 @@ func (reg *Register) BitMap(res []byte) (m string) {
 			copy(bitMap[off-1:], bitSepFixed)
 		}
 
-		indent := len(regMap) - int(off) - descSize
+		indent := len(regMap) - off - descSize
 
 		// We track and increase line length separately to account for
 		// UTF-8 charlen being > 1 bytes.

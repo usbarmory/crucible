@@ -18,7 +18,7 @@ import (
 
 // Read a register or fuse through Linux NVMEM subsystem framework. The name
 // argument could be a register or an individual OTP fuse.
-func Read(devicePath string, f *fusemap.FuseMap, name string) (res []byte, addr uint32, off uint32, size uint32, err error) {
+func Read(devicePath string, f *fusemap.FuseMap, name string) (res []byte, addr uint32, off int, size int, err error) {
 	if devicePath == "" {
 		err = errors.New("empty device path")
 		return

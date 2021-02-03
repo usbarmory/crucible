@@ -14,7 +14,7 @@ import (
 	"errors"
 )
 
-func (f *FuseMap) driverParams() (wordSize uint32, bankSize uint32, err error) {
+func (f *FuseMap) driverParams() (wordSize int, bankSize int, err error) {
 	switch f.Driver {
 	case "nvmem-imx-iim":
 		wordSize = 1

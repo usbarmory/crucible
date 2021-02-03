@@ -16,9 +16,9 @@ import (
 	"github.com/ghodss/yaml"
 )
 
-// Find looks for a fusemap YAML file for a given processor and reference
-// manual identifier. The YAML file is parsed, validated and converted to a
-// FuseMap structure.
+// Find searches a fusemap YAML file for a given processor and reference manual
+// identifier within a directory path. The YAML file is parsed, validated and
+// converted to a FuseMap structure.
 func Find(dir string, processor string, reference string) (fusemap *FuseMap, err error) {
 	path := path.Join(dir, processor+".yaml")
 
@@ -46,7 +46,7 @@ func Find(dir string, processor string, reference string) (fusemap *FuseMap, err
 	return
 }
 
-// Parses converts a fusemap YAML payload to a FuseMap structure.
+// Parse converts a fusemap YAML payload to a FuseMap structure.
 func Parse(y []byte) (fusemap *FuseMap, err error) {
 	fusemap = &FuseMap{}
 	err = yaml.Unmarshal(y, fusemap)

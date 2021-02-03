@@ -26,7 +26,7 @@ import (
 // The value parameter is interpreted as a big-endian value, please note that
 // certain tools, such as the ones creating the `SRK_HASH` for secure boot
 // purposes, typically prepare their output in little-endian format.
-func Blow(devicePath string, f *fusemap.FuseMap, name string, val []byte) (res []byte, addr uint32, off uint32, size uint32, err error) {
+func Blow(devicePath string, f *fusemap.FuseMap, name string, val []byte) (res []byte, addr uint32, off int, size int, err error) {
 	if len(val) == 0 {
 		err = errors.New("null value")
 		return
@@ -84,7 +84,7 @@ func Blow(devicePath string, f *fusemap.FuseMap, name string, val []byte) (res [
 	}
 
 	// nvmem-imx-ocotp allows only one complete OTP word write at a time
-	for i := 0; i < len(res); i += int(f.WordSize) {
+	for i := 0; i < len(res); i += f.WordSize {
 		_, err = device.Seek(int64(addr)+int64(i), 0)
 
 		if err != nil {
@@ -92,7 +92,7 @@ func Blow(devicePath string, f *fusemap.FuseMap, name string, val []byte) (res [
 			return
 		}
 
-		_, err = device.Write(res[i : i+int(f.WordSize)])
+		_, err = device.Write(res[i : i+f.WordSize])
 	}
 
 	_ = device.Close()

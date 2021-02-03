@@ -13,6 +13,8 @@ import (
 	"fmt"
 )
 
+// FuseMap imlements registers definition for One-Time-Programmable (OTP fuses
+// read and write operations.
 type FuseMap struct {
 	Processor string               `json:"processor"`
 	Reference string               `json:"reference"`
@@ -20,40 +22,41 @@ type FuseMap struct {
 	Registers map[string]*Register `json:"registers"`
 	Gaps      map[string]*Gap      `json:"gaps"`
 
-	WordSize uint32
-	BankSize uint32
+	WordSize int
+	BankSize int
 
 	valid bool
 }
 
+// Gap represents a gap definition to account for addressing gap between OTP
+// banks.
 type Gap struct {
-	Read   bool   `json:"read"`
-	Write  bool   `json:"write"`
-	Length uint32 `json:"len"`
+	Read   bool `json:"read"`
+	Write  bool `json:"write"`
+	Length int  `json:"len"`
 }
 
+// Register represents an OTP register definition.
 type Register struct {
 	Name         string
 	ReadAddress  uint32
 	WriteAddress uint32
-	Length       uint32
-	Bank         uint32           `json:"bank"`
-	Word         uint32           `json:"word"`
+	Length       int
+	Bank         int              `json:"bank"`
+	Word         int              `json:"word"`
 	Fuses        map[string]*Fuse `json:"fuses"`
 }
 
+// Fuse is an OTP fuse definition, representing one or more bits within a
+// register.
 type Fuse struct {
 	Name     string
-	Offset   uint32 `json:"offset"`
-	Length   uint32 `json:"len"`
+	Offset   int `json:"offset"`
+	Length   int `json:"len"`
 	Register *Register
 }
 
-func (f *FuseMap) Valid() bool {
-	return f.valid
-}
-
-// Set register addressing.
+// SetAddress sets register addressing.
 func (f *FuseMap) SetAddress(reg *Register) (err error) {
 	if reg == nil {
 		return
@@ -63,13 +66,13 @@ func (f *FuseMap) SetAddress(reg *Register) (err error) {
 		return fmt.Errorf("register word cannot exceed %d", f.BankSize-1)
 	}
 
-	reg.ReadAddress = (reg.Bank*f.BankSize + reg.Word) * f.WordSize
+	reg.ReadAddress = uint32((reg.Bank*f.BankSize + reg.Word) * f.WordSize)
 	reg.WriteAddress = reg.ReadAddress
 
 	return
 }
 
-// Apply gap information to register addressing.
+// ApplyGaps applies gap information to register addressing.
 func (f *FuseMap) ApplyGaps() (err error) {
 	raddr := make(map[string]uint32)
 	waddr := make(map[string]uint32)
@@ -98,11 +101,11 @@ func (f *FuseMap) ApplyGaps() (err error) {
 			}
 
 			if gap.Read && reg.ReadAddress >= gapReg.ReadAddress {
-				raddr[name] += gap.Length / f.WordSize
+				raddr[name] += uint32(gap.Length / f.WordSize)
 			}
 
 			if gap.Write && reg.WriteAddress >= gapReg.WriteAddress {
-				waddr[name] += gap.Length / f.WordSize
+				waddr[name] += uint32(gap.Length / f.WordSize)
 			}
 		}
 	}
@@ -113,6 +116,11 @@ func (f *FuseMap) ApplyGaps() (err error) {
 	}
 
 	return
+}
+
+// Valid returns whether the fusemap passed validation, see Validate().
+func (f *FuseMap) Valid() bool {
+	return f.valid
 }
 
 // Validate a fusemap and populate address values.

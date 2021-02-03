@@ -14,8 +14,8 @@ import (
 	"math/bits"
 )
 
-// Pad a byte array to ensure that it always represents one or more 4-byte
-// register.
+// Pad4 pads a byte array to ensure that it always represents one or more
+// 4-byte register.
 func Pad4(val []byte) (res []byte) {
 	numRegisters := 1 + len(val)/4
 
@@ -33,11 +33,11 @@ func Pad4(val []byte) (res []byte) {
 	return val
 }
 
-// Pad a big.Int value to account for the fact that big.Bytes() returns the
-// absolute value, therefore leading 0x00 bytes are not returned and 0x00
-// values are empty.
-func PadBigInt(val *big.Int, size uint32) (res []byte) {
-	numBytes := 1 + int(size/8)
+// PadBigInt pads a big.Int value to account for the fact that big.Bytes()
+// returns the absolute value, therefore leading 0x00 bytes are not returned
+// and 0x00 values are empty.
+func PadBigInt(val *big.Int, size int) (res []byte) {
+	numBytes := 1 + size/8
 
 	// normalize
 	if size%8 == 0 {
@@ -54,7 +54,8 @@ func PadBigInt(val *big.Int, size uint32) (res []byte) {
 	return
 }
 
-// Reverse a byte array to switch between big <> little endianess.
+// SwitchEndianness reverses a byte array to switch between big <> little
+// endianess.
 func SwitchEndianness(val []byte) []byte {
 	for i := len(val)/2 - 1; i >= 0; i-- {
 		rev := len(val) - 1 - i
@@ -64,9 +65,9 @@ func SwitchEndianness(val []byte) []byte {
 	return val
 }
 
-// Convert read value, shifted accordingly to its register offset and size, to
-// a big endian byte array.
-func ConvertReadValue(off uint32, size uint32, val []byte) (res []byte) {
+// ConvertReadValue converts a little-endian byte array by shifting it
+// according to its register offset and size and converting it to big-endian.
+func ConvertReadValue(off int, size int, val []byte) (res []byte) {
 	// little-endian > big-endian
 	res = SwitchEndianness(val)
 
@@ -83,12 +84,12 @@ func ConvertReadValue(off uint32, size uint32, val []byte) (res []byte) {
 	return
 }
 
-// Convert value to be written, shifted accordingly to its register offset and
-// size, to a little endian array of 32-bit registers.
-func ConvertWriteValue(off uint32, size uint32, val []byte) (res []byte, err error) {
+// ConvertWriteValue converts a big-endian byte array by shifting it according
+// to its register offset and size and converting it to little-endian.
+func ConvertWriteValue(off int, size int, val []byte) (res []byte, err error) {
 	bitLen := bits.Len(uint(val[0])) + (len(val)-1)*8
 
-	if bitLen > int(size) {
+	if bitLen > size {
 		err = fmt.Errorf("value bit size %d exceeds %d", bitLen, size)
 		return
 	}
