@@ -201,7 +201,7 @@ func checkArguments() error {
 }
 
 func read(tag string, f *fusemap.FuseMap, name string) (err error) {
-	res, addr, off, size, err := otp.Read(conf.device, f, name)
+	res, addr, off, size, err := otp.ReadNVMEM(conf.device, f, name)
 
 	if err != nil {
 		return
@@ -287,7 +287,7 @@ func blow(tag string, f *fusemap.FuseMap, name string, val string) (err error) {
 		}
 	}
 
-	res, addr, off, size, err := otp.Blow(conf.device, f, name, n.Bytes())
+	res, addr, off, size, err := otp.BlowNVMEM(conf.device, f, name, n.Bytes())
 
 	if err != nil {
 		return err

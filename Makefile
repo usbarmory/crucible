@@ -21,7 +21,7 @@ check:
 
 test:
 	@cd fusemap && ${GO} test -cover
-	@cd otp && ${GO} test -cover
+	@cd otp && ${GO} test -cover *linux*.go
 
 crucible:
 	${GO} build -v \

@@ -1,3 +1,5 @@
+github.com/f-secure-foundry/tamago v0.0.0-20210208154145-d5ac4d682fb8 h1:UQN5W6n3vNOxHbGFZ6VB3ebHPIic4PNuIIN3flK864Y=
+github.com/f-secure-foundry/tamago v0.0.0-20210208154145-d5ac4d682fb8/go.mod h1:+xmhdYxGfaNhWUZ/F1mbwFu38H73slg/k/oPjOL7tc8=
 github.com/ghodss/yaml v1.0.0 h1:wQHKEahhL6wmXdzwWG11gIVCkOv05bNOh+Rxn0yngAk=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=

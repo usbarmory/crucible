@@ -1,0 +1,90 @@
+// crucible
+// One-Time-Programmable (OTP) fusing tool
+//
+// Copyright (c) F-Secure Corporation
+//
+// Use of this source code is governed by the license
+// that can be found in the LICENSE file.
+
+// +build tamago,arm
+
+package otp
+
+import (
+	"encoding/binary"
+
+	"github.com/f-secure-foundry/crucible/util"
+	"github.com/f-secure-foundry/tamago/soc/imx6/ocotp"
+)
+
+func init() {
+	ocotp.Init()
+}
+
+// Blow an OTP fuse using the NXP On-Chip OTP Controller.
+//
+// WARNING: Fusing SoC OTPs is an **irreversible** action that permanently
+// fuses values on the device. This means that any errors in the process, or
+// lost fused data such as cryptographic key material, might result in a
+// **bricked** device.
+//
+// The use of this function is therefore **at your own risk**.
+func BlowOCOTP(bank int, word int, off int, size int, val []byte) (err error) {
+	if len(val) == 0 {
+		return
+	}
+
+	val, err = util.ConvertWriteValue(off, size, val)
+
+	if err != nil {
+		return
+	}
+
+	val = util.Pad4(val)
+
+	// write one complete OTP word write at the time
+	for i := 0; i < len(val); i += ocotp.WordSize {
+		w := word + (i / ocotp.WordSize)
+		v := binary.LittleEndian.Uint32(val[i : i+ocotp.WordSize])
+
+		err = ocotp.Blow(bank, w, v)
+
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+// Read an OTP fuse using the NXP On-Chip OTP Controller.
+func ReadOCOTP(bank int, word int, off int, size int) (res []byte, err error) {
+	regSize := ocotp.WordSize * 8
+	numRegisters := 1 + (off+size)/regSize
+
+	// normalize
+	if (off+size)%regSize == 0 {
+		numRegisters -= 1
+	}
+
+	res = make([]byte, numRegisters*ocotp.WordSize)
+
+	// read one complete OTP word write at the time
+	for i := 0; i < len(res); i += ocotp.WordSize {
+		w := word + (i / ocotp.WordSize)
+
+		val, err := ocotp.Read(bank, w)
+
+		if err != nil {
+			return nil, err
+		}
+
+		buf := make([]byte, 4)
+		binary.LittleEndian.PutUint32(buf, val)
+		copy(res[i:i+ocotp.WordSize], buf)
+	}
+
+	res = util.ConvertReadValue(off, size, res)
+
+	return
+}
