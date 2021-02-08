@@ -35,7 +35,7 @@ import (
 // **bricked** device.
 //
 // The use of this function is therefore **at your own risk**.
-func BlowNVMEM(devicePath string, f *fusemap.FuseMap, name string, val []byte) (res []byte, addr uint32, off int, size int, err error) {
+func BlowNVMEM(devicePath string, f *fusemap.FuseMap, name string, val []byte) (res []byte, addr uint32, off int, bitLen int, err error) {
 	if len(val) == 0 {
 		err = errors.New("null value")
 		return
@@ -66,15 +66,15 @@ func BlowNVMEM(devicePath string, f *fusemap.FuseMap, name string, val []byte) (
 		reg := m
 		addr = reg.WriteAddress
 		off = 0
-		size = reg.Length
+		bitLen = reg.Length
 	case *fusemap.Fuse:
 		fuse := m
 		addr = fuse.Register.WriteAddress
 		off = fuse.Offset
-		size = fuse.Length
+		bitLen = fuse.Length
 	}
 
-	res, err = util.ConvertWriteValue(off, size, val)
+	res, err = util.ConvertWriteValue(off, bitLen, val)
 
 	if err != nil {
 		return
@@ -111,7 +111,7 @@ func BlowNVMEM(devicePath string, f *fusemap.FuseMap, name string, val []byte) (
 
 // ReadNVMEM reads a register or fuse through Linux NVMEM subsystem framework.
 // The name argument could be a register or an individual OTP fuse.
-func ReadNVMEM(devicePath string, f *fusemap.FuseMap, name string) (res []byte, addr uint32, off int, size int, err error) {
+func ReadNVMEM(devicePath string, f *fusemap.FuseMap, name string) (res []byte, addr uint32, off int, bitLen int, err error) {
 	if devicePath == "" {
 		err = errors.New("empty device path")
 		return
@@ -135,12 +135,12 @@ func ReadNVMEM(devicePath string, f *fusemap.FuseMap, name string) (res []byte, 
 		reg := m
 		addr = reg.ReadAddress
 		off = 0
-		size = regSize
+		bitLen = regSize
 	case *fusemap.Fuse:
 		fuse := m
 		addr = fuse.Register.ReadAddress
 		off = fuse.Offset
-		size = fuse.Length
+		bitLen = fuse.Length
 	}
 
 	device, err := os.OpenFile(devicePath, os.O_RDONLY|os.O_EXCL|os.O_SYNC, 0600)
@@ -157,10 +157,10 @@ func ReadNVMEM(devicePath string, f *fusemap.FuseMap, name string) (res []byte, 
 		return
 	}
 
-	numRegisters := 1 + (off+size)/regSize
+	numRegisters := 1 + (off+bitLen)/regSize
 
 	// normalize
-	if (off+size)%regSize == 0 {
+	if (off+bitLen)%regSize == 0 {
 		numRegisters -= 1
 	}
 
@@ -171,7 +171,7 @@ func ReadNVMEM(devicePath string, f *fusemap.FuseMap, name string) (res []byte, 
 		return
 	}
 
-	res = util.ConvertReadValue(off, size, val)
+	res = util.ConvertReadValue(off, bitLen, val)
 
 	return
 }

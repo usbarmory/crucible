@@ -29,12 +29,12 @@ func init() {
 // **bricked** device.
 //
 // The use of this function is therefore **at your own risk**.
-func BlowOCOTP(bank int, word int, off int, size int, val []byte) (err error) {
+func BlowOCOTP(bank int, word int, off int, bitLen int, val []byte) (err error) {
 	if len(val) == 0 {
 		return
 	}
 
-	val, err = util.ConvertWriteValue(off, size, val)
+	val, err = util.ConvertWriteValue(off, bitLen, val)
 
 	if err != nil {
 		return
@@ -58,12 +58,12 @@ func BlowOCOTP(bank int, word int, off int, size int, val []byte) (err error) {
 }
 
 // Read an OTP fuse using the NXP On-Chip OTP Controller.
-func ReadOCOTP(bank int, word int, off int, size int) (res []byte, err error) {
+func ReadOCOTP(bank int, word int, off int, bitLen int) (res []byte, err error) {
 	regSize := ocotp.WordSize * 8
-	numRegisters := 1 + (off+size)/regSize
+	numRegisters := 1 + (off+bitLen)/regSize
 
 	// normalize
-	if (off+size)%regSize == 0 {
+	if (off+bitLen)%regSize == 0 {
 		numRegisters -= 1
 	}
 
@@ -84,7 +84,7 @@ func ReadOCOTP(bank int, word int, off int, size int) (res []byte, err error) {
 		copy(res[i:i+ocotp.WordSize], buf)
 	}
 
-	res = util.ConvertReadValue(off, size, res)
+	res = util.ConvertReadValue(off, bitLen, res)
 
 	return
 }

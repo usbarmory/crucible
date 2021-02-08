@@ -113,7 +113,7 @@ registers:
 
 	_, _, _, _, err = BlowNVMEM("", f, "OTP1", []byte{0xff})
 
-	if err == nil || err.Error() != "value bit size 8 exceeds 4" {
+	if err == nil || err.Error() != "value bit length 8 exceeds 4" {
 		t.Error("tripping a fuse with a value exceeding its size should raise an error")
 	}
 
@@ -125,7 +125,7 @@ registers:
 
 	_, _, _, _, err = BlowNVMEM("", f, "REG1", []byte{0xaa, 0xbb, 0xcc, 0xdd, 0xee})
 
-	if err == nil || err.Error() != "value bit size 40 exceeds 32" {
+	if err == nil || err.Error() != "value bit length 40 exceeds 32" {
 		t.Error("tripping a register with a value exceeding its size should raise an error")
 	}
 

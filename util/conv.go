@@ -38,11 +38,11 @@ func Pad4(val []byte) (res []byte) {
 // PadBigInt pads a big.Int value to account for the fact that big.Bytes()
 // returns the absolute value, therefore leading 0x00 bytes are not returned
 // and 0x00 values are empty.
-func PadBigInt(val *big.Int, size int) (res []byte) {
-	numBytes := 1 + size/8
+func PadBigInt(val *big.Int, bitLen int) (res []byte) {
+	numBytes := 1 + bitLen/8
 
 	// normalize
-	if size%8 == 0 {
+	if bitLen%8 == 0 {
 		numBytes -= 1
 	}
 
@@ -68,8 +68,9 @@ func SwitchEndianness(val []byte) []byte {
 }
 
 // ConvertReadValue converts a little-endian byte array by shifting it
-// according to its register offset and size and converting it to big-endian.
-func ConvertReadValue(off int, size int, val []byte) (res []byte) {
+// according to its register offset and bit length and converting it to
+// big-endian.
+func ConvertReadValue(off int, bitLen int, val []byte) (res []byte) {
 	// little-endian > big-endian
 	res = SwitchEndianness(val)
 
@@ -78,21 +79,21 @@ func ConvertReadValue(off int, size int, val []byte) (res []byte) {
 	v.Rsh(v, uint(off))
 
 	// get only the bits that we care about
-	mask := big.NewInt((1 << size) - 1)
+	mask := big.NewInt((1 << bitLen) - 1)
 	v.And(v, mask)
 
-	res = PadBigInt(v, size)
+	res = PadBigInt(v, bitLen)
 
 	return
 }
 
 // ConvertWriteValue converts a big-endian byte array by shifting it according
-// to its register offset and size and converting it to little-endian.
-func ConvertWriteValue(off int, size int, val []byte) (res []byte, err error) {
-	bitLen := bits.Len(uint(val[0])) + (len(val)-1)*8
+// to its register offset and bit length and converting it to little-endian.
+func ConvertWriteValue(off int, bitLen int, val []byte) (res []byte, err error) {
+	size := bits.Len(uint(val[0])) + (len(val)-1)*8
 
-	if bitLen > size {
-		err = fmt.Errorf("value bit size %d exceeds %d", bitLen, size)
+	if size > bitLen {
+		err = fmt.Errorf("value bit length %d exceeds %d", size, bitLen)
 		return
 	}
 
@@ -100,7 +101,7 @@ func ConvertWriteValue(off int, size int, val []byte) (res []byte, err error) {
 	v.SetBytes(val)
 	v.Lsh(v, uint(off))
 
-	res = PadBigInt(v, size)
+	res = PadBigInt(v, bitLen)
 	// big-endian > little-endian
 	res = SwitchEndianness(res)
 
