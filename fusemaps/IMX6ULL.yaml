@@ -445,6 +445,7 @@ registers:
       MAC1_ADDR[31:0]:
         offset: 0
         len: 32
+
   OCOTP_MAC1:
     bank: 4
     word: 3
@@ -452,10 +453,22 @@ registers:
       MAC1_ADDR[47:32]:
         offset: 0
         len: 16
+      # MAC2_ADDR is not described in the RM, however multiple implementations
+      # use it, see discussion at github.com/f-secure-foundry/crucible/issues/5
+      MAC2_ADDR:
+        offset: 16
+        len: 48
+      MAC2_ADDR[15:0]:
+        offset: 16
+        len: 16
 
   OCOTP_MAC:
     bank: 4
     word: 4
+    fuses:
+      MAC2_ADDR[47:16]:
+        offset: 0
+        len: 32
 
   OCOTP_CRC:
     bank: 4
