@@ -445,7 +445,6 @@ registers:
       MAC1_ADDR[31:0]:
         offset: 0
         len: 32
-
   OCOTP_MAC1:
     bank: 4
     word: 3
