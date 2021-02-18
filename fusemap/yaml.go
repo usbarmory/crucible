@@ -10,19 +10,18 @@ package fusemap
 
 import (
 	"fmt"
-	"io/ioutil"
-	"path"
+	"io/fs"
 
 	"github.com/ghodss/yaml"
 )
 
 // Find searches a fusemap YAML file for a given processor and reference manual
-// identifier within a directory path. The YAML file is parsed, validated and
+// identifier within a directory. The YAML file is parsed, validated and
 // converted to a FuseMap structure.
-func Find(dir string, processor string, reference string) (fusemap *FuseMap, err error) {
-	path := path.Join(dir, processor+".yaml")
+func Find(dir fs.FS, processor string, reference string) (fusemap *FuseMap, err error) {
+	path := processor + ".yaml"
 
-	y, err := ioutil.ReadFile(path)
+	y, err := fs.ReadFile(dir, path)
 
 	if err != nil {
 		return

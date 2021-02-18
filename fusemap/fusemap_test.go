@@ -9,8 +9,11 @@
 package fusemap
 
 import (
+	"os"
 	"testing"
 )
+
+var fusemaps = os.DirFS("../fusemaps")
 
 func TestInvalidReference(t *testing.T) {
 	y := `
@@ -25,7 +28,7 @@ driver: nvmem-imx-ocotp
 		t.Error("fusemap with missing reference should raise an error")
 	}
 
-	_, err = Find("../fusemaps", "IMX53", "1")
+	_, err = Find(fusemaps, "IMX53", "1")
 
 	if err == nil || err.Error() != "invalid reference" {
 		t.Error("fusemap with invalid reference should raise an error")

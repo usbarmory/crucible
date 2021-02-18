@@ -134,7 +134,7 @@ registers:
                                                                                            01 00  TESTER_LOCK
 `
 
-	f, err = Find("../fusemaps", "IMX6UL", "1")
+	f, err = Find(fusemaps, "IMX6UL", "1")
 
 	if err != nil {
 		t.Fatal(err)

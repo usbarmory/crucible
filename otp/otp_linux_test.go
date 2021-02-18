@@ -20,6 +20,8 @@ import (
 	"github.com/f-secure-foundry/crucible/fusemap"
 )
 
+var fusemaps = os.DirFS("../fusemaps")
+
 func blowTest(t *testing.T, f *fusemap.FuseMap, path string, name string, val []byte, expRes []byte, expAddr uint32) {
 	res, addr, _, _, err := BlowNVMEM(path, f, name, val)
 
@@ -205,7 +207,7 @@ registers:
 }
 
 func TestBlowIMX6UL(t *testing.T) {
-	f, err := fusemap.Find("../fusemaps", "IMX6UL", "1")
+	f, err := fusemap.Find(fusemaps, "IMX6UL", "1")
 
 	if err != nil {
 		t.Fatal(err)
@@ -290,7 +292,7 @@ registers:
 }
 
 func TestBlowIMX53(t *testing.T) {
-	f, err := fusemap.Find("../fusemaps", "IMX53", "2.1")
+	f, err := fusemap.Find(fusemaps, "IMX53", "2.1")
 
 	if err != nil {
 		t.Fatal(err)
@@ -320,7 +322,7 @@ func readTest(t *testing.T, devicePath string, f *fusemap.FuseMap, name string, 
 }
 
 func TestReadErrors(t *testing.T) {
-	f, err := fusemap.Find("../fusemaps", "IMX53", "2.1")
+	f, err := fusemap.Find(fusemaps, "IMX53", "2.1")
 
 	if err != nil {
 		t.Fatal(err)
@@ -334,7 +336,7 @@ func TestReadErrors(t *testing.T) {
 }
 
 func TestReadIMX53(t *testing.T) {
-	f, err := fusemap.Find("../fusemaps", "IMX53", "2.1")
+	f, err := fusemap.Find(fusemaps, "IMX53", "2.1")
 
 	if err != nil {
 		t.Fatal(err)
@@ -364,7 +366,7 @@ func TestReadIMX53(t *testing.T) {
 }
 
 func TestReadIMX6UL(t *testing.T) {
-	f, err := fusemap.Find("../fusemaps", "IMX6UL", "1")
+	f, err := fusemap.Find(fusemaps, "IMX6UL", "1")
 
 	if err != nil {
 		t.Fatal(err)
@@ -430,7 +432,7 @@ func TestReadBitMap8(t *testing.T) {
                       00  BOOT_LOCK
 `
 
-	f, err := fusemap.Find("../fusemaps", "IMX53", "2.1")
+	f, err := fusemap.Find(fusemaps, "IMX53", "2.1")
 
 	if err != nil {
 		t.Fatal(err)
@@ -465,7 +467,7 @@ func TestReadBitMap32(t *testing.T) {
                                                                 10 ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ 00  LOT_NO_ENC[42:32]
 `
 
-	f, err := fusemap.Find("../fusemaps", "IMX6UL", "1")
+	f, err := fusemap.Find(fusemaps, "IMX6UL", "1")
 
 	if err != nil {
 		t.Fatal(err)

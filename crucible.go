@@ -10,16 +10,15 @@ package main
 
 import (
 	"bufio"
+	"embed"
 	"errors"
 	"flag"
 	"fmt"
-	"go/build"
-	"io/ioutil"
+	"io/fs"
 	"log"
 	"log/syslog"
 	"math/big"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"text/tabwriter"
@@ -39,7 +38,13 @@ type Config struct {
 	fusemaps   string
 	processor  string
 	reference  string
+
+	fusemapDir fs.FS
 }
+
+// Bundled fusemaps
+//go:embed fusemaps
+var fusemaps embed.FS
 
 // build information, initialized at compile time (see Makefile)
 var Revision string
@@ -108,10 +113,6 @@ func init() {
 	flag.StringVar(&conf.fusemaps, "f", "", "YAML fusemaps directory")
 	flag.StringVar(&conf.processor, "m", "", "processor model")
 	flag.StringVar(&conf.reference, "r", "", "reference manual revision")
-
-	if conf.fusemaps == "" {
-		conf.fusemaps = path.Join(build.Default.GOPATH, "src/github.com/f-secure-foundry/crucible/fusemaps")
-	}
 }
 
 func confirm() bool {
@@ -123,7 +124,7 @@ func confirm() bool {
 }
 
 func listFusemapRegisters() {
-	f, err := fusemap.Find(conf.fusemaps, conf.processor, conf.reference)
+	f, err := fusemap.Find(conf.fusemapDir, conf.processor, conf.reference)
 
 	if err != nil {
 		log.Fatalf("error: could not open fusemap, %v", err)
@@ -140,12 +141,12 @@ func listFusemaps() {
 
 	_, _ = fmt.Println("Model (-m)\tReference (-r)\tDriver")
 
-	_ = filepath.Walk(conf.fusemaps, func(path string, info os.FileInfo, err error) error {
+	_ = fs.WalkDir(conf.fusemapDir, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if info.IsDir() {
+		if d.IsDir() {
 			return nil
 		}
 
@@ -153,7 +154,7 @@ func listFusemaps() {
 			return nil
 		}
 
-		y, err := ioutil.ReadFile(path)
+		y, err := fs.ReadFile(conf.fusemapDir, path)
 
 		if err != nil {
 			return err
@@ -171,7 +172,6 @@ func listFusemaps() {
 	})
 
 	_ = t.Flush()
-	_, _ = fmt.Printf("\nfusemaps directory: %s\n", conf.fusemaps)
 }
 
 func checkArguments() error {
@@ -303,6 +303,8 @@ func blow(tag string, f *fusemap.FuseMap, name string, val string) (err error) {
 }
 
 func main() {
+	var err error
+
 	flag.Parse()
 
 	if conf.syslog {
@@ -310,6 +312,22 @@ func main() {
 		log.SetOutput(logwriter)
 	} else {
 		log.SetOutput(os.Stdout)
+	}
+
+	if len(conf.fusemaps) > 0 {
+		stat, err := os.Stat(conf.fusemaps)
+
+		if err != nil || !stat.IsDir() {
+			log.Fatal("error: could not open fusemaps directory")
+		}
+
+		conf.fusemapDir = os.DirFS(conf.fusemaps)
+	} else {
+		conf.fusemapDir, err = fs.Sub(fusemaps, "fusemaps")
+
+		if err != nil {
+			log.Fatal("error: could not open fusemaps directory")
+		}
 	}
 
 	if conf.list && len(flag.Args()) < 2 {
@@ -322,26 +340,18 @@ func main() {
 		return
 	}
 
-	stat, err := os.Stat(conf.fusemaps)
-
-	if err != nil || !stat.IsDir() {
-		log.Fatalf("error: could not open fusemaps directory %s", conf.fusemaps)
-	}
-
-	err = checkArguments()
-
-	if err != nil {
+	if err = checkArguments(); err != nil {
 		flag.Usage()
 		log.Fatalf("error: %v", err)
 	}
 
-	stat, err = os.Stat(conf.device)
+	stat, err := os.Stat(conf.device)
 
 	if err != nil || stat.IsDir() {
 		log.Fatalf("error: could not open NVMEM device %s", conf.device)
 	}
 
-	f, err := fusemap.Find(conf.fusemaps, conf.processor, conf.reference)
+	f, err := fusemap.Find(conf.fusemapDir, conf.processor, conf.reference)
 
 	if err != nil {
 		log.Fatalf("error: could not open fusemap, %v", err)
