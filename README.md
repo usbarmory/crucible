@@ -30,14 +30,14 @@ Introduction
 
 The `crucible` tool provides user space support for reading, and writing,
 One-Time-Programmable (OTP) fuses of System-on-Chip (SoC) application
-processors.
+processors through the [Linux NVMEM framework](https://github.com/torvalds/linux/blob/master/Documentation/nvmem/nvmem.txt).
+
+The `habtool` tool provides support functions for NXP HABv4
+[Secure Boot](https://github.com/f-secure-foundry/usbarmory/wiki/Secure-boot-(Mk-II))
+provisioning and executable signing.
 
 The current support targets application processors from the NXP i.MX series
 (see _Supported drivers_).
-
-The tool consists of a client for SoC drivers which leverage on the
-[Linux NVMEM framework](https://github.com/torvalds/linux/blob/master/Documentation/nvmem/nvmem.txt)
-to provide read and write access to the processor non-volatile memory.
 
 Warning
 =======
@@ -46,10 +46,42 @@ Fusing SoC OTPs is an **irreversible** action that permanently fuses values on
 the device. This means that any errors in the process, or lost fused data such
 as cryptographic key material, might result in a **bricked** device.
 
-The use of this tool is therefore **at your own risk**.
+The use of these tools is therefore **at your own risk**.
+
+Installing
+==========
+
+You can automatically download, compile and install the package, under your
+GOPATH, as follows:
+
+```
+# crucible fusing tool
+go get github.com/f-secure-foundry/crucible/cmd/crucible
+
+# NXP HABv4 tool
+go get github.com/f-secure-foundry/crucible/cmd/habtool
+```
+
+Alternatively you can manually compile it from source:
+
+```
+git clone https://github.com/f-secure-foundry/crucible
+cd crucible && make
+```
+
+The tool can be cross compiled for an ARM target as follows:
+
+```
+make GOARCH=arm
+```
+
+The default compilation target automatically runs all available unit tests.
+
+Crucible
+========
 
 Operation
-=========
+---------
 
 ```
 Usage: crucible [options] [read|blow] [fuse/register name] [value]
@@ -125,7 +157,7 @@ soc:IMX6UL ref:1 otp:OCOTP_CFG2 op:read addr:0xc off:0 len:32 val:0x703100ec
 ```
 
 Fusemap format
-==============
+--------------
 
 The `crucible` tool relies on register definition files in YAML format (see
 `fusemaps` directory for examples) to map register/fuse names and address
@@ -180,8 +212,11 @@ crucible -s -m IMX6UL -r 1 -l
 ...
 ```
 
+A bundle of [fusemaps](https://github.com/f-secure-foundry/crucible/tree/master/fusemaps)
+for all supported drivers is embedded in the `crucible` executable.
+
 Supported drivers
-=================
+-----------------
 
 The following table summarizes the currently supported hardware in terms of
 driver and fusemap availability.
@@ -207,30 +242,32 @@ however does not allow for the entire fusemap to be read as its maximum size is
 computed without accounting for the gaps, see comments within the fusemap for
 affected registers.
 
-Installing
+HABv4 tool
 ==========
 
-You can automatically download, compile and install the package, under your
-GOPATH, as follows:
+Operation
+---------
 
 ```
-go get github.com/f-secure-foundry/crucible
+habtool - NXP HABv4 Secure Boot tool
+Usage: habtool [options]
+  -1 string
+    	SRK public key 1 in PEM format
+  -2 string
+    	SRK public key 2 in PEM format
+  -3 string
+    	SRK public key 3 in PEM format
+  -4 string
+    	SRK public key 4 in PEM format
+  -O string
+    	Write SRK table to file
+  -o string
+    	Write SRK table hash to file
 ```
 
-Alternatively you can manually compile it from source:
-
-```
-git clone https://github.com/f-secure-foundry/crucible
-cd crucible && make
-```
-
-The tool can be cross compiled for an ARM target as follows:
-
-```
-make crucible GOARCH=arm
-```
-
-The default compilation target automatically runs all available unit tests.
+The [USB armory](https://github.com/f-secure-foundry/usbarmory/wiki) guide for
+[Secure Boot](https://github.com/f-secure-foundry/usbarmory/wiki/Secure-boot-(Mk-II))
+provides an introduction on HABv4 using the USB armory Mk II as reference platform.
 
 License
 =======

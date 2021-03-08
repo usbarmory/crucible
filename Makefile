@@ -7,9 +7,9 @@ BUILD := ${BUILD_USER}@${BUILD_HOST} on ${BUILD_DATE}
 REV := $(shell git rev-parse --short HEAD 2> /dev/null)
 PKG = "github.com/f-secure-foundry/crucible"
 
-.PHONY: crucible test
+.PHONY: test crucible habtool
 
-all: test crucible
+all: test crucible habtool
 
 # requires the following dependencies in $GOPATH
 #   honnef.co/go/tools/cmd/staticcheck
@@ -21,11 +21,17 @@ check:
 
 test:
 	@cd fusemap && ${GO} test -cover
+	@cd hab && ${GO} test -cover
 	@cd otp && ${GO} test -cover *linux*.go
 
 crucible:
 	${GO} build -v \
-	  -gcflags=-trimpath=${CURDIR} -asmflags=-trimpath=${CURDIR} \
-	  -ldflags "-s -w -X 'main.Revision=${REV}' -X 'main.Build=${BUILD}'" \
-	  crucible.go
+	  -trimpath -ldflags "-s -w -X 'main.Revision=${REV}' -X 'main.Build=${BUILD}'" \
+	  cmd/crucible/crucible.go
 	@echo -e "compiled crucible ${REV} (${BUILD})"
+
+habtool:
+	${GO} build -v \
+	  -trimpath -ldflags "-s -w -X 'main.Revision=${REV}' -X 'main.Build=${BUILD}'" \
+	  cmd/habtool/habtool.go
+	@echo -e "compiled habtool ${REV} (${BUILD})"
