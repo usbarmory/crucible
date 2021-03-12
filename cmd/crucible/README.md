@@ -47,8 +47,11 @@ The use of this tool is therefore **at your own risk**.
 Installing
 ==========
 
-You can automatically download, compile and install the package, under your
-GOPATH, as follows:
+Pre-compiled binaries for Linux are released
+[here](https://github.com/f-secure-foundry/crucible/releases).
+
+You can also automatically download, compile and install the package, under
+your GOPATH, as follows:
 
 ```
 go install github.com/f-secure-foundry/crucible/cmd/crucible@latest

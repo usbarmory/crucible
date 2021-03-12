@@ -54,8 +54,11 @@ The use of these tools is therefore **at your own risk**.
 Installing
 ==========
 
-You can automatically download, compile and install the package, under your
-GOPATH, as follows:
+Pre-compiled binaries for Linux and Windows are released
+[here](https://github.com/f-secure-foundry/crucible/releases).
+
+You can also automatically download, compile and install the package, under
+your GOPATH, as follows:
 
 ```
 # crucible fusing tool
