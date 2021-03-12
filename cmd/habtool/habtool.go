@@ -99,7 +99,7 @@ func init() {
 			tags = fmt.Sprintf("%s (%s)", Revision, Build)
 		}
 
-		log.Printf("habtool - NXP HABv4 Secure Boot tool %s", tags)
+		log.Printf("habtool - NXP HABv4 Secure Boot utility %s", tags)
 		fmt.Println(usage)
 	}
 
