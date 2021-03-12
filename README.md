@@ -25,14 +25,17 @@ Authors
 Andrea Barisani  
 andrea.barisani@f-secure.com | andrea@inversepath.com  
 
+Andrej Rosano  
+andrej.rosano@f-secure.com | andrej@inversepath.com  
+
 Introduction
 ============
 
-The `crucible` tool provides user space support for reading, and writing,
+The `crucible` utility provides user space support for reading, and writing,
 One-Time-Programmable (OTP) fuses of System-on-Chip (SoC) application
 processors through the [Linux NVMEM framework](https://github.com/torvalds/linux/blob/master/Documentation/nvmem/nvmem.txt).
 
-The `habtool` tool provides support functions for NXP HABv4
+The `habtool` utility provides support functions for NXP HABv4
 [Secure Boot](https://github.com/f-secure-foundry/usbarmory/wiki/Secure-boot-(Mk-II))
 provisioning and executable signing.
 
@@ -69,13 +72,17 @@ git clone https://github.com/f-secure-foundry/crucible
 cd crucible && make
 ```
 
-The tool can be cross compiled for an ARM target as follows:
+All targets can be cross compiled for ARM as follows:
 
 ```
 make GOARCH=arm
 ```
 
-The default compilation target automatically runs all available unit tests.
+The `habtool` utility can be cross compiled Windows as follows:
+
+```
+make crucible.exe
+```
 
 Crucible
 ========
@@ -107,7 +114,7 @@ Usage: crucible [options] [read|blow] [fuse/register name] [value]
 The `-b` option controls value argument base/format and must be explicitly set
 for all operations. For instance binary values like 0b10 or 10 are treated as
 binary with `-b 2`, while values such as 0x0a or 0a are treated as hexadecimal
-values with `-b 16`. Similarily the option controls the output value format
+values with `-b 16`. Similarly the option controls the output value format
 when reading.
 
 The `-e` option controls value argument endianness and must be explicitly set
@@ -249,20 +256,33 @@ Operation
 ---------
 
 ```
-habtool - NXP HABv4 Secure Boot tool
-Usage: habtool [options]
-  -1 string
-    	SRK public key 1 in PEM format
-  -2 string
-    	SRK public key 2 in PEM format
-  -3 string
-    	SRK public key 3 in PEM format
-  -4 string
-    	SRK public key 4 in PEM format
-  -O string
-    	Write SRK table to file
-  -o string
-    	Write SRK table hash to file
+Usage: habtool [OPTIONS]
+  -h                  Show this help
+
+SRK table creation options:
+  -1 <input path>     SRK public key 1 in PEM format
+  -2 <input path>     SRK public key 2 in PEM format
+  -3 <input path>     SRK public key 3 in PEM format
+  -4 <input path>     SRK public key 4 in PEM format
+
+  -o <output path>    Write SRK table hash to file
+  -t <output path>    Write SRK table to file
+
+Executable signing options:
+  -A <input path>     CSF private key in PEM format
+  -a <input path>     CSF public  key in PEM format
+  -B <input path>     IMG private key in PEM format
+  -b <input path>     IMG public  key in PEM format
+  -t <input path>     Read SRK table from file
+  -x <1-4>            Index for SRK key
+  -e <id>             Crypto engine (e.g. 0x1b for HAB_ENG_DCP)
+  -i <input path>     Image file w/ IVT header (e.g. boot.imx)
+
+  -o <output path>    Write CSF to file
+
+  -s                  Serial download mode
+  -S <address>        Serial download DCD OCRAM address
+                      (depends on mfg tool, default: 0x00910000)
 ```
 
 The [USB armory](https://github.com/f-secure-foundry/usbarmory/wiki) guide for
