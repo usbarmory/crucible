@@ -81,7 +81,7 @@ make GOARCH=arm
 The `habtool` utility can be cross compiled Windows as follows:
 
 ```
-make crucible.exe
+make habtool.exe
 ```
 
 Crucible
