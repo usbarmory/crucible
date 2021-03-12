@@ -19,7 +19,7 @@ import (
 type SignOptions struct {
 	// CSFKeyPEMBlock specifies the Command Sequence File signing key in
 	// PEM format.
-	CSFKeyPEMBlock  []byte
+	CSFKeyPEMBlock []byte
 
 	// CSFCertPEMBlock specifies the Command Sequence File signing
 	// certificate in PEM format.
@@ -27,23 +27,23 @@ type SignOptions struct {
 
 	// IMGKeyPEMBlock specifies the IMX executable signing key in PEM
 	// format.
-	IMGKeyPEMBlock  []byte
+	IMGKeyPEMBlock []byte
 
 	// IMGCertPEMBlock specifies the IMX executable signing certificate in
 	// PEM format.
 	IMGCertPEMBlock []byte
 
 	// Table specifies the Super Root Key (SRK) table.
-	Table           []byte
+	Table []byte
 	// Index specifies the SRK key index.
-	Index           int
+	Index int
 	// Engine specifies the crypto engine.
-	Engine          int
+	Engine int
 
 	// SDP specifies whether the signed image is meant for Serial Download
 	// Protocol execution.
-	SDP             bool
-	DCD             uint32
+	SDP bool
+	DCD uint32
 }
 
 // Sign generates an HABv4 compliant authentication and configuration script
@@ -56,13 +56,12 @@ func Sign(imx []byte, opts SignOptions) (out []byte, err error) {
 	var sig []byte
 
 	ivt := &IVT{}
-	dcd := &CSF{}
+	dcd := &DCD{}
 
 	if err = ivt.Read(imx); err != nil {
 		return
 	}
 
-	dcdStart := ivt.DCD - ivt.Self
 	bootData, err := NewBootData(imx, ivt)
 
 	if err != nil {
@@ -130,14 +129,10 @@ func Sign(imx []byte, opts SignOptions) (out []byte, err error) {
 	authenticateDCD := NewAuthenticateData()
 
 	if opts.SDP {
-		err = dcd.Read(imx[dcdStart : dcdStart+4])
+		dcdStart := ivt.DCD - ivt.Self
 
-		if err != nil {
+		if err = dcd.Read(imx[dcdStart:]); err != nil {
 			return nil, err
-		}
-
-		if dcd.Header.Tag != HAB_TAG_DCD {
-			panic("fixme")
 		}
 
 		authenticateDCD.Key = 2
@@ -172,7 +167,7 @@ func Sign(imx []byte, opts SignOptions) (out []byte, err error) {
 
 	if opts.SDP {
 		// Sign DCD
-		if sig, err = sign(imx[dcdStart:dcdStart+uint32(dcd.Header.Len)], opts.IMGCertPEMBlock, imgKey); err != nil {
+		if sig, err = sign(dcd.Bytes(), opts.IMGCertPEMBlock, imgKey); err != nil {
 			return nil, err
 		}
 

@@ -31,8 +31,8 @@ func (hdr *Header) Bytes() []byte {
 }
 
 // NewHeader returns a tagged data structure header with default values.
-func NewHeader(tag uint8) *Header {
-	return &Header{
+func NewHeader(tag uint8) Header {
+	return Header{
 		Tag: tag,
 		Len: 4,
 		Ver: HAB_VER,
@@ -42,7 +42,7 @@ func NewHeader(tag uint8) *Header {
 // CSF represents a Command Sequence File
 // (p23, 4.3 Command Sequence File, HABv4 API RM).
 type CSF struct {
-	Header *Header
+	Header Header
 	Data   []byte
 }
 
@@ -50,27 +50,6 @@ type CSF struct {
 func (csf *CSF) Set(buf []byte) {
 	csf.Data = buf
 	csf.Header.Len += uint16(len(buf))
-}
-
-// Read parses a buffer as Command Sequence File.
-func (csf *CSF) Read(buf []byte) (err error) {
-	if len(buf) < 4 {
-		return errors.New("CSF header not found")
-	}
-
-	if csf.Header == nil {
-		csf.Header = NewHeader(0)
-	}
-
-	err = binary.Read(bytes.NewReader(buf[0:4]), binary.BigEndian, csf.Header)
-
-	if err != nil {
-		return
-	}
-
-	csf.Data = buf[4:csf.Header.Len]
-
-	return
 }
 
 // Bytes converts the CSF to byte array format.
@@ -91,7 +70,7 @@ func NewCSF(tag uint8) *CSF {
 }
 
 // IVT represents an Image Vector Table
-// (p161, 8.7.1.1 Image vector table structure, IMX6ULLRM).
+// (p310, 8.7.1.1 Image vector table structure, IMX6ULLRM).
 type IVT struct {
 	Header    Header
 	Entry     uint32 // Absolute address of the first instruction to execute from the image
@@ -105,15 +84,11 @@ type IVT struct {
 
 // Read parses a buffer as Image Vector Table.
 func (ivt *IVT) Read(buf []byte) (err error) {
-	err = binary.Read(bytes.NewReader(buf), binary.LittleEndian, ivt)
-
-	if err != nil {
+	if err = binary.Read(bytes.NewReader(buf), binary.LittleEndian, ivt); err != nil {
 		return
 	}
 
-	err = binary.Read(bytes.NewReader(buf[0:4]), binary.BigEndian, &ivt.Header)
-
-	if err != nil {
+	if err = binary.Read(bytes.NewReader(buf[0:4]), binary.BigEndian, &ivt.Header); err != nil {
 		return
 	}
 
@@ -136,6 +111,38 @@ func (ivt *IVT) Bytes() []byte {
 	binary.Write(buf, binary.LittleEndian, ivt.Self)
 	binary.Write(buf, binary.LittleEndian, ivt.CSF)
 	binary.Write(buf, binary.LittleEndian, ivt.Reserved2)
+
+	return buf.Bytes()
+}
+
+// DCD represents Device Configuration Data information
+// (p311, 8.7.1.1 Device Configuration Data (DCD), IMX6ULLRM).
+type DCD struct {
+	Header Header
+	Data   []byte
+}
+
+// Read parses a buffer as Device Configuration Data.
+func (dcd *DCD) Read(buf []byte) (err error) {
+	if err = binary.Read(bytes.NewReader(buf[0:4]), binary.BigEndian, &dcd.Header); err != nil {
+		return
+	}
+
+	if dcd.Header.Tag != HAB_TAG_DCD {
+		return errors.New("DCD header not found")
+	}
+
+	dcd.Data = buf[4:dcd.Header.Len]
+
+	return
+}
+
+// Bytes converts the DCD to byte array format.
+func (dcd *DCD) Bytes() []byte {
+	buf := new(bytes.Buffer)
+
+	buf.Write(dcd.Header.Bytes())
+	buf.Write(dcd.Data)
 
 	return buf.Bytes()
 }

@@ -15,7 +15,7 @@ const HAB_VER = 0x40
 const IVT_OFFSET = 1024
 
 // DCD represents the default DCD location in OCRAM for Serial Download Mode
-const DCD = 0x00910000
+const DCD_OFFSET = 0x00910000
 
 // HABv4 key constants
 // (p37, 4.3.7 Install Key, HABv4 API RM).

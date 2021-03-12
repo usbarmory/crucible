@@ -149,7 +149,7 @@ func sign() (err error) {
 
 	opts := hab.SignOptions{
 		Index: conf.index,
-		SDP: conf.sdp,
+		SDP:   conf.sdp,
 	}
 
 	if opts.CSFKeyPEMBlock, err = os.ReadFile(conf.csfKey); err != nil {
