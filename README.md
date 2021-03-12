@@ -59,10 +59,10 @@ GOPATH, as follows:
 
 ```
 # crucible fusing tool
-go get github.com/f-secure-foundry/crucible/cmd/crucible
+go install github.com/f-secure-foundry/crucible/cmd/crucible@latest
 
 # NXP HABv4 tool
-go get github.com/f-secure-foundry/crucible/cmd/habtool
+go install github.com/f-secure-foundry/crucible/cmd/habtool@latest
 ```
 
 Alternatively you can manually compile it from source:

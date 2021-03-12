@@ -51,7 +51,7 @@ You can automatically download, compile and install the package, under your
 GOPATH, as follows:
 
 ```
-go get github.com/f-secure-foundry/crucible/cmd/habtool
+go install github.com/f-secure-foundry/crucible/cmd/habtool@latest
 ```
 
 Alternatively you can manually compile it from source:
