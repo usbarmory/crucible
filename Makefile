@@ -7,7 +7,7 @@ BUILD := ${BUILD_USER}@${BUILD_HOST} on ${BUILD_DATE}
 REV := $(shell git rev-parse --short HEAD 2> /dev/null)
 PKG = "github.com/f-secure-foundry/crucible"
 
-.PHONY: test crucible habtool
+.PHONY: clean test crucible habtool habtool.exe
 
 all: test crucible habtool
 
@@ -35,3 +35,14 @@ habtool:
 	  -trimpath -ldflags "-s -w -X 'main.Revision=${REV}' -X 'main.Build=${BUILD}'" \
 	  cmd/habtool/habtool.go
 	@echo -e "compiled habtool ${REV} (${BUILD})"
+
+habtool.exe: BUILD_OPTS := GOOS=windows CGO_ENABLED=1 CXX=x86_64-w64-mingw32-g++ CC=x86_64-w64-mingw32-gcc
+habtool.exe:
+	$(BUILD_OPTS) ${GO} build -v \
+	  -trimpath -ldflags "-s -w -X 'main.Revision=${REV}' -X 'main.Build=${BUILD}'" \
+	  -o $(CURDIR)/habtool.exe \
+	  cmd/habtool/habtool.go
+	@echo -e "compiled habtool ${REV} (${BUILD})"
+
+clean:
+	@rm -fr $(CURDIR)/crucible $(CURDIR)/habtool $(CURDIR)/habtool.exe
