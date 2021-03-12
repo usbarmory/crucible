@@ -14,7 +14,7 @@ import (
 	"testing"
 )
 
-const key1 = `
+const srk1 = `
 -----BEGIN CERTIFICATE-----
 MIIDYDCCAkigAwIBAgIUVOfHUbVMUa6RtVhPdyvr8sZ33KMwDQYJKoZIhvcNAQEL
 BQAwHDEaMBgGA1UEAxQRU1JLXzFfc2hhMjU2XzIwNDgwHhcNMjEwMzA4MDgyOTQx
@@ -37,7 +37,7 @@ ADCROzrO8BudLzrzgt2vXpnhTZ5x/r/esPlQCv/eB+9EhHyclKFRoxzmGfe1+Qcz
 qMy3Wg==
 -----END CERTIFICATE-----`
 
-const key2 = `
+const srk2 = `
 -----BEGIN CERTIFICATE-----
 MIIDYDCCAkigAwIBAgIUPJnN3U7T1CCzf/VbwSuF+FrwKa0wDQYJKoZIhvcNAQEL
 BQAwHDEaMBgGA1UEAxQRU1JLXzJfc2hhMjU2XzIwNDgwHhcNMjEwMzA4MDgyOTQx
@@ -60,7 +60,7 @@ quEVBsI8EtVWefA1wKVvz0h3tkcyJfzCcpzl05FB1ioRrpPdZ2LbAMzR3lc2dlzu
 yaHKaQ==
 -----END CERTIFICATE-----`
 
-const key3 = `
+const srk3 = `
 -----BEGIN CERTIFICATE-----
 MIIDYDCCAkigAwIBAgIUXtJnF4taNxCZ1s052o+1dFudTU4wDQYJKoZIhvcNAQEL
 BQAwHDEaMBgGA1UEAxQRU1JLXzNfc2hhMjU2XzIwNDgwHhcNMjEwMzA4MDgyOTQy
@@ -83,7 +83,7 @@ kuY3hyjK/fzctbXU7V2SW7AkMT9JKMeDaTNN+Qi5xP0+0eGhHWCH4+dLXi+ZONHW
 ZwI3PA==
 -----END CERTIFICATE-----`
 
-const key4 = `
+const srk4 = `
 -----BEGIN CERTIFICATE-----
 MIIDYDCCAkigAwIBAgIUCcZ15PcyT5YT20XqaBa+dTfHI/wwDQYJKoZIhvcNAQEL
 BQAwHDEaMBgGA1UEAxQRU1JLXzRfc2hhMjU2XzIwNDgwHhcNMjEwMzA4MDgyOTQy
@@ -118,7 +118,7 @@ func TestPartialSRKTable(t *testing.T) {
 
 	table, _ := NewSRKTable(nil)
 
-	if err := table.AddKey([]byte(key1)); err != nil {
+	if err := table.AddKey([]byte(srk1)); err != nil {
 		t.Fatal(err)
 	}
 
@@ -136,7 +136,13 @@ func TestFullSRKTable(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	srks := [][]byte{[]byte(key1), []byte(key2), []byte(key3), []byte(key4)}
+	srks := [][]byte{
+		[]byte(srk1),
+		[]byte(srk2),
+		[]byte(srk3),
+		[]byte(srk4),
+	}
+
 	table, err := NewSRKTable(srks)
 
 	if err != nil {

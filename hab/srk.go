@@ -6,19 +6,14 @@
 // Use of this source code is governed by the license
 // that can be found in the LICENSE file.
 
-// Package hab provides support fuctions for NXP HABv4 Secure Boot provisioning
-// and executable signing.
 package hab
 
 import (
 	"bytes"
 	"crypto/rsa"
 	"crypto/sha256"
-	"crypto/x509"
 	"encoding/binary"
-	"encoding/pem"
 	"errors"
-	"fmt"
 	"math/big"
 )
 
@@ -94,16 +89,14 @@ type SRKTable struct {
 
 // AddKey imports an RSA public key in a Super Root Key table.
 func (table *SRKTable) AddKey(srk []byte) (err error) {
-	block, _ := pem.Decode([]byte(srk))
-
-	if block == nil {
-		return errors.New("failed to parse certificate PEM")
+	if len(table.SRK) > 4 {
+		return errors.New("no more than 4 SRKs can be added")
 	}
 
-	cert, err := x509.ParseCertificate(block.Bytes)
+	pubKey, _, err := parseCert([]byte(srk))
 
 	if err != nil {
-		return fmt.Errorf("failed to parse certificate, %v", err)
+		return
 	}
 
 	pk := PublicKey{
@@ -111,17 +104,7 @@ func (table *SRKTable) AddKey(srk []byte) (err error) {
 		Tag2: HAB_ALG_PKCS1,
 		Tag3: HAB_CMD_INS_KEY_HSH,
 	}
-
-	switch pubKey := cert.PublicKey.(type) {
-	case *rsa.PublicKey:
-		pk.Set(pubKey)
-	default:
-		return fmt.Errorf("unexpected public key type %T", pubKey)
-	}
-
-	if len(table.SRK) > 4 {
-		return errors.New("no more than 4 SRKs can be added")
-	}
+	pk.Set(pubKey)
 
 	table.SRK = append(table.SRK, pk)
 	table.Len = uint16(len(table.Bytes()))
@@ -138,7 +121,7 @@ func (table *SRKTable) Bytes() []byte {
 	binary.Write(buf, binary.BigEndian, table.Ver)
 
 	for _, pk := range table.SRK {
-		binary.Write(buf, binary.BigEndian, pk.Bytes())
+		buf.Write(pk.Bytes())
 	}
 
 	return buf.Bytes()
