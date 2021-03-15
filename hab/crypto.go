@@ -6,8 +6,6 @@
 // Use of this source code is governed by the license
 // that can be found in the LICENSE file.
 
-// Package hab provides support fuctions for NXP HABv4 Secure Boot provisioning
-// and executable signing.
 package hab
 
 import (
