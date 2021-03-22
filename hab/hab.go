@@ -6,8 +6,15 @@
 // Use of this source code is governed by the license
 // that can be found in the LICENSE file.
 
-// Package hab provides support fuctions for NXP HABv4 Secure Boot provisioning
-// and executable signing.
+// Package hab provides support functions for NXP HABv4 Secure Boot
+// provisioning and executable signing.
+//
+// WARNING: Enabling NXP HABv4 secure boot is an irreversible action that
+// permanently fuses verification keys hashes on the device. Any errors in the
+// process or loss of the signing PKI will result in a bricked device incapable
+// of executing unsigned code. This is a security feature, not a bug.
+//
+// The use of this package is therefore **at your own risk**.
 package hab
 
 import (

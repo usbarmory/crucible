@@ -77,6 +77,19 @@ Operation
 Usage: habtool [OPTIONS]
   -h                  Show this help
 
+SRK CA creation options:
+  -C <output path>    SRK private key in PEM format
+  -c <output path>    SRK public  key in PEM format
+
+CSF/IMG certificates creation options:
+  -C <input path>     SRK private key in PEM format
+  -c <input path>     SRK public  key in PEM format
+
+  -A <output path>    CSF private key in PEM format
+  -a <output path>    CSF public  key in PEM format
+  -B <output path>    IMG private key in PEM format
+  -b <output path>    IMG public  key in PEM format
+
 SRK table creation options:
   -1 <input path>     SRK public key 1 in PEM format
   -2 <input path>     SRK public key 2 in PEM format

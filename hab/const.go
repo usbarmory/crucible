@@ -8,6 +8,14 @@
 
 package hab
 
+// DEFAULT_KEY_LENGTH defines the default key length in bytes for generated HAB
+// PKI certificates.
+const DEFAULT_KEY_LENGTH = 2048
+
+// DEFAULT_KEY_EXPIRY defines the default key expiry in days for generated HAB
+// PKI certificates, note that Secure Boot devices ignore any expiration value.
+const DEFAULT_KEY_EXPIRY = 3650
+
 // HAB_VER specifies HABv4
 const HAB_VER = 0x40
 

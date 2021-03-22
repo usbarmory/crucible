@@ -9,6 +9,10 @@
 package main
 
 import (
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -28,6 +32,8 @@ type Config struct {
 	srk3 string
 	srk4 string
 
+	srkKey string
+	srkCrt string
 	csfKey string
 	csfCrt string
 	imgKey string
@@ -46,19 +52,37 @@ var Build string
 var conf *Config
 
 const warning = `
-WARNING: enabling secure boot functionality on the USB armory SoC, unlike
-similar features on modern PCs, is an irreversible action that permanently
-fuses verification keys hashes on the device. This means that any errors in the
-process or loss of the signing PKI will result in a bricked device incapable of
-executing unsigned code. This is a security feature, not a bug.
+████████████████████████████████████████████████████████████████████████████████
 
-This tool is EXPERIMENTAL and it is highly recommended to verify the SRK table
-hash, before fusing, by comparing it with the NXP IMX_CST_TOOL 2.2 generated
-one.
+                                **  WARNING  **
+
+Enabling NXP HABv4 secure boot is an irreversible action that permanently fuses
+verification keys hashes on the device.
+
+Any errors in the process or loss of the signing PKI will result in a bricked
+device incapable of executing unsigned code. This is a security feature, not a
+bug.
+
+The use of this tool is therefore **at your own risk**.
+
+████████████████████████████████████████████████████████████████████████████████
 `
 
 const usage = `Usage: habtool [OPTIONS]
   -h                  Show this help
+
+SRK CA creation options:
+  -C <output path>    SRK private key in PEM format
+  -c <output path>    SRK public  key in PEM format
+
+CSF/IMG certificates creation options:
+  -C <input path>     SRK private key in PEM format
+  -c <input path>     SRK public  key in PEM format
+
+  -A <output path>    CSF private key in PEM format
+  -a <output path>    CSF public  key in PEM format
+  -B <output path>    IMG private key in PEM format
+  -b <output path>    IMG public  key in PEM format
 
 SRK table creation options:
   -1 <input path>     SRK public key 1 in PEM format
@@ -107,15 +131,18 @@ func init() {
 	flag.StringVar(&conf.output, "o", "", "output")
 	flag.StringVar(&conf.table, "t", "SRK_1_2_3_4_table.bin", "SRK table")
 
-	flag.StringVar(&conf.srk1, "1", "SRK_1_crt.pem", "SRK public key 1 in PEM format")
-	flag.StringVar(&conf.srk2, "2", "SRK_2_crt.pem", "SRK public key 2 in PEM format")
-	flag.StringVar(&conf.srk3, "3", "SRK_3_crt.pem", "SRK public key 3 in PEM format")
-	flag.StringVar(&conf.srk4, "4", "SRK_4_crt.pem", "SRK public key 4 in PEM format")
+	flag.StringVar(&conf.srk1, "1", "", "SRK public key 1 in PEM format")
+	flag.StringVar(&conf.srk2, "2", "", "SRK public key 2 in PEM format")
+	flag.StringVar(&conf.srk3, "3", "", "SRK public key 3 in PEM format")
+	flag.StringVar(&conf.srk4, "4", "", "SRK public key 4 in PEM format")
 
-	flag.StringVar(&conf.csfKey, "A", "CSF_1_key.pem", "CSF private key in PEM format")
-	flag.StringVar(&conf.csfCrt, "a", "CSF_1_crt.pem", "CSF public  key in PEM format")
-	flag.StringVar(&conf.imgKey, "B", "IMG_1_key.pem", "IMG private key in PEM format")
-	flag.StringVar(&conf.imgCrt, "b", "IMG_1_crt.pem", "IMG public  key in PEM format")
+	flag.StringVar(&conf.srkKey, "C", "", "SRK private key in PEM format")
+	flag.StringVar(&conf.srkCrt, "c", "", "SRK public  key in PEM format")
+	flag.StringVar(&conf.csfKey, "A", "", "CSF private key in PEM format")
+	flag.StringVar(&conf.csfCrt, "a", "", "CSF public  key in PEM format")
+	flag.StringVar(&conf.imgKey, "B", "", "IMG private key in PEM format")
+	flag.StringVar(&conf.imgCrt, "b", "", "IMG public  key in PEM format")
+
 	flag.IntVar(&conf.index, "x", 1, "Index for SRK key")
 	flag.StringVar(&conf.engine, "e", "0xff", "Crypto engine (e.g. 0x1b for HAB_ENG_DCP)")
 
@@ -131,6 +158,14 @@ func main() {
 	log.Println(warning)
 
 	switch {
+	case len(conf.srkKey) > 0 && len(conf.srkCrt) > 0 &&
+		len(conf.csfKey) > 0 && len(conf.csfCrt) > 0 &&
+		len(conf.imgKey) > 0 && len(conf.imgCrt) > 0:
+		err = genCerts()
+	case len(conf.srkKey) > 0 && len(conf.srkCrt) > 0 &&
+		len(conf.csfKey) == 0 && len(conf.csfCrt) == 0 &&
+		len(conf.imgKey) == 0 && len(conf.imgCrt) == 0:
+		err = genCA()
 	case len(conf.table) > 0 && len(conf.input) > 0 && len(conf.output) > 0:
 		err = sign()
 	case len(conf.table) > 0 && len(conf.output) > 0:
@@ -142,6 +177,114 @@ func main() {
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
+}
+
+func saveCert(tag string, keyPath string, keyPEMBlock []byte, certPath string, certPEMBlock []byte) (err error) {
+	var keyFile, certFile *os.File
+
+	if keyFile, err = os.OpenFile(keyPath, os.O_WRONLY|os.O_CREATE|os.O_EXCL|os.O_TRUNC, 0600); err != nil {
+		return
+	}
+
+	if certFile, err = os.OpenFile(certPath, os.O_WRONLY|os.O_CREATE|os.O_EXCL|os.O_TRUNC, 0600); err != nil {
+		return
+	}
+
+	if _, err = keyFile.Write(keyPEMBlock); err != nil {
+		return
+	}
+
+	log.Printf("%s private key written to %s", tag, keyPath)
+
+	if _, err = certFile.Write(certPEMBlock); err != nil {
+		return
+	}
+
+	log.Printf("%s public  key written to %s", tag, certPath)
+
+	return
+}
+
+func genCerts() (err error) {
+	var signingKey *rsa.PrivateKey
+
+	SRKKeyPEMBlock, err := os.ReadFile(conf.srkKey)
+
+	if err != nil {
+		return
+	}
+
+	SRKCertPEMBlock, err := os.ReadFile(conf.srkCrt)
+
+	if err != nil {
+		return
+	}
+
+	caKey, _ := pem.Decode(SRKKeyPEMBlock)
+
+	if caKey == nil {
+		return errors.New("failed to parse SRK key PEM")
+	}
+
+	caCert, _ := pem.Decode(SRKCertPEMBlock)
+
+	if caCert == nil {
+		return errors.New("failed to parse SRK certificate PEM")
+	}
+
+	ca, err := x509.ParseCertificate(caCert.Bytes)
+
+	if err != nil {
+		return
+	}
+
+	caPriv, err := x509.ParsePKCS8PrivateKey(caKey.Bytes)
+
+	if err != nil {
+		return
+	}
+
+	switch k := caPriv.(type) {
+	case *rsa.PrivateKey:
+		signingKey = k
+	default:
+		return errors.New("failed to parse SRK key")
+	}
+
+	log.Printf("generating and signing CSF keypair")
+	CSFKeyPEMBlock, CSFCertPEMBlock, err := hab.NewCertificate("CSF", hab.DEFAULT_KEY_LENGTH, hab.DEFAULT_KEY_EXPIRY, ca, signingKey)
+
+	if err != nil {
+		return
+	}
+
+	log.Printf("generating and signing IMG keypair")
+	IMGKeyPEMBlock, IMGCertPEMBlock, err := hab.NewCertificate("IMG", hab.DEFAULT_KEY_LENGTH, hab.DEFAULT_KEY_EXPIRY, ca, signingKey)
+
+	if err != nil {
+		return
+	}
+
+	if err = saveCert("CSF", conf.csfKey, CSFKeyPEMBlock, conf.csfCrt, CSFCertPEMBlock); err != nil {
+		return
+	}
+
+	if err = saveCert("IMG", conf.imgKey, IMGKeyPEMBlock, conf.imgCrt, IMGCertPEMBlock); err != nil {
+		return
+	}
+
+	return
+}
+
+func genCA() (err error) {
+	log.Printf("generating SRK certification authority")
+	SRKKeyPEMBlock, SRKCertPEMBlock, err := hab.NewCA(hab.DEFAULT_KEY_LENGTH, hab.DEFAULT_KEY_EXPIRY)
+
+	if err != nil {
+		return
+	}
+
+	return saveCert("SRK", conf.srkKey, SRKKeyPEMBlock, conf.srkCrt, SRKCertPEMBlock)
 }
 
 func sign() (err error) {
@@ -186,6 +329,7 @@ func sign() (err error) {
 		return
 	}
 
+	log.Printf("generating signatures for %s", conf.input)
 	output, err := hab.Sign(input, opts)
 
 	if err != nil {
