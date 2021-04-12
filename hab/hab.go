@@ -151,7 +151,9 @@ func Sign(imx []byte, opts SignOptions) (out []byte, err error) {
 		// Clear DCD pointer in IVT since Serial download mode will do
 		// the same on loading the image.
 		ivt.DCD = 0
-		copy(imx, ivt.Bytes())
+
+		// make a copy to leave input slice untouched
+		imx = append(ivt.Bytes(), imx[len(ivt.Bytes()):]...)
 	}
 
 	// Prepare CSF body
