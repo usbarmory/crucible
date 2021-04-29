@@ -10,6 +10,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"embed"
 	"errors"
 	"flag"
@@ -137,9 +138,11 @@ func listFusemapRegisters() {
 }
 
 func listFusemaps() {
-	t := tabwriter.NewWriter(os.Stdout, 16, 8, 0, '\t', tabwriter.TabIndent)
+	var list bytes.Buffer
 
-	_, _ = fmt.Println("Model (-m)\tReference (-r)\tDriver")
+	_, _ = fmt.Fprintf(&list, "Model (-m)\tReference (-r)\tDriver\n")
+
+	t := tabwriter.NewWriter(&list, 16, 8, 0, '\t', tabwriter.TabIndent)
 
 	_ = fs.WalkDir(conf.fusemapDir, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -163,7 +166,8 @@ func listFusemaps() {
 		f, err := fusemap.Parse(y)
 
 		if err != nil {
-			return err
+			log.Printf("skipping %s (%v)", path, err)
+			return nil
 		}
 
 		_, _ = fmt.Fprintf(t, "%s\t%s\t%s\n", f.Processor, f.Reference, f.Driver)
@@ -172,6 +176,8 @@ func listFusemaps() {
 	})
 
 	_ = t.Flush()
+
+	fmt.Printf(list.String())
 }
 
 func checkArguments() error {
