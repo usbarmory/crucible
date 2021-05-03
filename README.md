@@ -181,7 +181,9 @@ The syntax is the following:
 ```
 processor: <string>       # processor model
 reference: <string>       # reference manual number (for P/N revision match)
+                          #
 driver: <string>          # Linux driver name
+bank_size: <int>          # bank size
                           #
 gaps:                     # gap definitions
   <string>:               #   name of first register after gap

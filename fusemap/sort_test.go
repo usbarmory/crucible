@@ -17,6 +17,7 @@ func TestSort(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 registers:
   REG1:
     bank: 0

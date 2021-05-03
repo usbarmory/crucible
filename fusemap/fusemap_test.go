@@ -71,6 +71,7 @@ func TestDuplicateRegisterName(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 registers:
   NAME1:
     fuses:
@@ -113,6 +114,7 @@ func TestInvalidWordIndices(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 registers:
   REG1:
     bank: 0
@@ -130,6 +132,7 @@ registers:
 ---
 reference: test
 driver: nvmem-imx-iim
+bank_size: 32
 registers:
   REG1:
     bank: 0
@@ -149,6 +152,7 @@ func TestInvalidFuseIndices(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 registers:
   REG1:
     bank: 0
@@ -171,6 +175,7 @@ registers:
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 registers:
   REG1:
     bank: 0
@@ -195,6 +200,7 @@ func TestValidMap(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 registers:
   REG1:
     bank: 0
@@ -217,6 +223,7 @@ func TestFind(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 registers:
   REG1:
     fuses:
@@ -268,6 +275,7 @@ func TestInvalidGap(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 gaps:
   REG3:
     read: true
@@ -292,6 +300,7 @@ registers:
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 gaps:
   REG2:
     len: 0x100
@@ -315,6 +324,7 @@ registers:
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 gaps:
   REG2:
     read: true
@@ -340,6 +350,7 @@ func TestGap(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 gaps:
   REG2:
     read: true

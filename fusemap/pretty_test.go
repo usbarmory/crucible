@@ -17,6 +17,7 @@ func TestFuseBitMap8(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-iim
+bank_size: 8
 registers:
   REG1:
     bank: 0
@@ -65,6 +66,7 @@ func TestFuseBitMap32(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 registers:
   REG1:
     bank: 0

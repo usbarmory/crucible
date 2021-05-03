@@ -21,11 +21,11 @@ type FuseMap struct {
 	Processor string               `json:"processor"`
 	Reference string               `json:"reference"`
 	Driver    string               `json:"driver"`
+	BankSize  int                  `json:"bank_size"`
 	Registers map[string]*Register `json:"registers"`
 	Gaps      map[string]*Gap      `json:"gaps"`
 
-	WordSize int
-	BankSize int
+	WordSize  int
 
 	valid bool
 }
@@ -135,14 +135,14 @@ func (f *FuseMap) Validate() (err error) {
 		return errors.New("missing reference")
 	}
 
-	if f.Driver == "" {
-		return errors.New("missing driver")
-	}
-
-	f.WordSize, f.BankSize, err = f.driverParams()
+	f.WordSize, err = f.driverParams()
 
 	if err != nil {
 		return
+	}
+
+	if f.BankSize <= 0 {
+		return errors.New("missing bank_size")
 	}
 
 	for n1, reg := range f.Registers {

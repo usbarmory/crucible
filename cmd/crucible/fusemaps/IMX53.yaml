@@ -12,7 +12,9 @@
 #
 processor: IMX53
 reference: 2.1
+
 driver: nvmem-imx-iim
+bank_size: 32
 
 registers:
   BANK0_WORD0:

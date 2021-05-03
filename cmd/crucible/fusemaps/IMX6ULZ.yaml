@@ -13,6 +13,9 @@
 processor: IMX6ULZ
 reference: 0
 
+driver: nvmem-imx-ocotp
+bank_size: 8
+
 # On the IMX6ULZ a gap is present between OTP Bank5 Word7 (21B_C6F0h) and
 # undocumented OTP Bank6 Word0 (21B_C800h), affecting the next available bank
 # addressing (OCOTP_GP3_0).
@@ -24,7 +27,6 @@ reference: 0
 # The gap definition below is required to ensure correct read operations for
 # all registers beyond the gap.
 #
-driver: nvmem-imx-ocotp
 registers:
   OCOTP_LOCK:
     bank: 0

@@ -13,6 +13,9 @@
 processor: IMX6ULL
 reference: 1
 
+driver: nvmem-imx-ocotp
+bank_size: 8
+
 # On the IMX6ULL a gap is present between OTP Bank5 Word7 (21B_C6F0h) and OTP
 # Bank6 Word0 (21B_C800h).
 #
@@ -23,7 +26,6 @@ reference: 1
 # The gap definition below is required to ensure correct read operations for
 # all registers beyond the gap.
 #
-driver: nvmem-imx-ocotp
 gaps:
   OCOTP_ROM_PATCH0:
     read: true

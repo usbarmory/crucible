@@ -12,14 +12,14 @@ import (
 	"errors"
 )
 
-func (f *FuseMap) driverParams() (wordSize int, bankSize int, err error) {
+func (f *FuseMap) driverParams() (wordSize int, err error) {
 	switch f.Driver {
 	case "nvmem-imx-iim":
 		wordSize = 1
-		bankSize = 32
 	case "nvmem-imx-ocotp":
 		wordSize = 4
-		bankSize = 8
+	case "":
+		err = errors.New("missing driver")
 	default:
 		err = errors.New("unsupported driver")
 	}

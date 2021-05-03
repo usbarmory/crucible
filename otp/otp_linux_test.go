@@ -59,6 +59,7 @@ func TestBlowErrors(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 registers:
   REG1:
     fuses:
@@ -98,6 +99,7 @@ func TestOverBlow(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 registers:
   REG1:
     fuses:
@@ -143,6 +145,7 @@ func TestBlow(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 registers:
   REG1:
     bank: 1
@@ -229,6 +232,7 @@ func TestBlowAndRead(t *testing.T) {
 ---
 reference: test
 driver: nvmem-imx-ocotp
+bank_size: 8
 registers:
   REG1:
     bank: 0

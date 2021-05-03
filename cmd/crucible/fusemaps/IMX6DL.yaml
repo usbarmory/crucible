@@ -14,6 +14,8 @@ processor: IMX6DL
 reference: 2
 
 driver: nvmem-imx-ocotp
+bank_size: 8
+
 registers:
   OCOTP_LOCK:
     bank: 0
