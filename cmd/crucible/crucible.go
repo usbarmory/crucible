@@ -106,7 +106,7 @@ func init() {
 	}
 
 	flag.BoolVar(&conf.force, "Y", false, "do not prompt for confirmation (DANGEROUS)")
-	flag.BoolVar(&conf.list, "l", false, "list fusemaps\nvisualize fusemap registers (with -m and -r)\nvisualize read value (with read operation on a register)")
+	flag.BoolVar(&conf.list, "l", false, "list fusemaps\nvisualize fusemap      (with -m and -r)\nvisualize read value   (with read operation on a register)\nvisualize read fusemap (with read operation and no register)")
 	flag.BoolVar(&conf.syslog, "s", false, "use syslog, print only result value to stdout")
 	flag.IntVar(&conf.base, "b", 0, "value base/format (2,10,16)")
 	flag.StringVar(&conf.endianness, "e", "", "value endianness (big,little)")
@@ -131,8 +131,21 @@ func listFusemapRegisters() {
 		log.Fatalf("error: could not open fusemap, %v", err)
 	}
 
+	var res []byte
+
 	for _, reg := range f.RegistersByWriteAddress() {
-		fmt.Print(reg.BitMap(nil))
+		if flag.Arg(0) == "read" {
+			res, _, _, _, err = otp.ReadNVMEM(conf.device, f, reg.Name)
+
+			if err != nil {
+				return
+			}
+
+			n := new(big.Int)
+			n.SetBytes(res)
+		}
+
+		fmt.Print(reg.BitMap(res))
 		fmt.Println()
 	}
 }

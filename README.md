@@ -103,8 +103,9 @@ Usage: crucible [options] [read|blow] [fuse/register name] [value]
   -f string
     	YAML fusemaps directory (default "fusemaps")
   -l	list fusemaps
-    	visualize fusemap registers (with -m and -r)
-    	visualize read value (with read operation on a register)
+    	visualize fusemap      (with -m and -r)
+    	visualize read value   (with read operation on a register)
+    	visualize read fusemap (with read operation and no register)
   -m string
     	processor model
   -n string
