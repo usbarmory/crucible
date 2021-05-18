@@ -270,7 +270,7 @@ registers:
       BOOT_FAILURE_INDICATOR_PIN_SELECT1:
         offset: 10
         len: 1
-      ENABLE_EMMC_2_2K_PULLUP:
+      ENABLE_EMMC_22K_PULLUP:
         offset: 11
         len: 1
       USDHC_PAD_PULL_DOWN:
