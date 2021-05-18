@@ -247,6 +247,9 @@ driver and fusemap availability.
 | NXP    | i.MX6ULZ | nvmem-imx-ocotp | yes   | yes   | yes     |
 | NXP    | i.MX7D   | nvmem-imx-ocotp | yes   | yes   | no      |
 | NXP    | i.MX7ULP | nvmem-imx-ocotp | yes   | yes   | no      |
+| NXP    | i.MX8M   | nvmem-imx-ocotp | yes   | yes   | yes     |
+| NXP    | i.MX8MM  | nvmem-imx-ocotp | yes   | yes   | yes     |
+| NXP    | i.MX8MP  | nvmem-imx-ocotp | yes   | yes   | yes     |
 
 ^ The nvmem-imx-ocotp driver does not handle addressing gaps between OTP banks,
 the fusemap supports gap information specifically to work this problem around
