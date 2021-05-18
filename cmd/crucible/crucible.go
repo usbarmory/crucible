@@ -138,7 +138,7 @@ func listFusemapRegisters() {
 			res, _, _, _, err = otp.ReadNVMEM(conf.device, f, reg.Name)
 
 			if err != nil {
-				return
+				log.Fatalf("error: could not read fusemap, %v", err)
 			}
 
 			n := new(big.Int)
