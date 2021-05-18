@@ -1,0 +1,592 @@
+---
+# crucible
+# One-Time-Programmable (OTP) fusing tool
+#
+# Copyright (c) F-Secure Corporation
+#
+# Use of this source code is governed by the license
+# that can be found in the LICENSE file.
+
+# i.MX 8M Plus Applications Processors Reference Manual
+# IMX8MPRM Rev. 0, 04/2021
+#
+processor: IMX8MP
+reference: 0
+
+driver: nvmem-imx-ocotp
+bank_size: 4
+
+registers:
+  OCOTP_LOCK:
+    bank: 0
+    word: 0
+    fuses:
+      TESTER_LOCK:
+        offset: 0
+        len: 2
+      BOOT_CFG_LOCK:
+        offset: 2
+        len: 2
+      CST_SRK_LOCK:
+        offset: 9
+        len: 1
+      SJC_RESP_LOCK:
+        offset: 10
+        len: 1
+      USB_ID_LOCK:
+        offset: 12
+        len: 2
+      MAC_ADDR_LOCK:
+        offset: 14
+        len: 2
+      GP1_LOCK:
+        offset: 20
+        len: 2
+      GP2_LOCK:
+        offset: 22
+        len: 2
+
+  OCOTP_TESTER0:
+    bank: 0
+    word: 1
+    fuses:
+      GP4_LOCK:
+        offset: 4
+        len: 2
+      GP6_LOCK:
+        offset: 10
+        len: 2
+      GP7_LOCK:
+        offset: 12
+        len: 2
+      GP8_LOCK:
+        offset: 14
+        len: 2
+      GP9_LOCK:
+        offset: 16
+        len: 2
+
+  OCOTP_TESTER1:
+    bank: 0
+    word: 2
+    fuses:
+      UNIQUE_ID:
+        offset: 0
+        len: 64
+      UNIQUE_ID[42:0]:
+        offset: 0
+        len: 43
+
+  OCOTP_TESTER2:
+    bank: 0
+    word: 3
+    fuses:
+      UNIQUE_ID[47:43]:
+        offset: 11
+        len: 5
+      UNIQUE_ID[55:48]:
+        offset: 16
+        len: 8
+      UNIQUE_ID[63:56]:
+        offset: 24
+        len: 8
+
+  OCOTP_TESTER3:
+    bank: 1
+    word: 0
+    fuses:
+      SPEED_GRADING:
+        offset: 8
+        len: 6
+      EXPORT_CONTROL:
+        offset: 16
+        len: 1
+      SEC_CONFIG[0]:
+        offset: 17
+        len: 1
+      M7_DISABLE:
+        offset: 21
+        len: 1
+      VPU_G1_DISABLE:
+        offset: 24
+        len: 1
+      VPU_G2_DISABLE:
+        offset: 25
+        len: 1
+      CAN_DISABLE:
+        offset: 28
+        len: 1
+      CAN_FD_DISABLE:
+        offset: 29
+        len: 1
+      VPU_VC800E_DISABLE:
+        offset: 30
+        len: 1
+
+  OCOTP_TESTER4:
+    bank: 1
+    word: 1
+    fuses:
+      IMG_ISP1_DISABLE:
+        offset: 0
+        len: 1
+      IMG_ISP2_DISABLE:
+        offset: 1
+        len: 1
+      IMG_DEWARP_DISABLE:
+        offset: 2
+        len: 1
+      NPU_DISABLE:
+        offset: 3
+        len: 1
+      AUDIO_PROCESSOR_DISABLE:
+        offset: 4
+        len: 1
+      ASRC_DISABLE:
+        offset: 5
+        len: 1
+      GPU2D_DISABLE:
+        offset: 6
+        len: 1
+      GPU3D_DISABLE:
+        offset: 7
+        len: 1
+      USB1_DISABLE:
+        offset: 8
+        len: 1
+      USB2_DISABLE:
+        offset: 9
+        len: 1
+      PCIE1_DISABLE:
+        offset: 11
+        len: 1
+      ENET1_DISABLE:
+        offset: 13
+        len: 1
+      ENET2_DISABLE:
+        offset: 14
+        len: 1
+      MIPI_CSI1_DISABLE:
+        offset: 15
+        len: 1
+      MIPI_CSI2_DISABLE:
+        offset: 16
+        len: 1
+      MIPI_DSI1_DISABLE:
+        offset: 17
+        len: 1
+      LVDS1_DISABLE:
+        offset: 19
+        len: 1
+      LVDS2_DISABLE:
+        offset: 20
+        len: 1
+      EARC_RX_DISABLE:
+        offset: 30
+        len: 1
+
+  OCOTP_TESTER5:
+    bank: 1
+    word: 2
+    fuses:
+      GP4:
+        offset: 7
+        len: 25
+
+  OCOTP_BOOT_CFG0:
+    bank: 1
+    word: 3
+    fuses:
+      BOOT_CFG:
+        offset: 0
+        len: 16
+      FLEXSPI_AUTO_PROBE_TYPE:
+        offset: 0
+        len: 2
+      FLEXSPI_AUTO_PROBE_EN:
+        offset: 2
+        len: 1
+      OVERRIDE_FLEXSPI_BT_SEL_VAL:
+        offset: 3
+        len: 2
+      OVERRIDE_FLEXSPI_BT_SEL:
+        offset: 5
+        len: 1
+      OVERRIDE_NAND_PG_PER_BLK_VAL:
+        offset: 6
+        len: 2
+      OVERRIDE_NAND_PG_PER_BLK:
+        offset: 8
+        len: 1
+      OVERRIDE_USDHC_BT_SEL_VAL:
+        offset: 9
+        len: 2
+      OVERRIDE_USDHC_BT_SEL:
+        offset: 11
+        len: 1
+      BOOT_MODE_FUSES:
+        offset: 12
+        len: 4
+      # https://community.nxp.com/t5/i-MX-Processors/DIR-BT-DIS-and-others/m-p/1221272
+      SJC_DISABLE:
+        offset: 21
+        len: 1
+      JTAG_MODE[1:0]:
+        offset: 22
+        len: 2
+      SEC_CONFIG[1]:
+        offset: 25
+        len: 1
+      BT_FUSE_SEL:
+        offset: 28
+        len: 1
+      FORCE_COLD_BOOT:
+        offset: 29
+        len: 1
+
+  OCOTP_BOOT_CFG1:
+    bank: 2
+    word: 0
+    fuses:
+      BOOT_CFG_PARAMETER1:
+        offset: 0
+        len: 32
+      FLEXSPI_FEQ_SEL:
+        offset: 0
+        len: 3
+      FLEXSPI_DUMMY_CYCLE_SEL:
+        offset: 3
+        len: 4
+      DCACHE_DIS:
+        offset: 8
+        len: 1
+      BT_FREQ_SEL:
+        offset: 9
+        len: 1
+      WDOG_EN:
+        offset: 10
+        len: 1
+      ICACHE_DIS:
+        offset: 12
+        len: 1
+      BT_LPB_POLARITY:
+        offset: 13
+        len: 1
+      BT_LPB:
+        offset: 15
+        len: 2
+      WDOG_TIMEOUT_SELECT:
+        offset: 16
+        len: 2
+      FLEXSPI_HOLD_TIME_SEL:
+        offset: 18
+        len: 2
+      FORCE_BT_FROM_FUSE:
+        offset: 20
+        len: 1
+      SDP_DISABLE:
+        offset: 21
+        len: 1
+      NOC_ID_REMAP_BYPASS:
+        offset: 23
+        len: 1
+      DCACHE_BYPASS_DIS:
+        offset: 24
+        len: 1
+      RECOVER_ECSPI_BOOT_EN:
+        offset: 25
+        len: 1
+      ECSPI_CS_SEL:
+        offset: 26
+        len: 2
+      ECSPI_ADDR_SEL:
+        offset: 28
+        len: 1
+      ECSPI_PORT_SEL:
+        offset: 29
+        len: 3
+
+  OCOTP_BOOT_CFG2:
+    bank: 2
+    word: 1
+    fuses:
+      BOOT_CFG_PARAMETER2:
+        offset: 0
+        len: 32
+      USDHC_MFG_VOL_SEL:
+        offset: 0
+        len: 1
+      USDHC_VOL_SEL:
+        offset: 1
+        len: 1
+      SD_SPEED:
+        offset: 2
+        len: 2
+      SDMMC_BUS_WIDTH:
+        offset: 4
+        len: 2
+      EMMC_FAST_BT:
+        offset: 6
+        len: 1
+      USDHC_PWR_EN:
+        offset: 7
+        len: 1
+      SDMMC_DLL_DLY:
+        offset: 8
+        len: 7
+      USDHC_DLL_SEL:
+        offset: 15
+        len: 1
+      USDHC_DLL_EN:
+        offset: 16
+        len: 1
+      USDHC_PAD_SION_EN:
+        offset: 18
+        len: 1
+      IMG_CNTN_SET1_OFFSET:
+        offset: 19
+        len: 4
+      RECOVERY_SDMMC_BOOT_DIS:
+        offset: 23
+        len: 1
+      USDHC_OVRD_PAD_SETTING_LOW8:
+        offset: 24
+        len: 8
+
+  OCOTP_BOOT_CFG3:
+    bank: 2
+    word: 2
+    fuses:
+      BOOT_CFG_PARAMETER3:
+        offset: 0
+        len: 32
+      EMMC_FAST_BT_ACK:
+        offset: 0
+        len: 1
+      USDHC_OVRD_PAD_SETTING_UP1:
+        offset: 1
+        len: 1
+      USDHC_PWR_POLARITY:
+        offset: 2
+        len: 1
+      USDHC_PWR_DELAY:
+        offset: 3
+        len: 1
+      USDHC_PWR_INTERVAL:
+        offset: 4
+        len: 2
+      SD_CALI_STEP:
+        offset: 6
+        len: 2
+      NAND_RST_TIME:
+        offset: 8
+        len: 1
+      NAND_TG_PREAMBLE_RD_LATENCY:
+        offset: 9
+        len: 4
+      NAND_FCB_SERCH_COUNT:
+        offset: 13
+        len: 2
+      BT_TOGGLE_MODE:
+        offset: 15
+        len: 1
+      NAND_OVERRIDE_PAD_SETTING:
+        offset: 24
+        len: 8
+
+  OCOTP_BOOT_CFG4:
+    bank: 2
+    word: 3
+    fuses:
+      BOOT_CFG_PARAMETER4:
+        offset: 0
+        len: 32
+      NAND_CS_NUM:
+        offset: 0
+        len: 2
+      NAND_GPMI_DDR_DLL_VAL:
+        offset: 3
+        len: 4
+      NAND_ROW_ADDR_BYTES:
+        offset: 10
+        len: 2
+      NAND_READ_RETRY_SEQ_ID:
+        offset: 12
+        len: 4
+
+  OCOTP_SRK0:
+    bank: 6
+    word: 0
+    fuses:
+      CST_SRK_HASH:
+        offset: 0
+        len: 256
+      CST_SRK_HASH[255:224]:
+        offset: 0
+        len: 32
+  OCOTP_SRK1:
+    bank: 6
+    word: 1
+    fuses:
+      CST_SRK_HASH[223:192]:
+        offset: 0
+        len: 32
+  OCOTP_SRK2:
+    bank: 6
+    word: 2
+    fuses:
+      CST_SRK_HASH[191:160]:
+        offset: 0
+        len: 32
+  OCOTP_SRK3:
+    bank: 6
+    word: 3
+    fuses:
+      CST_SRK_HASH[159:128]:
+        offset: 0
+        len: 32
+  OCOTP_SRK4:
+    bank: 7
+    word: 0
+    fuses:
+      CST_SRK_HASH[127:96]:
+        offset: 0
+        len: 32
+  OCOTP_SRK5:
+    bank: 7
+    word: 1
+    fuses:
+      CST_SRK_HASH[95:64]:
+        offset: 0
+        len: 32
+  OCOTP_SRK6:
+    bank: 7
+    word: 2
+    fuses:
+      CST_SRK_HASH[63:32]:
+        offset: 0
+        len: 32
+  OCOTP_SRK7:
+    bank: 7
+    word: 3
+    fuses:
+      CST_SRK_HASH[31:0]:
+        offset: 0
+        len: 32
+
+  OCOTP_SJC_RESP0:
+    bank: 8
+    word: 0
+    fuses:
+      SJC_RESP:
+        offset: 0
+        len: 56
+      SJC_RESP[31:0]:
+        offset: 0
+        len: 32
+  OCOTP_SJC_RESP1:
+    bank: 8
+    word: 1
+    fuses:
+      SJC_RESP[55:32]:
+        offset: 0
+        len: 24
+
+  OCOTP_USB_ID:
+    bank: 8
+    word: 2
+    fuses:
+      USB_VID:
+        offset: 0
+        len: 16
+      USB_PID:
+        offset: 16
+        len: 16
+
+  OCOTP_FIELD_RETURN:
+    bank: 8
+    word: 3
+    fuses:
+      FIELD_RETURN:
+        offset: 0
+        len: 1
+
+  OCOTP_MAC_ADDR0:
+    bank: 9
+    word: 0
+    fuses:
+      MAC_ADDR:
+        offset: 0
+        len: 48
+      MAC_ADDR[31:0]:
+        offset: 0
+        len: 32
+  OCOTP_MAC_ADDR1:
+    bank: 9
+    word: 1
+    fuses:
+      MAC_ADDR[47:32]:
+        offset: 0
+        len: 16
+  OCOTP_MAC_ADDR2:
+    bank: 9
+    word: 2
+
+  OCOTP_SRK_REVOKE:
+    bank: 9
+    word: 3
+    fuses:
+      CST_SRK_REVOKE[2:0]:
+        offset: 0
+        len: 3
+
+  OCOTP_GP10:
+    bank: 14
+    word: 0
+    fuses:
+      GP1:
+        offset: 0
+        len: 64
+      GP1[31:0]:
+        offset: 0
+        len: 32
+  OCOTP_GP11:
+    bank: 14
+    word: 1
+    fuses:
+      GP1[63:32]:
+        offset: 0
+        len: 32
+
+  OCOTP_GP20:
+    bank: 14
+    word: 2
+    fuses:
+      GP2:
+        offset: 0
+        len: 64
+      GP2[31:0]:
+        offset: 0
+        len: 32
+  OCOTP_GP21:
+    bank: 14
+    word: 3
+    fuses:
+      GP2[63:32]:
+        offset: 0
+        len: 32
+
+# The RM is not clear on bank/word addressing for the end of the fusemap, which
+# probably has an undetermined gap at its end. For this reason the following
+# fuses are not specified for now:
+#
+#     UNIQUE_ID[127:64]:
+#       len: 64
+#     GP6:
+#       len: 128
+#     GP7:
+#       len: 128
+#     GP8:
+#       len: 128
+#     GP9:
+#       len: 128

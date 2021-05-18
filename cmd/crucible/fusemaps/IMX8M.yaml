@@ -1,0 +1,462 @@
+---
+# crucible
+# One-Time-Programmable (OTP) fusing tool
+#
+# Copyright (c) F-Secure Corporation
+#
+# Use of this source code is governed by the license
+# that can be found in the LICENSE file.
+
+# i.MX 8M Dual/8M QuadLite/8M Quad Applications Processors Reference Manual
+# IMX8MDQLQRM Rev. 3, 04/2020
+#
+processor: IMX8M
+reference: 3
+
+driver: nvmem-imx-ocotp
+bank_size: 4
+
+registers:
+  OCOTP_LOCK:
+    bank: 0
+    word: 0
+    fuses:
+      TESTER_LOCK:
+        offset: 0
+        len: 2
+      BOOT_CFG_LOCK:
+        offset: 2
+        len: 2
+      SRK_LOCK:
+        offset: 9
+        len: 1
+      SJC_RESP_LOCK:
+        offset: 10
+        len: 1
+      USB_ID_LOCK:
+        offset: 12
+        len: 2
+      MAC_ADDR_LOCK:
+        offset: 14
+        len: 2
+      GP1_LOCK:
+        offset: 20
+        len: 2
+      GP2_LOCK:
+        offset: 22
+        len: 2
+
+  OCOTP_TESTER0:
+    bank: 0
+    word: 1
+    fuses:
+      SJC_CHALLENGE:
+        offset: 0
+        len: 64
+      SJC_CHALLENGE[31:0]:
+        offset: 0
+        len: 32
+      UNIQUE_ID:
+        offset: 0
+        len: 64
+      UNIQUE_ID[31:0]:
+        offset: 0
+        len: 32
+
+  OCOTP_TESTER1:
+    bank: 0
+    word: 2
+    fuses:
+      SJC_CHALLENGE[63:32]:
+        offset: 0
+        len: 32
+      UNIQUE_ID[63:32]:
+        offset: 0
+        len: 32
+
+  OCOTP_TESTER3:
+    bank: 1
+    word: 0
+    fuses:
+      SPEED_GRADING:
+        offset: 8
+        len: 2
+
+  OCOTP_TESTER4:
+    bank: 1
+    word: 1
+    fuses:
+      NUM_A53_CORES:
+        offset: 0
+        len: 2
+      M4_DISABLE:
+        offset: 8
+        len: 1
+      M4_MPU_DISABLE:
+        offset: 9
+        len: 1
+      M4_FPU_DISABLE:
+        offset: 10
+        len: 1
+      USB_OTG1_DISABLE:
+        offset: 11
+        len: 1
+      USB_OTG2_DISABLE:
+        offset: 12
+        len: 1
+      DOLBY_DISABLE:
+        offset: 13
+        len: 1
+      VPU_VP9_DISABLE:
+        offset: 18
+        len: 1
+      VPU_HEVC_DISABLE:
+        offset: 19
+        len: 1
+      VPU_AVC_DISABLE:
+        offset: 20
+        len: 1
+      VPU_DISABLE:
+        offset: 21
+        len: 1
+      PCIE1_DISABLE:
+        offset: 22
+        len: 1
+      PCIE2_DISABLE:
+        offset: 23
+        len: 1
+      GPU_DISABLE:
+        offset: 24
+        len: 1
+      HDMI_DISABLE:
+        offset: 25
+        len: 1
+      DC_DISABLE:
+        offset: 26
+        len: 1
+      HDCP_DISABLE:
+        offset: 27
+        len: 1
+      MIPI_DSI_DISABLE:
+        offset: 28
+        len: 1
+      ENET_DISABLE:
+        offset: 29
+        len: 1
+      MIPI_CSI1_DISABLE:
+        offset: 30
+        len: 1
+      MIPI_CSI2_DISABLE:
+        offset: 31
+        len: 1
+
+  OCOTP_BOOT_CFG0:
+    bank: 1
+    word: 3
+    fuses:
+      BOOT_CFG:
+        offset: 0
+        len: 16
+      BT_FUSE_SEL:
+        offset: 28
+        len: 1
+      FORCE_COLD_BOOT:
+        offset: 29
+        len: 1
+
+  OCOTP_BOOT_CFG1:
+    bank: 2
+    word: 0
+    fuses:
+      BOOT_CFG_PARAMETER1:
+        offset: 0
+        len: 32
+      BT_FREQ_SEL:
+        offset: 9
+        len: 1
+      WDOG_ENABLE:
+        offset: 10
+        len: 1
+      TZASC_ENABLE:
+        offset: 11
+        len: 1
+      ICACHE_DIS:
+        offset: 12
+        len: 1
+      BT_LPB_POLARITY:
+        offset: 13
+        len: 1
+      LPB_BOOT:
+        offset: 14
+        len: 2
+      WDOG_TIMEOUT_SELECT:
+        offset: 16
+        len: 3
+      FORCE_INTERNAL_BOOT:
+        offset: 20
+        len: 1
+      SDP_DISABLE:
+        offset: 21
+        len: 1
+      SDP_READ_DISABLE:
+        offset: 22
+        len: 1
+      NOC_ID_REMAP_BYPASS:
+        offset: 23
+        len: 1
+      UART_SERIAL_DOWNLOAD_DISABLE:
+        offset: 24
+        len: 1
+
+  OCOTP_BOOT_CFG2:
+    bank: 2
+    word: 1
+    fuses:
+      BOOT_CFG_PARAMETER2:
+        offset: 0
+        len: 32
+      MMC_DLL_DLY[6:0]:
+        offset: 8
+        len: 7
+      USDHC_DLL_SEL:
+        offset: 15
+        len: 1
+      USDHC_DLL_EN:
+        offset: 16
+        len: 1
+      USDHC_OVERRIDE_PAD_SETTINGS:
+        offset: 17
+        len: 1
+      USDHC_IOMUX_SION_BIT_ENABLE:
+        offset: 18
+        len: 1
+      ENABLE_EMMC_22K_PULLUP:
+        offset: 19
+        len: 1
+      USDHC_PAD_PULL_DOWN:
+        offset: 20
+        len: 1
+      EMMC-4.4_RESET_TO_PRE-IDLE_STATE:
+        offset: 21
+        len: 1
+      USDHC_CMD_OE_PRE_EN:
+        offset: 22
+        len: 1
+      DISABLE_SDMMC_MFG:
+        offset: 23
+        len: 1
+      USDHC_PAD_SETTINGS:
+        offset: 24
+        len: 8
+
+  OCOTP_BOOT_CFG3:
+    bank: 2
+    word: 2
+    fuses:
+      BOOT_CFG_PARAMETER3:
+        offset: 0
+        len: 32
+      EMMC_FAST_BT_ACK:
+        offset: 0
+        len: 1
+      DCD_SIZE:
+        offset: 1
+        len: 1
+      USDHC_PWR_POLARITY:
+        offset: 2
+        len: 1
+      USDHC_PWR_DELAY:
+        offset: 3
+        len: 1
+      USDHC_PWR_INTERVAL:
+        offset: 4
+        len: 2
+      SD_CALI_STEP:
+        offset: 6
+        len: 2
+      NAND_READ_CMD_CODE1:
+        offset: 8
+        len: 8
+      NAND_READ_CMD_CODE2:
+        offset: 16
+        len: 8
+      NAND_PAD_SETTINGS:
+        offset: 24
+        len: 8
+
+  OCOTP_BOOT_CFG4:
+    bank: 2
+    word: 3
+    fuses:
+      BOOT_CFG_PARAMETER4:
+        offset: 0
+        len: 32
+      NAND_CS_NUM:
+        offset: 0
+        len: 3
+      NAND_GPMI_DDR_DLL_VAL:
+        offset: 3
+        len: 4
+      NAND_OVERRIDE_PAD_SETTINGS:
+        offset: 7
+        len: 1
+      NAND_READ_RETRY_SEQ_ID:
+        offset: 12
+        len: 4
+      RNG_TRIM:
+        offset: 24
+        len: 8
+
+  OCOTP_SRK0:
+    bank: 6
+    word: 0
+    fuses:
+      SRK_HASH:
+        offset: 0
+        len: 256
+      SRK_HASH[255:224]:
+        offset: 0
+        len: 32
+  OCOTP_SRK1:
+    bank: 6
+    word: 1
+    fuses:
+      SRK_HASH[223:192]:
+        offset: 0
+        len: 32
+  OCOTP_SRK2:
+    bank: 6
+    word: 2
+    fuses:
+      SRK_HASH[191:160]:
+        offset: 0
+        len: 32
+  OCOTP_SRK3:
+    bank: 6
+    word: 3
+    fuses:
+      SRK_HASH[159:128]:
+        offset: 0
+        len: 32
+  OCOTP_SRK4:
+    bank: 7
+    word: 0
+    fuses:
+      SRK_HASH[127:96]:
+        offset: 0
+        len: 32
+  OCOTP_SRK5:
+    bank: 7
+    word: 1
+    fuses:
+      SRK_HASH[95:64]:
+        offset: 0
+        len: 32
+  OCOTP_SRK6:
+    bank: 7
+    word: 2
+    fuses:
+      SRK_HASH[63:32]:
+        offset: 0
+        len: 32
+  OCOTP_SRK7:
+    bank: 7
+    word: 3
+    fuses:
+      SRK_HASH[31:0]:
+        offset: 0
+        len: 32
+
+  OCOTP_SJC_RESP0:
+    bank: 8
+    word: 0
+    fuses:
+      SJC_RESP:
+        offset: 0
+        len: 56
+      SJC_RESP[31:0]:
+        offset: 0
+        len: 32
+  OCOTP_SJC_RESP1:
+    bank: 8
+    word: 1
+    fuses:
+      SJC_RESP[55:32]:
+        offset: 0
+        len: 24
+
+  OCOTP_USB_ID:
+    bank: 8
+    word: 2
+    fuses:
+      USB_VID:
+        offset: 0
+        len: 16
+      USB_PID:
+        offset: 16
+        len: 16
+
+  OCOTP_MAC_ADDR0:
+    bank: 9
+    word: 0
+    fuses:
+      MAC_ADDR:
+        offset: 0
+        len: 48
+      MAC_ADDR[31:0]:
+        offset: 0
+        len: 32
+  OCOTP_MAC_ADDR1:
+    bank: 9
+    word: 1
+    fuses:
+      MAC_ADDR[47:32]:
+        offset: 0
+        len: 16
+  OCOTP_MAC_ADDR2:
+    bank: 9
+    word: 2
+
+  OCOTP_SRK_REVOKE:
+    bank: 9
+    word: 3
+    fuses:
+      SRK_REVOKE[2:0]:
+        offset: 0
+        len: 3
+
+  OCOTP_GP10:
+    bank: 14
+    word: 0
+    fuses:
+      GP1:
+        offset: 0
+        len: 64
+      GP1[31:0]:
+        offset: 0
+        len: 32
+  OCOTP_GP11:
+    bank: 14
+    word: 1
+    fuses:
+      GP1[63:32]:
+        offset: 0
+        len: 32
+
+  OCOTP_GP20:
+    bank: 14
+    word: 2
+    fuses:
+      GP2:
+        offset: 0
+        len: 64
+      GP2[31:0]:
+        offset: 0
+        len: 32
+  OCOTP_GP21:
+    bank: 14
+    word: 3
+    fuses:
+      GP2[63:32]:
+        offset: 0
+        len: 32
