@@ -25,6 +25,9 @@ Authors
 Andrea Barisani  
 andrea.barisani@f-secure.com | andrea@inversepath.com  
 
+Andrej Rosano  
+andrej.rosano@f-secure.com | andrej@inversepath.com  
+
 Introduction
 ============
 
@@ -83,8 +86,9 @@ Usage: crucible [options] [read|blow] [fuse/register name] [value]
   -f string
     	YAML fusemaps directory (default "fusemaps")
   -l	list fusemaps
-    	visualize fusemap registers (with -m and -r)
-    	visualize read value (with read operation on a register)
+    	visualize fusemap      (with -m and -r)
+    	visualize read value   (with read operation on a register)
+    	visualize read fusemap (with read operation and no register)
   -m string
     	processor model
   -n string
@@ -161,7 +165,9 @@ The syntax is the following:
 ```
 processor: <string>       # processor model
 reference: <string>       # reference manual number (for P/N revision match)
+                          #
 driver: <string>          # Linux driver name
+bank_size: <int>          # bank size
                           #
 gaps:                     # gap definitions
   <string>:               #   name of first register after gap
@@ -224,6 +230,9 @@ driver and fusemap availability.
 | NXP    | i.MX6ULZ | nvmem-imx-ocotp | yes   | yes   | yes     |
 | NXP    | i.MX7D   | nvmem-imx-ocotp | yes   | yes   | no      |
 | NXP    | i.MX7ULP | nvmem-imx-ocotp | yes   | yes   | no      |
+| NXP    | i.MX8M   | nvmem-imx-ocotp | yes   | yes   | yes     |
+| NXP    | i.MX8MM  | nvmem-imx-ocotp | yes   | yes   | yes     |
+| NXP    | i.MX8MP  | nvmem-imx-ocotp | yes   | yes   | yes     |
 
 ^ The nvmem-imx-ocotp driver does not handle addressing gaps between OTP banks,
 the fusemap supports gap information specifically to work this problem around
