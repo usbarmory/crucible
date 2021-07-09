@@ -155,11 +155,11 @@ func NewCA(keyLength int, keyExpiry int) (pemKey []byte, pemCert []byte, err err
 // string (e.g. "CSF" or "IMG") is used in the certificate Common Name to
 // distinguish its role.
 func NewCertificate(tag string, keyLength int, keyExpiry int, parent *x509.Certificate, signer *rsa.PrivateKey) (pemKey []byte, pemCert []byte, err error) {
-	serialSize := new(big.Int).Lsh(big.NewInt(1), 160)
-	serial, _ := rand.Int(rand.Reader, serialSize)
+	// serial should be 0
+	var serial big.Int
 
 	certificate := x509.Certificate{
-		SerialNumber: serial,
+		SerialNumber: &serial,
 		Subject: pkix.Name{
 			CommonName: fmt.Sprintf("%s_sha256_%d", tag, keyLength),
 		},
