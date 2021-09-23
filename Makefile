@@ -27,13 +27,13 @@ test:
 crucible:
 	${GO} build -v \
 	  -trimpath -ldflags "-s -w -X 'main.Revision=${REV}' -X 'main.Build=${BUILD}'" \
-	  cmd/crucible/crucible.go
+	  ./cmd/crucible
 	@echo -e "compiled crucible ${REV} (${BUILD})"
 
 habtool:
 	${GO} build -v \
 	  -trimpath -ldflags "-s -w -X 'main.Revision=${REV}' -X 'main.Build=${BUILD}'" \
-	  cmd/habtool/habtool.go
+	  ./cmd/habtool
 	@echo -e "compiled habtool ${REV} (${BUILD})"
 
 habtool.exe: BUILD_OPTS := GOOS=windows CGO_ENABLED=1 CXX=x86_64-w64-mingw32-g++ CC=x86_64-w64-mingw32-gcc
@@ -41,7 +41,7 @@ habtool.exe:
 	$(BUILD_OPTS) ${GO} build -v \
 	  -trimpath -ldflags "-s -w -X 'main.Revision=${REV}' -X 'main.Build=${BUILD}'" \
 	  -o $(CURDIR)/habtool.exe \
-	  cmd/habtool/habtool.go
+	  ./cmd/habtool
 	@echo -e "compiled habtool ${REV} (${BUILD})"
 
 clean:
