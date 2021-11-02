@@ -168,6 +168,12 @@ registers:
       BOOT_CFG:
         offset: 0
         len: 16
+      SJC_DISABLE:
+        offset: 21
+        len: 1
+      JTAG_SMODE:
+        offset: 22
+        len: 2
       SEC_CONFIG[1]:
         offset: 25
         len: 1
