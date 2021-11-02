@@ -8,7 +8,7 @@
 # that can be found in the LICENSE file.
 
 # i.MX 8M Mini Applications Processor Reference Manual
-# IMX8MMRM Rev. 2, 08/2019
+# IMX8MMRM Rev. 3, 11/2020
 #
 processor: IMX8MM
 reference: 3
@@ -47,6 +47,9 @@ registers:
         len: 2
       GP2_LOCK:
         offset: 22
+        len: 2
+      GP5_LOCK:
+        offset: 24
         len: 2
 
   OCOTP_TESTER0:
