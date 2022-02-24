@@ -231,7 +231,7 @@ registers:
       SJC_DISABLE:
         offset: 21
         len: 1
-      JTAG_MODE[1:0]:
+      JTAG_SMODE[1:0]:
         offset: 22
         len: 2
       SEC_CONFIG[1]:
