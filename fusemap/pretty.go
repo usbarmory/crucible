@@ -160,7 +160,8 @@ func (reg *Register) BitMap(res []byte) (m string) {
 		}
 
 		if lineLen < len(regMap) {
-			line += fmt.Sprintf("%s ", strings.Repeat("─", len(regMap)-lineLen))
+			line += strings.Repeat("─", len(regMap)-lineLen)
+			line += " "
 		}
 
 		lines = append(lines, fmt.Sprintf("%s %s\n", line, fuse.Name))
