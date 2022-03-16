@@ -24,9 +24,9 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/f-secure-foundry/crucible/fusemap"
-	"github.com/f-secure-foundry/crucible/otp"
-	"github.com/f-secure-foundry/crucible/util"
+	"github.com/usbarmory/crucible/fusemap"
+	"github.com/usbarmory/crucible/otp"
+	"github.com/usbarmory/crucible/util"
 )
 
 type Config struct {

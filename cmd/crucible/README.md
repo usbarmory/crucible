@@ -1,7 +1,7 @@
 One-Time-Programmable (OTP) fusing tool
 =======================================
 
-crucible | https://github.com/f-secure-foundry/crucible  
+crucible | https://github.com/usbarmory/crucible  
 Copyright (c) F-Secure Corporation
 
 ```
@@ -51,19 +51,19 @@ Installing
 ==========
 
 Pre-compiled binaries for Linux are released
-[here](https://github.com/f-secure-foundry/crucible/releases).
+[here](https://github.com/usbarmory/crucible/releases).
 
 You can also automatically download, compile and install the package, under
 your GOPATH, as follows:
 
 ```
-go install github.com/f-secure-foundry/crucible/cmd/crucible@latest
+go install github.com/usbarmory/crucible/cmd/crucible@latest
 ```
 
 Alternatively you can manually compile it from source:
 
 ```
-git clone https://github.com/f-secure-foundry/crucible
+git clone https://github.com/usbarmory/crucible
 cd crucible && make
 ```
 
@@ -208,7 +208,7 @@ crucible -s -m IMX6UL -r 1 -l
 ...
 ```
 
-A bundle of [fusemaps](https://github.com/f-secure-foundry/crucible/tree/master/fusemaps)
+A bundle of [fusemaps](https://github.com/usbarmory/crucible/tree/master/fusemaps)
 for all supported drivers is embedded in the `crucible` executable.
 
 Supported drivers
@@ -244,7 +244,7 @@ affected registers.
 License
 =======
 
-crucible | https://github.com/f-secure-foundry/crucible  
+crucible | https://github.com/usbarmory/crucible  
 Copyright (c) F-Secure Corporation
 
 This program is free software: you can redistribute it and/or modify it under

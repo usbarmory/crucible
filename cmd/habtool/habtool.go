@@ -19,7 +19,7 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/f-secure-foundry/crucible/hab"
+	"github.com/usbarmory/crucible/hab"
 )
 
 type Config struct {

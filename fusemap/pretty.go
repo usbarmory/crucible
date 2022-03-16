@@ -14,7 +14,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/f-secure-foundry/crucible/util"
+	"github.com/usbarmory/crucible/util"
 )
 
 const bitSep = "┃"

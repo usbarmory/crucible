@@ -424,7 +424,7 @@ registers:
         offset: 0
         len: 16
       # MAC2_ADDR is not described in the RM, however multiple implementations
-      # use it, see discussion at github.com/f-secure-foundry/crucible/issues/5
+      # use it, see discussion at github.com/usbarmory/crucible/issues/5
       MAC2_ADDR:
         offset: 16
         len: 48

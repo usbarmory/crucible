@@ -17,7 +17,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/f-secure-foundry/crucible/fusemap"
+	"github.com/usbarmory/crucible/fusemap"
 )
 
 var fusemaps = os.DirFS("../fusemaps")

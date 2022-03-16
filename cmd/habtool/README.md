@@ -1,7 +1,7 @@
 NXP HABv4 Secure Boot utility
 =============================
 
-crucible | https://github.com/f-secure-foundry/crucible  
+crucible | https://github.com/usbarmory/crucible  
 Copyright (c) F-Secure Corporation
 
 ```
@@ -32,7 +32,7 @@ Introduction
 ============
 
 The `habtool` utility provides support functions for NXP HABv4
-[Secure Boot](https://github.com/f-secure-foundry/usbarmory/wiki/Secure-boot-(Mk-II))
+[Secure Boot](https://github.com/usbarmory/usbarmory/wiki/Secure-boot-(Mk-II))
 provisioning and executable signing.
 
 Warning
@@ -48,19 +48,19 @@ Installing
 ==========
 
 Pre-compiled binaries for Linux and Windows are released
-[here](https://github.com/f-secure-foundry/crucible/releases).
+[here](https://github.com/usbarmory/crucible/releases).
 
 You can also automatically download, compile and install the package, under
 your GOPATH, as follows:
 
 ```
-go install github.com/f-secure-foundry/crucible/cmd/habtool@latest
+go install github.com/usbarmory/crucible/cmd/habtool@latest
 ```
 
 Alternatively you can manually compile it from source:
 
 ```
-git clone https://github.com/f-secure-foundry/crucible
+git clone https://github.com/usbarmory/crucible
 cd crucible && make
 ```
 
@@ -116,14 +116,14 @@ Executable signing options:
                       (depends on mfg tool, default: 0x00910000)
 ```
 
-The [USB armory](https://github.com/f-secure-foundry/usbarmory/wiki) guide for
-[Secure Boot](https://github.com/f-secure-foundry/usbarmory/wiki/Secure-boot-(Mk-II))
+The [USB armory](https://github.com/usbarmory/usbarmory/wiki) guide for
+[Secure Boot](https://github.com/usbarmory/usbarmory/wiki/Secure-boot-(Mk-II))
 provides an introduction on HABv4 using the USB armory Mk II as reference platform.
 
 License
 =======
 
-crucible | https://github.com/f-secure-foundry/crucible  
+crucible | https://github.com/usbarmory/crucible  
 Copyright (c) F-Secure Corporation
 
 This program is free software: you can redistribute it and/or modify it under

@@ -13,8 +13,8 @@ package otp
 import (
 	"encoding/binary"
 
-	"github.com/f-secure-foundry/crucible/util"
-	"github.com/f-secure-foundry/tamago/soc/imx6/ocotp"
+	"github.com/usbarmory/crucible/util"
+	"github.com/usbarmory/tamago/soc/imx6/ocotp"
 )
 
 func init() {

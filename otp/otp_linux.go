@@ -14,8 +14,8 @@ import (
 	"errors"
 	"os"
 
-	"github.com/f-secure-foundry/crucible/fusemap"
-	"github.com/f-secure-foundry/crucible/util"
+	"github.com/usbarmory/crucible/fusemap"
+	"github.com/usbarmory/crucible/util"
 )
 
 // BlowNVMEM a fuse through Linux NVMEM subsystem framework, returns the input

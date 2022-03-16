@@ -5,7 +5,7 @@ BUILD_HOST ?= $(shell hostname)
 BUILD_DATE ?= $(shell /bin/date -u "+%Y-%m-%d %H:%M:%S")
 BUILD := ${BUILD_USER}@${BUILD_HOST} on ${BUILD_DATE}
 REV := $(shell git rev-parse --short HEAD 2> /dev/null)
-PKG = "github.com/f-secure-foundry/crucible"
+PKG = "github.com/usbarmory/crucible"
 
 .PHONY: clean test crucible habtool habtool.exe
 
