@@ -2,7 +2,7 @@ One-Time-Programmable (OTP) fusing tool
 =======================================
 
 crucible | https://github.com/usbarmory/crucible  
-Copyright (c) F-Secure Corporation
+Copyright (c) WithSecure Corporation
 
 ```
  ▄████▄   ██▀███   █    ██  ▄████▄   ██▓ ▄▄▄▄    ██▓    ▓█████
@@ -23,10 +23,10 @@ Authors
 =======
 
 Andrea Barisani  
-andrea.barisani@f-secure.com | andrea@inversepath.com  
+andrea.barisani@withsecure.com | andrea@inversepath.com  
 
 Andrej Rosano  
-andrej.rosano@f-secure.com | andrej@inversepath.com  
+andrej.rosano@withsecure.com | andrej@inversepath.com  
 
 Introduction
 ============
@@ -315,7 +315,7 @@ License
 =======
 
 crucible | https://github.com/usbarmory/crucible  
-Copyright (c) F-Secure Corporation
+Copyright (c) WithSecure Corporation
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
