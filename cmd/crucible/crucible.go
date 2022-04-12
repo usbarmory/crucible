@@ -260,6 +260,10 @@ func read(tag string, f *fusemap.FuseMap, name string) (err error) {
 		fmt.Println(value)
 	} else if conf.list {
 		if reg, ok := f.Registers[name]; ok {
+			if conf.endianness == "little" {
+				res = util.SwitchEndianness(res)
+			}
+
 			log.Println()
 			log.Print(reg.BitMap(res))
 		}
