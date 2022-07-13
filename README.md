@@ -245,7 +245,7 @@ driver and fusemap availability.
 | NXP    | i.MX6UL  | nvmem-imx-ocotp | yes^  | yes   | yes     |
 | NXP    | i.MX6ULL | nvmem-imx-ocotp | yes   | yes   | yes     |
 | NXP    | i.MX6ULZ | nvmem-imx-ocotp | yes   | yes   | yes     |
-| NXP    | i.MX7D   | nvmem-imx-ocotp | yes   | yes   | no      |
+| NXP    | i.MX7D   | nvmem-imx-ocotp | yes   | yes   | yes     |
 | NXP    | i.MX7ULP | nvmem-imx-ocotp | yes   | yes   | no      |
 | NXP    | i.MX8M   | nvmem-imx-ocotp | yes   | yes   | yes     |
 | NXP    | i.MX8MM  | nvmem-imx-ocotp | yes   | yes   | yes     |
