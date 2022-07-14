@@ -24,7 +24,7 @@ registers:
       TESTER_LOCK:
         offset: 0
         len: 2
-      BOOT_CFG_LOCK: 
+      BOOT_CFG_LOCK:
         offset: 2
         len: 2
       MEM_TRIM_LOCK:
@@ -35,7 +35,7 @@ registers:
         len: 2
       OTPMK_LOCK:
         offset: 8
-        len: 1          
+        len: 1
       SRK_LOCK:
         offset: 9
         len: 1
@@ -181,7 +181,7 @@ registers:
         len: 3
       SD_BOOT_BUS_WIDTH:
         offset: 4
-        len: 1     
+        len: 1
       SD_BOOT_BUS_FAST_BOOT:
         offset: 7
         len: 1
@@ -196,7 +196,7 @@ registers:
         len: 2
       EMMC_BOOT_BUS_WIDTH:
         offset: 4
-        len: 3     
+        len: 3
       EMMC_BOOT_BUS_FAST_BOOT:
         offset: 7
         len: 1
@@ -425,7 +425,7 @@ registers:
       MEM_TRIM1[31:0]:
         offset: 0
         len: 32
-        
+
   OCOTP_MEM_ANA0:
     bank: 3
     word: 2
@@ -505,7 +505,7 @@ registers:
       OTPMK7[31:0]:
         offset: 0
         len: 32
-             
+
   OCOTP_SRK0:
     bank: 6
     word: 0
@@ -668,7 +668,7 @@ registers:
 
   OCOTP_MAU_KEY6:
     bank: 11
-    word: 2      
+    word: 2
 
   OCOTP_MAU_KEY7:
     bank: 11
