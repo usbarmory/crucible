@@ -14,11 +14,12 @@ import (
 	"encoding/binary"
 
 	"github.com/usbarmory/crucible/util"
+	"github.com/usbarmory/tamago/soc/imx6/imx6ul"
 	"github.com/usbarmory/tamago/soc/imx6/ocotp"
 )
 
 func init() {
-	ocotp.Init()
+	imx6ul.OCOTP.Init()
 }
 
 // Blow an OTP fuse using the NXP On-Chip OTP Controller.
@@ -47,9 +48,7 @@ func BlowOCOTP(bank int, word int, off int, bitLen int, val []byte) (err error) 
 		w := word + (i / ocotp.WordSize)
 		v := binary.LittleEndian.Uint32(val[i : i+ocotp.WordSize])
 
-		err = ocotp.Blow(bank, w, v)
-
-		if err != nil {
+		if err = imx6ul.OCOTP.Blow(bank, w, v); err != nil {
 			return
 		}
 	}
@@ -73,7 +72,7 @@ func ReadOCOTP(bank int, word int, off int, bitLen int) (res []byte, err error) 
 	for i := 0; i < len(res); i += ocotp.WordSize {
 		w := word + (i / ocotp.WordSize)
 
-		val, err := ocotp.Read(bank, w)
+		val, err := imx6ul.OCOTP.Read(bank, w)
 
 		if err != nil {
 			return nil, err
