@@ -14,8 +14,8 @@ import (
 	"encoding/binary"
 
 	"github.com/usbarmory/crucible/util"
-	"github.com/usbarmory/tamago/soc/imx6/imx6ul"
-	"github.com/usbarmory/tamago/soc/imx6/ocotp"
+	"github.com/usbarmory/tamago/soc/nxp/imx6ul"
+	"github.com/usbarmory/tamago/soc/nxp/ocotp"
 )
 
 func init() {
