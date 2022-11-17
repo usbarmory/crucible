@@ -67,11 +67,10 @@ git clone https://github.com/usbarmory/crucible
 cd crucible && make
 ```
 
-All targets can be cross compiled for ARM as follows:
-
-```
-make GOARCH=arm
-```
+All targets can be cross compiled for ARM as follows...
+* 32-bit arm: `make GOARCH=arm`
+* 64-bit arm: `make GOARCH=arm64`
+* To just build the crucible executable for 64-bit arm: `make crucible GOARCH=arm64`
 
 Operation
 =========
