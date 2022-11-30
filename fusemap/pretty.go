@@ -75,7 +75,7 @@ func byteArrayToBitMap(val []byte, off int, size int) (m []byte) {
 // start in other registers are not shown (to overcome this fusemaps can
 // include fuse definitions to alias their register range).
 //
-// Additionally fuse definitions which overlaps across each other (e.g.
+// Additionally fuse definitions which overlap across each other (e.g.
 // aliases) result in an overlapping bit map, individual fuse description
 // remains accurate.
 //
