@@ -161,14 +161,128 @@ registers:
       TAMPER_PIN_DISABLE:
         offset: 20
         len: 2
+      TSC_UNAVAILABLE:
+        offset: 22
+        len: 1
+      ADC2_UNAVAILABLE:
+        offset: 23
+        len: 1
+      SIM1_UNAVAILABLE:
+        offset: 24
+        len: 1
+      SIM2_UNAVAILABLE:
+        offset: 25
+        len: 1
+      FLEXCAN1_UNAVAILABLE:
+        offset: 26
+        len: 1
+      FLEXCAN2_UNAVAILABLE:
+        offset: 27
+        len: 1
 
   OCOTP_CFG3:
     bank: 0
     word: 4
     fuses:
+      SPDIF_UNAVAILABLE:
+        offset: 2
+        len: 1
+      EIM_UNAVAILABLE:
+        offset: 3
+        len: 1
+      SD1_UNAVAILABLE:
+        offset: 4
+        len: 1
+      SD2_UNAVAILABLE:
+        offset: 5
+        len: 1
+      QSPI1_UNAVAILABLE:
+        offset: 6
+        len: 1
+      GPMI_UNAVAILABLE:
+        offset: 7
+        len: 1
+      APBHDMA_UNAVAILABLE:
+        offset: 7
+        len: 1
+      LCDIF_UNAVAILABLE:
+        offset: 8
+        len: 1
+      PXP_UNAVAILABLE:
+        offset: 9
+        len: 1
+      CSI_UNAVAILABLE:
+        offset: 10
+        len: 1
+      ADC1_UNAVAILABLE:
+        offset: 11
+        len: 1
+      ENET1_UNAVAILABLE:
+        offset: 12
+        len: 1
+      ENET2_UNAVAILABLE:
+        offset: 13
+        len: 1
+      CAAM_UNAVAILABLE:
+        offset: 14
+        len: 1
+      USB_OTG2_UNAVAILABLE:
+        offset: 15
+        len: 1
       SPEED_GRADING:
         offset: 16
         len: 2
+      SAI2_UNAVAILABLE:
+        offset: 24
+        len: 1
+      SAI3_UNAVAILABLE:
+        offset: 24
+        len: 1
+      BEE_UNAVAILABLE:
+        offset: 25
+        len: 1
+      UART5_UNAVAILABLE:
+        offset: 26
+        len: 1
+      UART6_UNAVAILABLE:
+        offset: 26
+        len: 1
+      UART7_UNAVAILABLE:
+        offset: 26
+        len: 1
+      UART8_UNAVAILABLE:
+        offset: 26
+        len: 1
+      PWM5_UNAVAILABLE:
+        offset: 27
+        len: 1
+      PWM6_UNAVAILABLE:
+        offset: 27
+        len: 1
+      PWM7_UNAVAILABLE:
+        offset: 27
+        len: 1
+      PWM8_UNAVAILABLE:
+        offset: 27
+        len: 1
+      ECSPI3_UNAVAILABLE:
+        offset: 28
+        len: 1
+      ECSPI4_UNAVAILABLE:
+        offset: 28
+        len: 1
+      I2C3_UNAVAILABLE:
+        offset: 29
+        len: 1
+      I2C4_UNAVAILABLE:
+        offset: 29
+        len: 1
+      GPT2_UNAVAILABLE:
+        offset: 30
+        len: 1
+      EPIT2_UNAVAILABLE:
+        offset: 31
+        len: 1
 
   OCOTP_CFG4:
     bank: 0
