@@ -78,7 +78,7 @@ cd crucible && make
 All targets can be cross compiled for ARM as follows:
 
 ```
-make GOARCH=arm
+make crucible GOARCH=arm
 ```
 
 The `habtool` utility can be cross compiled Windows as follows:
