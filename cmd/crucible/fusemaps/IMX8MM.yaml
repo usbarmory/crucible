@@ -345,6 +345,29 @@ registers:
         offset: 24
         len: 8
 
+  OCOTP_TMU:
+    bank: 3
+    word: 3
+    fuses:
+      TMU_CONFIG:
+        offset: 0
+        len: 26
+      TMU_25C_CAL_VAL:
+        offset: 0
+        len: 8
+      TMU_85C_CAL_VAL:
+        offset: 8
+        len: 8
+      TMU_SLOPE:
+        offset: 16
+        len: 4
+      TMU_VREF:
+        offset: 20
+        len: 5
+      TMU_USE_HOT_CAL:
+        offset: 25
+        len: 1
+
   OCOTP_SRK0:
     bank: 6
     word: 0
