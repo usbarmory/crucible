@@ -515,30 +515,30 @@ registers:
     bank: 9
     word: 0
     fuses:
-      MAC1_ADDR:
+      MAC_0_ADDR:
         offset: 0
         len: 48
-      MAC1_ADDR[31:0]:
+      MAC_0_ADDR[31:0]:
         offset: 0
         len: 32
   OCOTP_MAC_ADDR1:
     bank: 9
     word: 1
     fuses:
-      MAC1_ADDR[47:32]:
+      MAC_0_ADDR[47:32]:
         offset: 0
         len: 16
-      MAC2_ADDR:
+      MAC_1_ADDR:
         offset: 16
         len: 48
-      MAC2_ADDR[15:0]:
+      MAC_1_ADDR[15:0]:
         offset: 16
         len: 16
   OCOTP_MAC_ADDR2:
     bank: 9
     word: 2
     fuses:
-      MAC2_ADDR[47:16]:
+      MAC_1_ADDR[47:16]:
         offset: 0
         len: 32
 
