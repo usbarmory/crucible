@@ -444,9 +444,21 @@ registers:
   OCOTP_ANA0:
     bank: 1
     word: 5
+
   OCOTP_ANA1:
     bank: 1
     word: 6
+    fuses:
+      HOT_TEMP:
+        offset: 0
+        len: 8
+      HOT_COUNT:
+        offset: 8
+        len: 12
+      ROOM_COUNT:
+        offset: 20
+        len: 12
+
   OCOTP_ANA2:
     bank: 1
     word: 7
