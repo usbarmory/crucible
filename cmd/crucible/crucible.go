@@ -331,8 +331,9 @@ func main() {
 	flag.Parse()
 
 	if conf.syslog {
-		logwriter, _ := syslog.New(syslog.LOG_INFO, "crucible")
-		log.SetOutput(logwriter)
+		if logwriter, _ := syslog.New(syslog.LOG_INFO, "crucible"); logwriter != nil {
+			log.SetOutput(logwriter)
+		}
 	} else {
 		log.SetOutput(os.Stdout)
 	}
