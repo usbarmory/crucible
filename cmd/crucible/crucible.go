@@ -333,6 +333,8 @@ func main() {
 	if conf.syslog {
 		if logwriter, _ := syslog.New(syslog.LOG_INFO, "crucible"); logwriter != nil {
 			log.SetOutput(logwriter)
+		} else {
+			log.SetOutput(os.Stderr)
 		}
 	} else {
 		log.SetOutput(os.Stdout)
