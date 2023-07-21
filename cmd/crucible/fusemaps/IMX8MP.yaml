@@ -586,14 +586,14 @@ registers:
         offset: 0
         len: 32
 
-  OCOTP_UNIQUEID1:
+  OCOTP_UNIQUE_ID[95:64]:
     bank: 40
     word: 0
     fuses:
       UNIQUE_ID[95:64]:
         offset: 0
         len: 32
-  OCOTP_UNIQUEID2:
+  OCOTP_UNIQUE_ID[127:96]:
     bank: 40
     word: 1
     fuses:
