@@ -586,12 +586,25 @@ registers:
         offset: 0
         len: 32
 
+  OCOTP_UNIQUEID1:
+    bank: 40
+    word: 0
+    fuses:
+      UNIQUE_ID[95:64]:
+        offset: 0
+        len: 32
+  OCOTP_UNIQUEID2:
+    bank: 40
+    word: 1
+    fuses:
+      UNIQUE_ID[127:96]:
+        offset: 0
+        len: 32
+
 # The RM is not clear on bank/word addressing for the end of the fusemap, which
 # probably has an undetermined gap at its end. For this reason the following
 # fuses are not specified for now:
 #
-#     UNIQUE_ID[127:64]:
-#       len: 64
 #     GP6:
 #       len: 128
 #     GP7:
