@@ -629,10 +629,20 @@ registers:
       MAC_ADDR[47:32]:
         offset: 0
         len: 16
+      MAC_ADDR2:
+        offset: 16
+        len: 48
+      MAC_ADDR2[16:0]:
+        offset: 16
+        len: 16
 
   OCOTP_MAC_ADDR2:
     bank: 9
     word: 2
+    fuses:
+      MAC_ADDR2[47:17]:
+        offset: 0
+        len: 32
 
   OCOTP_SRK_REVOKE:
     bank: 9
