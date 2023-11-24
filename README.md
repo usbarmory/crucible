@@ -33,7 +33,7 @@ Introduction
 
 The `crucible` utility provides user space support for reading, and writing,
 One-Time-Programmable (OTP) fuses of System-on-Chip (SoC) application
-processors through the [Linux NVMEM framework](https://github.com/torvalds/linux/blob/master/Documentation/nvmem/nvmem.txt).
+processors through the [Linux NVMEM framework](https://github.com/torvalds/linux/blob/master/Documentation/driver-api/nvmem.rst).
 
 The `habtool` utility provides support functions for NXP HABv4
 [Secure Boot](https://github.com/usbarmory/usbarmory/wiki/Secure-boot-(Mk-II))
