@@ -546,9 +546,9 @@ registers:
     bank: 9
     word: 3
     fuses:
-      CST_SRK_REVOKE[2:0]:
+      CST_SRK_REVOKE[3:0]:
         offset: 0
-        len: 3
+        len: 4
 
   OCOTP_GP10:
     bank: 14
