@@ -428,9 +428,24 @@ registers:
   OCOTP_MEM0:
     bank: 1
     word: 0
+
   OCOTP_MEM1:
     bank: 1
     word: 1
+    fuses:
+      PROG_TRIM:
+        offset: 26
+        len: 6
+      BGR_TRIM:
+        offset: 20
+        len: 6
+      VOLT_MON_TRIM:
+        offset: 10
+        len: 10
+      TEMP_MON_TRIM:
+        offset: 0
+        len: 10
+
   OCOTP_MEM2:
     bank: 1
     word: 2
