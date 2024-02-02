@@ -20,7 +20,7 @@ import (
 	"math/big"
 	"time"
 
-	"go.mozilla.org/pkcs7"
+	"github.com/smallstep/pkcs7"
 )
 
 func padCert(buf []byte) []byte {

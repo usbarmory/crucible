@@ -9,6 +9,7 @@ require (
 )
 
 require (
+	github.com/smallstep/pkcs7 v0.0.0-20231107075624-be1870d87d13 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
