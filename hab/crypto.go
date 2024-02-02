@@ -10,12 +10,12 @@ package hab
 
 import (
 	"bytes"
+	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"errors"
 	"fmt"
 	"math/big"
 	"time"
@@ -31,61 +31,7 @@ func padCert(buf []byte) []byte {
 	return buf
 }
 
-func parseCert(certPEMBlock []byte) (*rsa.PublicKey, []byte, error) {
-	block, _ := pem.Decode([]byte(certPEMBlock))
-
-	if block == nil {
-		return nil, nil, errors.New("failed to parse certificate PEM")
-	}
-
-	cert, err := x509.ParseCertificate(block.Bytes)
-
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to parse certificate, %v", err)
-	}
-
-	switch pubKey := cert.PublicKey.(type) {
-	case *rsa.PublicKey:
-		return pubKey, cert.Raw, nil
-	default:
-		return nil, nil, fmt.Errorf("unexpected public key type %T", pubKey)
-	}
-}
-
-func parseKey(keyPEMBlock []byte) (*rsa.PrivateKey, error) {
-	block, _ := pem.Decode([]byte(keyPEMBlock))
-
-	if block == nil {
-		return nil, errors.New("failed to parse certificate PEM")
-	}
-
-	key, err := x509.ParsePKCS8PrivateKey(block.Bytes)
-
-	if err == nil {
-		switch privKey := key.(type) {
-		case *rsa.PrivateKey:
-			return privKey, nil
-		default:
-			return nil, errors.New("failed to parse key")
-		}
-	}
-
-	return x509.ParsePKCS1PrivateKey(block.Bytes)
-}
-
-func sign(buf []byte, certPEMBlock []byte, privKey *rsa.PrivateKey) (sig []byte, err error) {
-	block, _ := pem.Decode([]byte(certPEMBlock))
-
-	if block == nil {
-		return nil, errors.New("failed to parse certificate PEM")
-	}
-
-	cert, err := x509.ParseCertificate(block.Bytes)
-
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse certificate, %v", err)
-	}
-
+func sign(buf []byte, cert *x509.Certificate, privKey crypto.PrivateKey) (sig []byte, err error) {
 	data, err := pkcs7.NewSignedData(buf)
 
 	if err != nil {

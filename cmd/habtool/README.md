@@ -100,10 +100,11 @@ SRK table creation options:
   -t <output path>    Write SRK table to file
 
 Executable signing options:
-  -A <input path>     CSF private key in PEM format
-  -a <input path>     CSF public  key in PEM format
-  -B <input path>     IMG private key in PEM format
-  -b <input path>     IMG public  key in PEM format
+  -z <crypto backend> "file" (default) or "gcp"
+  -A <input path>     CSF private key (PEM format for "file" backend, GCP resource ID for "gcp")
+  -a <input path>     CSF public  key (PEM format for "file" backend, GCP resource ID for "gcp") 
+  -B <input path>     IMG private key (PEM format for "file" backend, GCP resource ID for "gcp")
+  -b <input path>     IMG public  key (PEM format for "file" backend, GCP resource ID for "gcp")
   -t <input path>     Read SRK table from file
   -x <1-4>            Index for SRK key
   -e <id>             Crypto engine (e.g. 0x1b for HAB_ENG_DCP)

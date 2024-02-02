@@ -9,17 +9,26 @@
 package main
 
 import (
+	"crypto"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"math/big"
+	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/usbarmory/crucible/hab"
+)
+
+const (
+	BackendFile = "file"
+	BackendGCP  = "gcp"
 )
 
 type Config struct {
@@ -43,6 +52,69 @@ type Config struct {
 	engine string
 	sdp    bool
 	dcd    string
+
+	backend string
+}
+
+func (c Config) SignOpts() (hab.SignOptions, error) {
+	opts := hab.SignOptions{
+		Index: c.index,
+		SDP:   c.sdp,
+	}
+
+	var newSigner func(string) (crypto.Signer, error)
+	switch c.backend {
+	case BackendFile:
+		newSigner = keyFromFile
+	case BackendGCP:
+		newSigner = signerFromGCP
+	default:
+		return hab.SignOptions{}, fmt.Errorf("unknown backend %q", c.backend)
+	}
+
+	var err error
+	if opts.CSFSigner, err = newSigner(c.csfKey); err != nil {
+		return hab.SignOptions{}, err
+	}
+	if opts.CSFCert, err = certFromURL(c.csfCrt); err != nil {
+		return hab.SignOptions{}, err
+	}
+	if opts.IMGSigner, err = newSigner(c.imgKey); err != nil {
+		return hab.SignOptions{}, err
+	}
+	if opts.IMGCert, err = certFromURL(c.imgCrt); err != nil {
+		return hab.SignOptions{}, err
+	}
+	if opts.Table, err = os.ReadFile(c.table); err != nil {
+		return hab.SignOptions{}, err
+	}
+	engine := new(big.Int)
+	engine.SetString(c.engine, 0)
+	opts.Engine = int(engine.Int64())
+
+	dcd := new(big.Int)
+	dcd.SetString(c.dcd, 0)
+	opts.DCD = uint32(dcd.Int64())
+
+	return opts, nil
+}
+
+func (c Config) SRKeys() ([]*rsa.PublicKey, error) {
+	ret := []*rsa.PublicKey{}
+	for _, p := range []string{c.srk1, c.srk2, c.srk3, c.srk4} {
+		if len(p) > 0 {
+			cert, err := certFromURL(p)
+			if err != nil {
+				return nil, err
+			}
+			key, ok := cert.PublicKey.(*rsa.PublicKey)
+			if !ok {
+				return nil, fmt.Errorf("SRK certificates must be for RSA keys, found %T", cert)
+			}
+			ret = append(ret, key)
+		}
+	}
+	return ret, nil
 }
 
 // build information, initialized at compile time (see Makefile)
@@ -85,19 +157,19 @@ CSF/IMG certificates creation options:
   -b <output path>    IMG public  key in PEM format
 
 SRK table creation options:
-  -1 <input path>     SRK public key 1 in PEM format
-  -2 <input path>     SRK public key 2 in PEM format
-  -3 <input path>     SRK public key 3 in PEM format
-  -4 <input path>     SRK public key 4 in PEM format
+  -1 <input path>     SRK public key 1 path/URL to PEM file
+  -2 <input path>     SRK public key 2 path/URL to PEM file
+  -3 <input path>     SRK public key 3 path/URL to PEM file
+  -4 <input path>     SRK public key 4 path/URL to PEM file
 
   -o <output path>    Write SRK table hash to file
   -t <output path>    Write SRK table to file
 
 Executable signing options:
-  -A <input path>     CSF private key in PEM format
-  -a <input path>     CSF public  key in PEM format
-  -B <input path>     IMG private key in PEM format
-  -b <input path>     IMG public  key in PEM format
+  -A <input path>     CSF private key PEM file or GCP Cloud HSM resourceID
+  -a <input path>     CSF public  key path/URL to PEM file
+  -B <input path>     IMG private key PEM file or GCP Cloud HSM resourceID
+  -b <input path>     IMG public  key path/URL to PEM file
   -t <input path>     Read SRK table from file
   -x <1-4>            Index for SRK key
   -e <id>             Crypto engine (e.g. 0x1b for HAB_ENG_DCP)
@@ -108,6 +180,8 @@ Executable signing options:
   -s                  Serial download mode
   -S <address>        Serial download DCD OCRAM address
                       (depends on mfg tool, default: 0x00910000)
+
+  -z <backend> "file" (default) or "gcp"
 `
 
 func init() {
@@ -145,6 +219,7 @@ func init() {
 
 	flag.IntVar(&conf.index, "x", 1, "Index for SRK key")
 	flag.StringVar(&conf.engine, "e", "0xff", "Crypto engine (e.g. 0x1b for HAB_ENG_DCP)")
+	flag.StringVar(&conf.backend, "z", "file", "Backend to use for signing & SRK table generation: 'file' for local PEM files, 'gcp' for Google Cloud/CloudHSM resource IDs")
 
 	flag.BoolVar(&conf.sdp, "s", false, "Serial download mode")
 	flag.StringVar(&conf.dcd, "S", "0x00910000", "Serial download DCD OCRAM address")
@@ -290,38 +365,10 @@ func genCA() (err error) {
 func sign() (err error) {
 	var f *os.File
 
-	opts := hab.SignOptions{
-		Index: conf.index,
-		SDP:   conf.sdp,
+	opts, err := conf.SignOpts()
+	if err != nil {
+		return err
 	}
-
-	if opts.CSFKeyPEMBlock, err = os.ReadFile(conf.csfKey); err != nil {
-		return
-	}
-
-	if opts.CSFCertPEMBlock, err = os.ReadFile(conf.csfCrt); err != nil {
-		return
-	}
-
-	if opts.IMGKeyPEMBlock, err = os.ReadFile(conf.imgKey); err != nil {
-		return
-	}
-
-	if opts.IMGCertPEMBlock, err = os.ReadFile(conf.imgCrt); err != nil {
-		return
-	}
-
-	if opts.Table, err = os.ReadFile(conf.table); err != nil {
-		return
-	}
-
-	engine := new(big.Int)
-	engine.SetString(conf.engine, 0)
-	opts.Engine = int(engine.Int64())
-
-	dcd := new(big.Int)
-	dcd.SetString(conf.dcd, 0)
-	opts.DCD = uint32(dcd.Int64())
 
 	input, err := os.ReadFile(conf.input)
 
@@ -353,18 +400,13 @@ func genSRKTable() (err error) {
 	var f *os.File
 
 	table, _ := hab.NewSRKTable(nil)
-
-	for _, keyPath := range []string{conf.srk1, conf.srk2, conf.srk3, conf.srk4} {
-		var key []byte
-
-		if len(keyPath) > 0 {
-			if key, err = os.ReadFile(keyPath); err != nil {
-				return err
-			}
-
-			if err = table.AddKey(key); err != nil {
-				return err
-			}
+	keys, err := conf.SRKeys()
+	if err != nil {
+		return err
+	}
+	for _, key := range keys {
+		if err = table.AddKey(key); err != nil {
+			return err
 		}
 	}
 
@@ -392,4 +434,35 @@ func genSRKTable() (err error) {
 	log.Printf("SRK table written to %s", conf.table)
 
 	return
+}
+
+func certFromURL(s string) (*x509.Certificate, error) {
+	u, err := url.Parse(s)
+	if err != nil {
+		return nil, err
+	}
+
+	var b []byte
+	if u.Scheme == "http" || u.Scheme == "https" {
+		resp, err := http.Get(u.String())
+		if err != nil {
+			return nil, err
+		}
+		b, err = io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		var err error
+		b, err = os.ReadFile(u.Path)
+		if err != nil {
+			return nil, err
+		}
+	}
+	derBlock, _ := pem.Decode(b)
+	if derBlock == nil {
+		return nil, fmt.Errorf("invalid PEM in %q", s)
+	}
+
+	return x509.ParseCertificate(derBlock.Bytes)
 }
