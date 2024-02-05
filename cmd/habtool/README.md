@@ -76,6 +76,7 @@ Operation
 ```
 Usage: habtool [OPTIONS]
   -h                  Show this help
+  -z <crypto backend> "file" (default) or "gcp"
 
 SRK CA creation options:
   -C <output path>    SRK private key in PEM format
@@ -91,16 +92,15 @@ CSF/IMG certificates creation options:
   -b <output path>    IMG public  key in PEM format
 
 SRK table creation options:
-  -1 <input path>     SRK public key 1 in PEM format
-  -2 <input path>     SRK public key 2 in PEM format
-  -3 <input path>     SRK public key 3 in PEM format
-  -4 <input path>     SRK public key 4 in PEM format
+  -1 <input path>     SRK public key 1 in PEM format (PEM format for "file" backend, GCP resource ID for "gcp")
+  -2 <input path>     SRK public key 2 in PEM format (PEM format for "file" backend, GCP resource ID for "gcp")
+  -3 <input path>     SRK public key 3 in PEM format (PEM format for "file" backend, GCP resource ID for "gcp")
+  -4 <input path>     SRK public key 4 in PEM format (PEM format for "file" backend, GCP resource ID for "gcp")
 
   -o <output path>    Write SRK table hash to file
   -t <output path>    Write SRK table to file
 
 Executable signing options:
-  -z <crypto backend> "file" (default) or "gcp"
   -A <input path>     CSF private key (PEM format for "file" backend, GCP resource ID for "gcp")
   -a <input path>     CSF public  key (PEM format for "file" backend, GCP resource ID for "gcp") 
   -B <input path>     IMG private key (PEM format for "file" backend, GCP resource ID for "gcp")
