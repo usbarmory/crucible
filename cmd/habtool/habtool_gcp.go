@@ -92,7 +92,7 @@ func (s *gcpSigner) Sign(_ io.Reader, digest []byte, opts crypto.SignerOpts) (si
 			},
 		},
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), GCPTimeout)
+	ctx, cancel := context.WithTimeout(s.ctx, GCPTimeout)
 	defer cancel()
 
 	resp, err := s.client.AsymmetricSign(ctx, req)
