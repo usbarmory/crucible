@@ -92,10 +92,10 @@ CSF/IMG certificates creation options:
   -b <output path>    IMG public  key in PEM format
 
 SRK table creation options:
-  -1 <input path>     SRK public key 1 in PEM format (PEM format for "file" backend, GCP resource ID for "gcp")
-  -2 <input path>     SRK public key 2 in PEM format (PEM format for "file" backend, GCP resource ID for "gcp")
-  -3 <input path>     SRK public key 3 in PEM format (PEM format for "file" backend, GCP resource ID for "gcp")
-  -4 <input path>     SRK public key 4 in PEM format (PEM format for "file" backend, GCP resource ID for "gcp")
+  -1 <input path>     SRK public key 1 (PEM format for "file" backend, GCP resource ID for "gcp")
+  -2 <input path>     SRK public key 2 (PEM format for "file" backend, GCP resource ID for "gcp")
+  -3 <input path>     SRK public key 3 (PEM format for "file" backend, GCP resource ID for "gcp")
+  -4 <input path>     SRK public key 4 (PEM format for "file" backend, GCP resource ID for "gcp")
 
   -o <output path>    Write SRK table hash to file
   -t <output path>    Write SRK table to file
@@ -120,6 +120,24 @@ Executable signing options:
 The [USB armory](https://github.com/usbarmory/usbarmory/wiki) guide for
 [Secure Boot](https://github.com/usbarmory/usbarmory/wiki/Secure-boot-(Mk-II))
 provides an introduction on HABv4 using the USB armory Mk II as reference platform.
+
+Using `habtool` with Google Cloud
+=================================
+
+When setting the `-z` flag to `gcp`, `habtool` will use the Google Cloud APIs to fetch certificates
+and perform signing operations. This backend requires that public and private keys are referenced
+using [GCP Resource IDs](https://cloud.google.com/config-connector/docs/how-to/managing-resources-with-resource-ids)
+rather than on-disk files.
+
+Signing keys must be stored in [CloudHSM](https://cloud.google.com/kms/docs/hsm), and the particular
+keys to use when signing the CSF and IMG payloads are passed as
+[CloudHSM Key Resource IDs](https://cloud.google.com/kms/docs/getting-resource-ids) to the `-A` and `-B`flags, e.g:
+`projects/myProject/locations/global/keyRings/myKeyRing/cryptoKeys/myKey/cryptoKeyVersions/1`.
+
+Public key Resource IDs, passed via the `-1`, `-2`, `-3`, `-4`, `-A`, or `-B` flags, should reference a
+[Certificate](https://cloud.google.com/certificate-authority-service/docs/reference/rest/v1/projects.locations.caPools.certificates#Certificate)
+resource, e.g.:
+`projects/myProject/locations/us-central1/caPools/myPool/certificateAuthorities/myCertificate`.
 
 License
 =======

@@ -168,19 +168,19 @@ CSF/IMG certificates creation options:
   -b <output path>    IMG public  key in PEM format
 
 SRK table creation options:
-  -1 <input path>     SRK public key 1 PEM file/resource
-  -2 <input path>     SRK public key 2 PEM file/resource
-  -3 <input path>     SRK public key 3 PEM file/resource
-  -4 <input path>     SRK public key 4 PEM file/resource
+  -1 <input path>     SRK public key 1 (PEM format for "file" backend, GCP resource ID for "gcp")
+  -2 <input path>     SRK public key 2 (PEM format for "file" backend, GCP resource ID for "gcp") 
+  -3 <input path>     SRK public key 3 (PEM format for "file" backend, GCP resource ID for "gcp")
+  -4 <input path>     SRK public key 4 (PEM format for "file" backend, GCP resource ID for "gcp") 
 
   -o <output path>    Write SRK table hash to file
   -t <output path>    Write SRK table to file
 
 Executable signing options:
-  -A <input path>     CSF private key PEM file or GCP Cloud HSM resourceID
-  -a <input path>     CSF public  key PEM file or GCP Cloud NSM resourceID
-  -B <input path>     IMG private key PEM file or GCP Cloud HSM resourceID
-  -b <input path>     IMG public  key PEM file or GCP Cloud NSM resourceID
+  -A <input path>     CSF private key (PEM format for "file" backend, GCP resource ID for "gcp")
+  -a <input path>     CSF public  key (PEM format for "file" backend, GCP resource ID for "gcp") 
+  -B <input path>     IMG private key (PEM format for "file" backend, GCP resource ID for "gcp")
+  -b <input path>     IMG public  key (PEM format for "file" backend, GCP resource ID for "gcp")
   -t <input path>     Read SRK table from file
   -x <1-4>            Index for SRK key
   -e <id>             Crypto engine (e.g. 0x1b for HAB_ENG_DCP)
@@ -214,21 +214,21 @@ func init() {
 	flag.StringVar(&conf.output, "o", "", "output")
 	flag.StringVar(&conf.table, "t", "SRK_1_2_3_4_table.bin", "SRK table")
 
-	flag.StringVar(&conf.srk1, "1", "", "SRK public key 1 in PEM format")
-	flag.StringVar(&conf.srk2, "2", "", "SRK public key 2 in PEM format")
-	flag.StringVar(&conf.srk3, "3", "", "SRK public key 3 in PEM format")
-	flag.StringVar(&conf.srk4, "4", "", "SRK public key 4 in PEM format")
+	flag.StringVar(&conf.srk1, "1", "", "SRK public key 1 (PEM format for 'file' backend, GCP resource ID for 'gcp')")
+	flag.StringVar(&conf.srk2, "2", "", "SRK public key 2 (PEM format for 'file' backend, GCP resource ID for 'gcp')")
+	flag.StringVar(&conf.srk3, "3", "", "SRK public key 3 (PEM format for 'file' backend, GCP resource ID for 'gcp')")
+	flag.StringVar(&conf.srk4, "4", "", "SRK public key 4 (PEM format for 'file' backend, GCP resource ID for 'gcp')")
 
-	flag.StringVar(&conf.srkKey, "C", "", "SRK private key in PEM format")
-	flag.StringVar(&conf.srkCrt, "c", "", "SRK public  key in PEM format")
-	flag.StringVar(&conf.csfKey, "A", "", "CSF private key in PEM format")
-	flag.StringVar(&conf.csfCrt, "a", "", "CSF public  key in PEM format")
-	flag.StringVar(&conf.imgKey, "B", "", "IMG private key in PEM format")
-	flag.StringVar(&conf.imgCrt, "b", "", "IMG public  key in PEM format")
+	flag.StringVar(&conf.srkKey, "C", "", "SRK private key (PEM format for 'file' backend, GCP resource ID for 'gcp')")
+	flag.StringVar(&conf.srkCrt, "c", "", "SRK public  key (PEM format for 'file' backend, GCP resource ID for 'gcp')")
+	flag.StringVar(&conf.csfKey, "A", "", "CSF private key (PEM format for 'file' backend, GCP resource ID for 'gcp')")
+	flag.StringVar(&conf.csfCrt, "a", "", "CSF public  key (PEM format for 'file' backend, GCP resource ID for 'gcp')")
+	flag.StringVar(&conf.imgKey, "B", "", "IMG private key (PEM format for 'file' backend, GCP resource ID for 'gcp')")
+	flag.StringVar(&conf.imgCrt, "b", "", "IMG public  key (PEM format for 'file' backend, GCP resource ID for 'gcp')")
 
 	flag.IntVar(&conf.index, "x", 1, "Index for SRK key")
 	flag.StringVar(&conf.engine, "e", "0xff", "Crypto engine (e.g. 0x1b for HAB_ENG_DCP)")
-	flag.StringVar(&conf.backend, "z", "file", "Backend to use for signing & SRK table generation: 'file' for local PEM files, 'gcp' for Google Cloud/CloudHSM resource IDs")
+	flag.StringVar(&conf.backend, "z", "file", "Backend to use for signing & SRK table generation: 'file' for local PEM files, 'gcp' for Google Cloud resource IDs")
 
 	flag.BoolVar(&conf.sdp, "s", false, "Serial download mode")
 	flag.StringVar(&conf.dcd, "S", "0x00910000", "Serial download DCD OCRAM address")
