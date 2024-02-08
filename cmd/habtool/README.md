@@ -134,10 +134,18 @@ keys to use when signing the CSF and IMG payloads are passed as
 [CloudHSM Key Resource IDs](https://cloud.google.com/kms/docs/getting-resource-ids) to the `-A` and `-B`flags, e.g:
 `projects/myProject/locations/global/keyRings/myKeyRing/cryptoKeys/myKey/cryptoKeyVersions/1`.
 
-Public key Resource IDs, passed via the `-1`, `-2`, `-3`, `-4`, `-A`, or `-B` flags, should reference a
+Public key Resource IDs, passed via the `-1`, `-2`, `-3`, `-4`, `-A`, or `-B` flags, should reference either:
+
+- a
 [Certificate](https://cloud.google.com/certificate-authority-service/docs/reference/rest/v1/projects.locations.caPools.certificates#Certificate)
 resource, e.g.:
-`projects/myProject/locations/us-central1/caPools/myPool/certificateAuthorities/myCertificate`.
+`projects/myProject/locations/us-central1/caPools/myPool/certificates/myCertificate`
+- a [CertificateAuthority](https://cloud.google.com/certificate-authority-service/docs/reference/rpc/google.cloud.security.privateca.v1#google.cloud.security.privateca.v1.CertificateAuthority)
+resource, e.g.:
+`projects/myProject/locations/us-central1/caPools/myPool/certificateAuthorities/myCertificateAuthority`
+
+In the later case, the authoritie's public key certificate will be used.
+
 
 License
 =======
