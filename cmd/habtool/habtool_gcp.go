@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"regexp"
 	"time"
 
 	kms "cloud.google.com/go/kms/apiv1"
@@ -18,6 +19,14 @@ import (
 
 var GCPTimeout = 30 * time.Second
 
+// Matchers for GCP resource IDs
+var (
+	getCertificatePathMatcher          = regexp.MustCompile("projects/[^/]+/locations/[^/]+/caPools/[^/]+/certificates/.+")
+	getCertificateAuthorityPathMatcher = regexp.MustCompile("projects/[^/]+/locations/[^/]+/caPools/[^/]+/certificateAuthorities/.+")
+)
+
+// certFromGCP fetches the specified certificate from GCP.
+// r must be either a GCP Certificate or CertificateAuthority resource ID.
 func certFromGCP(ctx context.Context, r string) (*x509.Certificate, error) {
 	c, err := privateca.NewCertificateAuthorityClient(ctx)
 	if err != nil {
@@ -25,13 +34,26 @@ func certFromGCP(ctx context.Context, r string) (*x509.Certificate, error) {
 	}
 	defer c.Close()
 
-	req := &privatecapb.GetCertificateRequest{Name: r}
-	resp, err := c.GetCertificate(ctx, req)
-	if err != nil {
-		return nil, err
+	var p string
+	if getCertificatePathMatcher.Match([]byte(r)) {
+		req := &privatecapb.GetCertificateRequest{Name: r}
+		resp, err := c.GetCertificate(ctx, req)
+		if err != nil {
+			return nil, err
+		}
+		p = resp.GetPemCertificate()
+	} else if getCertificateAuthorityPathMatcher.Match([]byte(r)) {
+		req := &privatecapb.GetCertificateAuthorityRequest{Name: r}
+		ca, err := c.GetCertificateAuthority(ctx, req)
+		if err != nil {
+			return nil, err
+		}
+		p = ca.GetPemCaCertificates()[0]
+	} else {
+		return nil, fmt.Errorf("unknown resource ID type %q", r)
 	}
 
-	der, _ := pem.Decode([]byte(resp.GetPemCertificate()))
+	der, _ := pem.Decode([]byte(p))
 	if der == nil {
 		return nil, fmt.Errorf("invalid PEM at %q", r)
 	}
