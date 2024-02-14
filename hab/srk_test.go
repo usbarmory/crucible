@@ -10,7 +10,10 @@ package hab
 
 import (
 	"bytes"
+	"crypto/rsa"
+	"crypto/x509"
 	"encoding/hex"
+	"encoding/pem"
 	"testing"
 )
 
@@ -118,7 +121,7 @@ func TestPartialSRKTable(t *testing.T) {
 
 	table, _ := NewSRKTable(nil)
 
-	if err := table.AddKey([]byte(srk1)); err != nil {
+	if err := table.AddKey(mustKeyFromPEM(t, srk1)); err != nil {
 		t.Fatal(err)
 	}
 
@@ -136,11 +139,11 @@ func TestFullSRKTable(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	srks := [][]byte{
-		[]byte(srk1),
-		[]byte(srk2),
-		[]byte(srk3),
-		[]byte(srk4),
+	srks := []*rsa.PublicKey{
+		mustKeyFromPEM(t, srk1),
+		mustKeyFromPEM(t, srk2),
+		mustKeyFromPEM(t, srk3),
+		mustKeyFromPEM(t, srk4),
 	}
 
 	table, err := NewSRKTable(srks)
@@ -154,4 +157,22 @@ func TestFullSRKTable(t *testing.T) {
 	if !bytes.Equal(srkHash[:], refHash) {
 		t.Errorf("SRK table with unexpected value, %x != %x", srkHash, refHash)
 	}
+}
+
+func mustKeyFromPEM(t *testing.T, b string) *rsa.PublicKey {
+	t.Helper()
+	der, _ := pem.Decode([]byte(b))
+	if der == nil {
+		t.Fatal("Invalid testdata PEM")
+	}
+	c, err := x509.ParseCertificate(der.Bytes)
+	if err != nil {
+		t.Fatalf("Invalid testdata: %v", err)
+	}
+	r, ok := c.PublicKey.(*rsa.PublicKey)
+	if !ok {
+		t.Fatal("Invalid testdata: cert key must be RSA")
+	}
+	return r
+
 }

@@ -18,27 +18,26 @@
 package hab
 
 import (
-	"crypto/rsa"
+	"crypto"
+	"crypto/x509"
 	"fmt"
 )
 
 // SignOptions describes options for HABv4 executable image signing.
 type SignOptions struct {
-	// CSFKeyPEMBlock specifies the Command Sequence File signing key in
-	// PEM format.
-	CSFKeyPEMBlock []byte
+	// CSFSigner is the signer to use for the Command Sequence File.
+	// Its corresponding certificate should be provided in CSFCertPEMBlock.
+	CSFSigner crypto.Signer
 
-	// CSFCertPEMBlock specifies the Command Sequence File signing
-	// certificate in PEM format.
-	CSFCertPEMBlock []byte
+	// CSFCert specifies the Command Sequence File signing certificate.
+	CSFCert *x509.Certificate
 
-	// IMGKeyPEMBlock specifies the IMX executable signing key in PEM
-	// format.
-	IMGKeyPEMBlock []byte
+	// IMGSigner is the signer to use for IMX executables.
+	// Its corresponding certificate should be in IMGCertPEMBlock below.
+	IMGSigner crypto.Signer
 
-	// IMGCertPEMBlock specifies the IMX executable signing certificate in
-	// PEM format.
-	IMGCertPEMBlock []byte
+	// IMGCertPEMBlock specifies the IMX executable signing certificate.
+	IMGCert *x509.Certificate
 
 	// Table specifies the Super Root Key (SRK) table.
 	Table []byte
@@ -58,8 +57,6 @@ type SignOptions struct {
 // resulting CSF can be concatenated to the IMX image and used as signed
 // bootable payload on NXP HABv4 supported processors.
 func Sign(imx []byte, opts SignOptions) (out []byte, err error) {
-	var csfKey, imgKey *rsa.PrivateKey
-	var csfDER, imgDER []byte
 	var sig []byte
 
 	ivt := &IVT{}
@@ -72,22 +69,6 @@ func Sign(imx []byte, opts SignOptions) (out []byte, err error) {
 	bootData, err := NewBootData(imx, ivt)
 
 	if err != nil {
-		return
-	}
-
-	if csfKey, err = parseKey(opts.CSFKeyPEMBlock); err != nil {
-		return
-	}
-
-	if _, csfDER, err = parseCert(opts.CSFCertPEMBlock); err != nil {
-		return
-	}
-
-	if imgKey, err = parseKey(opts.IMGKeyPEMBlock); err != nil {
-		return
-	}
-
-	if _, imgDER, err = parseCert(opts.IMGCertPEMBlock); err != nil {
 		return
 	}
 
@@ -159,13 +140,13 @@ func Sign(imx []byte, opts SignOptions) (out []byte, err error) {
 	// Prepare CSF body
 
 	csfCrt := NewCSF(HAB_TAG_CRT)
-	csfCrt.Set(padCert(csfDER))
+	csfCrt.Set(padCert(opts.CSFCert.Raw))
 
 	imgCrt := NewCSF(HAB_TAG_CRT)
-	imgCrt.Set(padCert(imgDER))
+	imgCrt.Set(padCert(opts.IMGCert.Raw))
 
 	// Sign IMX executable image
-	if sig, err = sign(imx, opts.IMGCertPEMBlock, imgKey); err != nil {
+	if sig, err = sign(imx, opts.IMGCert, opts.IMGSigner); err != nil {
 		return nil, err
 	}
 
@@ -176,7 +157,7 @@ func Sign(imx []byte, opts SignOptions) (out []byte, err error) {
 
 	if opts.SDP {
 		// Sign DCD
-		if sig, err = sign(dcd.Bytes(), opts.IMGCertPEMBlock, imgKey); err != nil {
+		if sig, err = sign(dcd.Bytes(), opts.IMGCert, opts.IMGSigner); err != nil {
 			return nil, err
 		}
 
@@ -204,7 +185,7 @@ func Sign(imx []byte, opts SignOptions) (out []byte, err error) {
 	}
 
 	// Sign CSF commands
-	if sig, err = sign(csf.Bytes(), opts.CSFCertPEMBlock, csfKey); err != nil {
+	if sig, err = sign(csf.Bytes(), opts.CSFCert, opts.CSFSigner); err != nil {
 		return nil, err
 	}
 

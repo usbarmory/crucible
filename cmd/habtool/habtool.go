@@ -9,6 +9,8 @@
 package main
 
 import (
+	"context"
+	"crypto"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
@@ -20,6 +22,11 @@ import (
 	"os"
 
 	"github.com/usbarmory/crucible/hab"
+)
+
+const (
+	BackendFile = "file"
+	BackendGCP  = "gcp"
 )
 
 type Config struct {
@@ -43,6 +50,81 @@ type Config struct {
 	engine string
 	sdp    bool
 	dcd    string
+
+	backend string
+}
+
+func (c Config) getCert(ctx context.Context, f string) (*x509.Certificate, error) {
+	switch c.backend {
+	case BackendFile:
+		return certFromFile(ctx, f)
+	case BackendGCP:
+		return certFromGCP(ctx, f)
+	default:
+		return nil, fmt.Errorf("unknown backend %q", c.backend)
+	}
+}
+
+func (c Config) getSigner(ctx context.Context, f string) (crypto.Signer, error) {
+	switch c.backend {
+	case BackendFile:
+		return signerFromFile(ctx, f)
+	case BackendGCP:
+		return signerFromGCP(ctx, f)
+	default:
+		return nil, fmt.Errorf("unknown backend %q", c.backend)
+	}
+}
+
+func (c Config) SignOpts(ctx context.Context) (hab.SignOptions, error) {
+	opts := hab.SignOptions{
+		Index: c.index,
+		SDP:   c.sdp,
+	}
+
+	var err error
+	if opts.CSFSigner, err = c.getSigner(ctx, c.csfKey); err != nil {
+		return hab.SignOptions{}, err
+	}
+	if opts.CSFCert, err = c.getCert(ctx, c.csfCrt); err != nil {
+		return hab.SignOptions{}, err
+	}
+	if opts.IMGSigner, err = c.getSigner(ctx, c.imgKey); err != nil {
+		return hab.SignOptions{}, err
+	}
+	if opts.IMGCert, err = c.getCert(ctx, c.imgCrt); err != nil {
+		return hab.SignOptions{}, err
+	}
+	if opts.Table, err = os.ReadFile(c.table); err != nil {
+		return hab.SignOptions{}, err
+	}
+	engine := new(big.Int)
+	engine.SetString(c.engine, 0)
+	opts.Engine = int(engine.Int64())
+
+	dcd := new(big.Int)
+	dcd.SetString(c.dcd, 0)
+	opts.DCD = uint32(dcd.Int64())
+
+	return opts, nil
+}
+
+func (c Config) SRKeys(ctx context.Context) ([]*rsa.PublicKey, error) {
+	ret := []*rsa.PublicKey{}
+	for _, p := range []string{c.srk1, c.srk2, c.srk3, c.srk4} {
+		if len(p) > 0 {
+			cert, err := c.getCert(ctx, p)
+			if err != nil {
+				return nil, err
+			}
+			key, ok := cert.PublicKey.(*rsa.PublicKey)
+			if !ok {
+				return nil, fmt.Errorf("SRK certificates must be for RSA keys, found %T", cert)
+			}
+			ret = append(ret, key)
+		}
+	}
+	return ret, nil
 }
 
 // build information, initialized at compile time (see Makefile)
@@ -70,6 +152,7 @@ The use of this tool is therefore **at your own risk**.
 
 const usage = `Usage: habtool [OPTIONS]
   -h                  Show this help
+  -z <backend> "file" (default) or "gcp"
 
 SRK CA creation options:
   -C <output path>    SRK private key in PEM format
@@ -85,19 +168,19 @@ CSF/IMG certificates creation options:
   -b <output path>    IMG public  key in PEM format
 
 SRK table creation options:
-  -1 <input path>     SRK public key 1 in PEM format
-  -2 <input path>     SRK public key 2 in PEM format
-  -3 <input path>     SRK public key 3 in PEM format
-  -4 <input path>     SRK public key 4 in PEM format
+  -1 <input path>     SRK public key 1 ("file": PEM format, "gcp": resource ID)
+  -2 <input path>     SRK public key 2 ("file": PEM format, "gcp": resource ID)
+  -3 <input path>     SRK public key 3 ("file": PEM format, "gcp": resource ID)
+  -4 <input path>     SRK public key 4 ("file": PEM format, "gcp": resource ID)
 
   -o <output path>    Write SRK table hash to file
   -t <output path>    Write SRK table to file
 
 Executable signing options:
-  -A <input path>     CSF private key in PEM format
-  -a <input path>     CSF public  key in PEM format
-  -B <input path>     IMG private key in PEM format
-  -b <input path>     IMG public  key in PEM format
+  -A <input path>     CSF private key ("file": PEM format, "gcp": resource ID)
+  -a <input path>     CSF public  key ("file": PEM format, "gcp": resource ID)
+  -B <input path>     IMG private key ("file": PEM format, "gcp": resource ID)
+  -b <input path>     IMG public  key ("file": PEM format, "gcp": resource ID)
   -t <input path>     Read SRK table from file
   -x <1-4>            Index for SRK key
   -e <id>             Crypto engine (e.g. 0x1b for HAB_ENG_DCP)
@@ -131,20 +214,21 @@ func init() {
 	flag.StringVar(&conf.output, "o", "", "output")
 	flag.StringVar(&conf.table, "t", "SRK_1_2_3_4_table.bin", "SRK table")
 
-	flag.StringVar(&conf.srk1, "1", "", "SRK public key 1 in PEM format")
-	flag.StringVar(&conf.srk2, "2", "", "SRK public key 2 in PEM format")
-	flag.StringVar(&conf.srk3, "3", "", "SRK public key 3 in PEM format")
-	flag.StringVar(&conf.srk4, "4", "", "SRK public key 4 in PEM format")
+	flag.StringVar(&conf.srk1, "1", "", "SRK public key 1 ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.srk2, "2", "", "SRK public key 2 ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.srk3, "3", "", "SRK public key 3 ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.srk4, "4", "", "SRK public key 4 ('file': PEM format, 'gcp': resource ID)")
 
-	flag.StringVar(&conf.srkKey, "C", "", "SRK private key in PEM format")
-	flag.StringVar(&conf.srkCrt, "c", "", "SRK public  key in PEM format")
-	flag.StringVar(&conf.csfKey, "A", "", "CSF private key in PEM format")
-	flag.StringVar(&conf.csfCrt, "a", "", "CSF public  key in PEM format")
-	flag.StringVar(&conf.imgKey, "B", "", "IMG private key in PEM format")
-	flag.StringVar(&conf.imgCrt, "b", "", "IMG public  key in PEM format")
+	flag.StringVar(&conf.srkKey, "C", "", "SRK private key ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.srkCrt, "c", "", "SRK public  key ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.csfKey, "A", "", "CSF private key ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.csfCrt, "a", "", "CSF public  key ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.imgKey, "B", "", "IMG private key ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.imgCrt, "b", "", "IMG public  key ('file': PEM format, 'gcp': resource ID)")
 
 	flag.IntVar(&conf.index, "x", 1, "Index for SRK key")
 	flag.StringVar(&conf.engine, "e", "0xff", "Crypto engine (e.g. 0x1b for HAB_ENG_DCP)")
+	flag.StringVar(&conf.backend, "z", "file", "Backend to use for signing & SRK table generation: 'file' for local PEM files, 'gcp' for Google Cloud resource IDs")
 
 	flag.BoolVar(&conf.sdp, "s", false, "Serial download mode")
 	flag.StringVar(&conf.dcd, "S", "0x00910000", "Serial download DCD OCRAM address")
@@ -152,6 +236,7 @@ func init() {
 
 func main() {
 	var err error
+	ctx := context.Background()
 
 	flag.Parse()
 
@@ -167,9 +252,9 @@ func main() {
 		len(conf.imgKey) == 0 && len(conf.imgCrt) == 0:
 		err = genCA()
 	case len(conf.table) > 0 && len(conf.input) > 0 && len(conf.output) > 0:
-		err = sign()
+		err = sign(ctx)
 	case len(conf.table) > 0 && len(conf.output) > 0:
-		err = genSRKTable()
+		err = genSRKTable(ctx)
 	default:
 		fmt.Println(usage)
 	}
@@ -287,41 +372,13 @@ func genCA() (err error) {
 	return saveCert("SRK", conf.srkKey, SRKKeyPEMBlock, conf.srkCrt, SRKCertPEMBlock)
 }
 
-func sign() (err error) {
+func sign(ctx context.Context) (err error) {
 	var f *os.File
 
-	opts := hab.SignOptions{
-		Index: conf.index,
-		SDP:   conf.sdp,
+	opts, err := conf.SignOpts(ctx)
+	if err != nil {
+		return err
 	}
-
-	if opts.CSFKeyPEMBlock, err = os.ReadFile(conf.csfKey); err != nil {
-		return
-	}
-
-	if opts.CSFCertPEMBlock, err = os.ReadFile(conf.csfCrt); err != nil {
-		return
-	}
-
-	if opts.IMGKeyPEMBlock, err = os.ReadFile(conf.imgKey); err != nil {
-		return
-	}
-
-	if opts.IMGCertPEMBlock, err = os.ReadFile(conf.imgCrt); err != nil {
-		return
-	}
-
-	if opts.Table, err = os.ReadFile(conf.table); err != nil {
-		return
-	}
-
-	engine := new(big.Int)
-	engine.SetString(conf.engine, 0)
-	opts.Engine = int(engine.Int64())
-
-	dcd := new(big.Int)
-	dcd.SetString(conf.dcd, 0)
-	opts.DCD = uint32(dcd.Int64())
 
 	input, err := os.ReadFile(conf.input)
 
@@ -349,22 +406,17 @@ func sign() (err error) {
 	return
 }
 
-func genSRKTable() (err error) {
+func genSRKTable(ctx context.Context) (err error) {
 	var f *os.File
 
 	table, _ := hab.NewSRKTable(nil)
-
-	for _, keyPath := range []string{conf.srk1, conf.srk2, conf.srk3, conf.srk4} {
-		var key []byte
-
-		if len(keyPath) > 0 {
-			if key, err = os.ReadFile(keyPath); err != nil {
-				return err
-			}
-
-			if err = table.AddKey(key); err != nil {
-				return err
-			}
+	keys, err := conf.SRKeys(ctx)
+	if err != nil {
+		return err
+	}
+	for _, key := range keys {
+		if err = table.AddKey(key); err != nil {
+			return err
 		}
 	}
 

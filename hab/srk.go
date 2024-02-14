@@ -88,15 +88,9 @@ type SRKTable struct {
 }
 
 // AddKey imports an RSA public key in a Super Root Key table.
-func (table *SRKTable) AddKey(srk []byte) (err error) {
+func (table *SRKTable) AddKey(srk *rsa.PublicKey) (err error) {
 	if len(table.SRK) > 4 {
 		return errors.New("no more than 4 SRKs can be added")
-	}
-
-	pubKey, _, err := parseCert([]byte(srk))
-
-	if err != nil {
-		return
 	}
 
 	pk := PublicKey{
@@ -104,7 +98,7 @@ func (table *SRKTable) AddKey(srk []byte) (err error) {
 		Tag2: HAB_ALG_PKCS1,
 		Tag3: HAB_CMD_INS_KEY_HSH,
 	}
-	pk.Set(pubKey)
+	pk.Set(srk)
 
 	table.SRK = append(table.SRK, pk)
 	table.Len = uint16(len(table.Bytes()))
@@ -148,7 +142,7 @@ func (table *SRKTable) Hash() [32]byte {
 // The argument takes an array of Super Root Keys for addition, it can be set
 // to nil (or an empty list) as keys can also be individually added with
 // AddKey().
-func NewSRKTable(srks [][]byte) (table *SRKTable, err error) {
+func NewSRKTable(srks []*rsa.PublicKey) (table *SRKTable, err error) {
 	table = &SRKTable{
 		Tag: HAB_TAG_CRT,
 		Ver: HAB_VER,
