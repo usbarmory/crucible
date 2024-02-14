@@ -168,19 +168,19 @@ CSF/IMG certificates creation options:
   -b <output path>    IMG public  key in PEM format
 
 SRK table creation options:
-  -1 <input path>     SRK public key 1 (PEM format for "file" backend, GCP resource ID for "gcp")
-  -2 <input path>     SRK public key 2 (PEM format for "file" backend, GCP resource ID for "gcp") 
-  -3 <input path>     SRK public key 3 (PEM format for "file" backend, GCP resource ID for "gcp")
-  -4 <input path>     SRK public key 4 (PEM format for "file" backend, GCP resource ID for "gcp") 
+  -1 <input path>     SRK public key 1 ("file": PEM format, "gcp": resource ID)
+  -2 <input path>     SRK public key 2 ("file": PEM format, "gcp": resource ID)
+  -3 <input path>     SRK public key 3 ("file": PEM format, "gcp": resource ID)
+  -4 <input path>     SRK public key 4 ("file": PEM format, "gcp": resource ID)
 
   -o <output path>    Write SRK table hash to file
   -t <output path>    Write SRK table to file
 
 Executable signing options:
-  -A <input path>     CSF private key (PEM format for "file" backend, GCP resource ID for "gcp")
-  -a <input path>     CSF public  key (PEM format for "file" backend, GCP resource ID for "gcp") 
-  -B <input path>     IMG private key (PEM format for "file" backend, GCP resource ID for "gcp")
-  -b <input path>     IMG public  key (PEM format for "file" backend, GCP resource ID for "gcp")
+  -A <input path>     CSF private key ("file": PEM format, "gcp": resource ID)
+  -a <input path>     CSF public  key ("file": PEM format, "gcp": resource ID)
+  -B <input path>     IMG private key ("file": PEM format, "gcp": resource ID)
+  -b <input path>     IMG public  key ("file": PEM format, "gcp": resource ID)
   -t <input path>     Read SRK table from file
   -x <1-4>            Index for SRK key
   -e <id>             Crypto engine (e.g. 0x1b for HAB_ENG_DCP)
@@ -214,17 +214,17 @@ func init() {
 	flag.StringVar(&conf.output, "o", "", "output")
 	flag.StringVar(&conf.table, "t", "SRK_1_2_3_4_table.bin", "SRK table")
 
-	flag.StringVar(&conf.srk1, "1", "", "SRK public key 1 (PEM format for 'file' backend, GCP resource ID for 'gcp')")
-	flag.StringVar(&conf.srk2, "2", "", "SRK public key 2 (PEM format for 'file' backend, GCP resource ID for 'gcp')")
-	flag.StringVar(&conf.srk3, "3", "", "SRK public key 3 (PEM format for 'file' backend, GCP resource ID for 'gcp')")
-	flag.StringVar(&conf.srk4, "4", "", "SRK public key 4 (PEM format for 'file' backend, GCP resource ID for 'gcp')")
+	flag.StringVar(&conf.srk1, "1", "", "SRK public key 1 ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.srk2, "2", "", "SRK public key 2 ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.srk3, "3", "", "SRK public key 3 ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.srk4, "4", "", "SRK public key 4 ('file': PEM format, 'gcp': resource ID)")
 
-	flag.StringVar(&conf.srkKey, "C", "", "SRK private key (PEM format for 'file' backend, GCP resource ID for 'gcp')")
-	flag.StringVar(&conf.srkCrt, "c", "", "SRK public  key (PEM format for 'file' backend, GCP resource ID for 'gcp')")
-	flag.StringVar(&conf.csfKey, "A", "", "CSF private key (PEM format for 'file' backend, GCP resource ID for 'gcp')")
-	flag.StringVar(&conf.csfCrt, "a", "", "CSF public  key (PEM format for 'file' backend, GCP resource ID for 'gcp')")
-	flag.StringVar(&conf.imgKey, "B", "", "IMG private key (PEM format for 'file' backend, GCP resource ID for 'gcp')")
-	flag.StringVar(&conf.imgCrt, "b", "", "IMG public  key (PEM format for 'file' backend, GCP resource ID for 'gcp')")
+	flag.StringVar(&conf.srkKey, "C", "", "SRK private key ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.srkCrt, "c", "", "SRK public  key ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.csfKey, "A", "", "CSF private key ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.csfCrt, "a", "", "CSF public  key ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.imgKey, "B", "", "IMG private key ('file': PEM format, 'gcp': resource ID)")
+	flag.StringVar(&conf.imgCrt, "b", "", "IMG public  key ('file': PEM format, 'gcp': resource ID)")
 
 	flag.IntVar(&conf.index, "x", 1, "Index for SRK key")
 	flag.StringVar(&conf.engine, "e", "0xff", "Crypto engine (e.g. 0x1b for HAB_ENG_DCP)")

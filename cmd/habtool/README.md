@@ -92,19 +92,19 @@ CSF/IMG certificates creation options:
   -b <output path>    IMG public  key in PEM format
 
 SRK table creation options:
-  -1 <input path>     SRK public key 1 (PEM format for "file" backend, GCP resource ID for "gcp")
-  -2 <input path>     SRK public key 2 (PEM format for "file" backend, GCP resource ID for "gcp")
-  -3 <input path>     SRK public key 3 (PEM format for "file" backend, GCP resource ID for "gcp")
-  -4 <input path>     SRK public key 4 (PEM format for "file" backend, GCP resource ID for "gcp")
+  -1 <input path>     SRK public key 1 ('file': PEM format, 'gcp': resource ID)
+  -2 <input path>     SRK public key 2 ('file': PEM format, 'gcp': resource ID)
+  -3 <input path>     SRK public key 3 ('file': PEM format, 'gcp': resource ID)
+  -4 <input path>     SRK public key 4 ('file': PEM format, 'gcp': resource ID)
 
   -o <output path>    Write SRK table hash to file
   -t <output path>    Write SRK table to file
 
 Executable signing options:
-  -A <input path>     CSF private key (PEM format for "file" backend, GCP resource ID for "gcp")
-  -a <input path>     CSF public  key (PEM format for "file" backend, GCP resource ID for "gcp") 
-  -B <input path>     IMG private key (PEM format for "file" backend, GCP resource ID for "gcp")
-  -b <input path>     IMG public  key (PEM format for "file" backend, GCP resource ID for "gcp")
+  -A <input path>     CSF private key ('file': PEM format, 'gcp': resource ID)
+  -a <input path>     CSF public  key ('file': PEM format, 'gcp': resource ID)
+  -B <input path>     IMG private key ('file': PEM format, 'gcp': resource ID)
+  -b <input path>     IMG public  key ('file': PEM format, 'gcp': resource ID)
   -t <input path>     Read SRK table from file
   -x <1-4>            Index for SRK key
   -e <id>             Crypto engine (e.g. 0x1b for HAB_ENG_DCP)
@@ -145,7 +145,6 @@ resource, e.g.:
 `projects/myProject/locations/us-central1/caPools/myPool/certificateAuthorities/myCertificateAuthority`
 
 In the later case, the authoritie's public key certificate will be used.
-
 
 License
 =======
