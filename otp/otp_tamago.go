@@ -6,12 +6,14 @@
 // Use of this source code is governed by the license
 // that can be found in the LICENSE file.
 
+//go:build tamago && arm
 // +build tamago,arm
 
 package otp
 
 import (
 	"encoding/binary"
+	"time"
 
 	"github.com/usbarmory/crucible/util"
 	"github.com/usbarmory/tamago/soc/nxp/imx6ul"
@@ -51,6 +53,7 @@ func BlowOCOTP(bank int, word int, off int, bitLen int, val []byte) (err error) 
 		if err = imx6ul.OCOTP.Blow(bank, w, v); err != nil {
 			return
 		}
+		time.Sleep(10 * time.Millisecond)
 	}
 
 	return
