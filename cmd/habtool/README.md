@@ -121,8 +121,8 @@ The [USB armory](https://github.com/usbarmory/usbarmory/wiki) guide for
 [Secure Boot](https://github.com/usbarmory/usbarmory/wiki/Secure-boot-(Mk-II))
 provides an introduction on HABv4 using the USB armory Mk II as reference platform.
 
-Using `habtool` with Google Cloud
-=================================
+Google Cloud support
+====================
 
 When setting the `-z` flag to `gcp`, `habtool` will use the Google Cloud APIs to fetch certificates
 and perform signing operations. This backend requires that public and private keys are referenced
