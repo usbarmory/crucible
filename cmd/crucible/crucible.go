@@ -190,7 +190,7 @@ func listFusemaps() {
 
 	_ = t.Flush()
 
-	fmt.Printf(list.String())
+	fmt.Print(list.String())
 }
 
 func checkArguments() error {
