@@ -12,7 +12,6 @@ package otp
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -256,7 +255,7 @@ registers:
 		t.Fatal(err)
 	}
 
-	tempDir, err := ioutil.TempDir("", "crucible_test-")
+	tempDir, err := os.MkdirTemp("", "crucible_test-")
 
 	defer func() {
 		_ = os.RemoveAll(tempDir)
@@ -267,7 +266,7 @@ registers:
 	}
 
 	tempFile := filepath.Join(tempDir, "nvram")
-	err = ioutil.WriteFile(tempFile, nvram, 0600)
+	err = os.WriteFile(tempFile, nvram, 0600)
 
 	if err != nil {
 		t.Fatal(err)
