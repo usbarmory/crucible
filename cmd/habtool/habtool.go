@@ -207,7 +207,7 @@ func init() {
 		}
 
 		log.Printf("habtool - NXP HABv4 Secure Boot utility %s", tags)
-		fmt.Println(usage)
+		fmt.Print(usage)
 	}
 
 	flag.StringVar(&conf.input, "i", "", "Image file w/ IVT header (e.g. boot.imx)")
@@ -240,7 +240,7 @@ func main() {
 
 	flag.Parse()
 
-	log.Println(warning)
+	log.Print(warning)
 
 	switch {
 	case len(conf.srkKey) > 0 && len(conf.srkCrt) > 0 &&
@@ -256,7 +256,7 @@ func main() {
 	case len(conf.table) > 0 && len(conf.output) > 0:
 		err = genSRKTable(ctx)
 	default:
-		fmt.Println(usage)
+		fmt.Print(usage)
 	}
 
 	if err != nil {

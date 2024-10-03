@@ -100,7 +100,7 @@ func init() {
 		}
 
 		log.Printf("crucible - One-Time-Programmable (OTP) fusing tool %s", tags)
-		log.Println(splash)
+		log.Print(splash)
 		log.Printf("Usage: crucible [options] [read|blow] [fuse/register name] [value]\n")
 		flag.PrintDefaults()
 	}
@@ -302,7 +302,7 @@ func blow(tag string, f *fusemap.FuseMap, name string, val string) (err error) {
 	}
 
 	if !conf.force {
-		log.Println(warning)
+		log.Print(warning)
 		log.Printf("%s reg:%s base:%d val:%s %s-endian\n\n", tag, name, conf.base, val, conf.endianness)
 
 		if !confirm() {
