@@ -100,11 +100,11 @@ func NewCA(keyLength int, keyExpiry int) (pemKey []byte, pemCert []byte, err err
 // NewCertificate generates a certificate suitable for HABv4 signing, the tag
 // string (e.g. "CSF" or "IMG") is used in the certificate Common Name to
 // distinguish its role.
-func NewCertificate(tag string, keyLength int, keyExpiry int, parent *x509.Certificate, signer *rsa.PrivateKey) (pemKey []byte, pemCert []byte, err error) {
+func NewCertificate(tag string, keyLength int, keyExpiry int, parent *x509.Certificate, signer *rsa.PrivateKey) (key *rsa.PrivateKey, cert *x509.Certificate, pemKey []byte, pemCert []byte, err error) {
 	// serial should be 0
 	var serial big.Int
 
-	certificate := x509.Certificate{
+	cert = &x509.Certificate{
 		SerialNumber: &serial,
 		Subject: pkix.Name{
 			CommonName: fmt.Sprintf("%s_sha256_%d", tag, keyLength),
@@ -115,29 +115,27 @@ func NewCertificate(tag string, keyLength int, keyExpiry int, parent *x509.Certi
 		NotAfter:           time.Now().AddDate(0, 0, keyExpiry),
 	}
 
-	key, err := rsa.GenerateKey(rand.Reader, keyLength)
+	if key, err = rsa.GenerateKey(rand.Reader, keyLength); err != nil {
+		return
+	}
+
+	c, err := x509.CreateCertificate(rand.Reader, cert, parent, &key.PublicKey, signer)
 
 	if err != nil {
 		return
 	}
 
-	privKey, err := x509.MarshalPKCS8PrivateKey(key)
-
-	if err != nil {
-		return
-	}
-
-	cert, err := x509.CreateCertificate(rand.Reader, &certificate, parent, &key.PublicKey, signer)
+	k, err := x509.MarshalPKCS8PrivateKey(key)
 
 	if err != nil {
 		return
 	}
 
 	keyBuf := new(bytes.Buffer)
-	pem.Encode(keyBuf, &pem.Block{Type: "PRIVATE KEY", Bytes: privKey})
+	pem.Encode(keyBuf, &pem.Block{Type: "PRIVATE KEY", Bytes: k})
 
 	certBuf := new(bytes.Buffer)
-	pem.Encode(certBuf, &pem.Block{Type: "CERTIFICATE", Bytes: cert})
+	pem.Encode(certBuf, &pem.Block{Type: "CERTIFICATE", Bytes: c})
 
-	return keyBuf.Bytes(), certBuf.Bytes(), nil
+	return key, cert, keyBuf.Bytes(), certBuf.Bytes(), nil
 }

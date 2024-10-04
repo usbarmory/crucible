@@ -337,14 +337,14 @@ func genCerts() (err error) {
 	}
 
 	log.Printf("generating and signing CSF keypair")
-	CSFKeyPEMBlock, CSFCertPEMBlock, err := hab.NewCertificate("CSF", hab.DEFAULT_KEY_LENGTH, hab.DEFAULT_KEY_EXPIRY, ca, signingKey)
+	_, _, CSFKeyPEMBlock, CSFCertPEMBlock, err := hab.NewCertificate("CSF", hab.DEFAULT_KEY_LENGTH, hab.DEFAULT_KEY_EXPIRY, ca, signingKey)
 
 	if err != nil {
 		return
 	}
 
 	log.Printf("generating and signing IMG keypair")
-	IMGKeyPEMBlock, IMGCertPEMBlock, err := hab.NewCertificate("IMG", hab.DEFAULT_KEY_LENGTH, hab.DEFAULT_KEY_EXPIRY, ca, signingKey)
+	_, _, IMGKeyPEMBlock, IMGCertPEMBlock, err := hab.NewCertificate("IMG", hab.DEFAULT_KEY_LENGTH, hab.DEFAULT_KEY_EXPIRY, ca, signingKey)
 
 	if err != nil {
 		return
