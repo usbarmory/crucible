@@ -175,3 +175,20 @@ func ReadNVMEM(devicePath string, f *fusemap.FuseMap, name string) (res []byte, 
 
 	return
 }
+
+// Blow an OTP fuse using the NXP On-Chip OTP Controller.
+//
+// WARNING: Fusing SoC OTPs is an **irreversible** action that permanently
+// fuses values on the device. This means that any errors in the process, or
+// lost fused data such as cryptographic key material, might result in a
+// **bricked** device.
+//
+// The use of this function is therefore **at your own risk**.
+func BlowOCOTP(bank int, word int, off int, bitLen int, val []byte) (err error) {
+	return errors.New("available only under GOOS=tamago")
+}
+
+// Read an OTP fuse using the NXP On-Chip OTP Controller.
+func ReadOCOTP(bank int, word int, off int, bitLen int) (res []byte, err error) {
+	return nil, errors.New("available only under GOOS=tamago")
+}
