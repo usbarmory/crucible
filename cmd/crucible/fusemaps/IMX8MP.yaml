@@ -227,6 +227,9 @@ registers:
       BOOT_MODE_FUSES:
         offset: 12
         len: 4
+      KTE:
+        offset: 20
+        len: 1
       # https://community.nxp.com/t5/i-MX-Processors/DIR-BT-DIS-and-others/m-p/1221272
       SJC_DISABLE:
         offset: 21
