@@ -287,6 +287,9 @@ registers:
       SDP_DISABLE:
         offset: 21
         len: 1
+      ROM_NO_LOG:
+        offset: 22
+        len: 1
       NOC_ID_REMAP_BYPASS:
         offset: 23
         len: 1
