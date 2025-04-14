@@ -237,6 +237,9 @@ registers:
       SEC_CONFIG[1]:
         offset: 25
         len: 1
+      JTAG_HEO:
+        offset: 26
+        len: 1
       BT_FUSE_SEL:
         offset: 28
         len: 1
