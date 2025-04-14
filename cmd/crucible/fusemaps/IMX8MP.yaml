@@ -272,6 +272,9 @@ registers:
       WDOG_EN:
         offset: 10
         len: 1
+      TZASC_ENABLE:
+        offset: 11
+        len: 1
       ICACHE_DIS:
         offset: 12
         len: 1
