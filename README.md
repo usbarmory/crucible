@@ -103,7 +103,7 @@ Usage: crucible [options] [read|blow] [fuse/register name] [value]
   -f string
     	reference fusemap directory
   -i string
-    	vendor fusemap file
+    	overlay fusemap file
   -l	list fusemaps
     	visualize fusemap      (with -m and -r)
     	visualize read value   (with read operation on a register)
@@ -260,15 +260,15 @@ however does not allow for the entire fusemap to be read as its maximum size is
 computed without accounting for the gaps, see comments within the fusemap for
 affected registers.
 
-Vendor overrides
-----------------
+Vendor overlays
+---------------
 
 The `-i` option allows to overlay a vendor/board specific fusemap against an
 SoC reference one, to support vendor/board specific interpretation of available
 fuses.
 
-The overlay is allowed to define additional fuses for existing registers of a
-reference fusemap matching the processor and reference fields.
+The overlay is allowed to define additional fuses for existing registers
+against a reference fusemap matching the processor and reference fields.
 
 Example use:
 

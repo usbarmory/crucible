@@ -242,10 +242,10 @@ func (f *FuseMap) Find(name string) (mapping interface{}, err error) {
 	return
 }
 
-// Merge combines two fusemaps with matching processor and reference fields,
+// Overlay combines two fusemaps with matching processor and reference fields,
 // the argument fusemap must represent a subset specifying additional unique
 // fuses for matching registers.
-func (f *FuseMap) Merge(overlay *FuseMap) (err error) {
+func (f *FuseMap) Overlay(overlay *FuseMap) (err error) {
 	if f.Processor != overlay.Processor {
 		return errors.New("processor mismatch")
 	}

@@ -57,7 +57,7 @@ registers:
 		t.Fatal(err)
 	}
 
-	err = f.Merge(v)
+	err = f.Overlay(v)
 
 	if err == nil {
 		t.Error("fusemap overlay with invalid register should raise an error")
@@ -85,7 +85,7 @@ registers:
 		t.Fatal(err)
 	}
 
-	err = f.Merge(v)
+	err = f.Overlay(v)
 
 	if err == nil {
 		t.Error("fusemap overlay with invalid register should raise an error")
@@ -113,7 +113,7 @@ registers:
 		t.Fatal(err)
 	}
 
-	err = f.Merge(v)
+	err = f.Overlay(v)
 
 	if err == nil {
 		t.Error("fusemap overlay with duplicate fuse should raise an error")
@@ -165,7 +165,7 @@ registers:
 		t.Fatal(err)
 	}
 
-	err = f.Merge(v)
+	err = f.Overlay(v)
 
 	if err != nil {
 		t.Error("fusemap overlay with valid fuse should not raise an error")

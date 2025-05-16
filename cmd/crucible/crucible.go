@@ -107,7 +107,7 @@ func init() {
 	flag.StringVar(&conf.endianness, "e", "", "value endianness (big,little)")
 	flag.StringVar(&conf.device, "n", "/sys/bus/nvmem/devices/imx-ocotp0/nvmem", "NVMEM device")
 	flag.StringVar(&conf.fusemaps, "f", "", "reference fusemap directory")
-	flag.StringVar(&conf.fusemap, "i", "", "vendor fusemap file")
+	flag.StringVar(&conf.fusemap, "i", "", "overlay fusemap file")
 	flag.StringVar(&conf.processor, "m", "", "processor model")
 	flag.StringVar(&conf.reference, "r", "", "reference manual revision")
 
@@ -233,7 +233,7 @@ func main() {
 	}
 
 	if v != nil {
-		if err = f.Merge(v); err != nil {
+		if err = f.Overlay(v); err != nil {
 			log.Fatalf("error: could not merge vendor and reference fusemaps, %v", err)
 		}
 	}
