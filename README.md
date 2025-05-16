@@ -42,6 +42,23 @@ provisioning and executable signing.
 The current support targets application processors from the NXP i.MX series
 (see _Supported drivers_).
 
+Libraries
+---------
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/usbarmory/crucible.svg)](https://pkg.go.dev/github.com/usbarmory/crucible)
+
+* Package [fusemap](https://pkg.go.dev/github.com/usbarmory/crucible/hab)
+  implements a register definition format to describe One-Time-Programmable (OTP)
+  registers and fuses.
+
+* Package [hab](https://pkg.go.dev/github.com/usbarmory/crucible/hab)
+  provides support functions for NXP HABv4 Secure Boot provisioning and
+  executable signing.
+
+* Package [otp](https://pkg.go.dev/github.com/usbarmory/crucible/otp)
+  provides support for One-Time-Programmable (OTP) fuses read and write
+  operations.
+
 Warning
 =======
 
