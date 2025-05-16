@@ -251,7 +251,7 @@ func (f *FuseMap) Overlay(overlay *FuseMap) (err error) {
 	}
 
 	if f.Reference != overlay.Reference {
-		return errors.New("refrence mismatch")
+		return errors.New("reference mismatch")
 	}
 
 	for _, reg := range overlay.Registers {
