@@ -261,7 +261,7 @@ computed without accounting for the gaps, see comments within the fusemap for
 affected registers.
 
 Vendor overrides
-================
+----------------
 
 The `-i` option allows to overlay a vendor/board specific fusemap against an
 SoC reference one, to support vendor/board specific interpretation of available
