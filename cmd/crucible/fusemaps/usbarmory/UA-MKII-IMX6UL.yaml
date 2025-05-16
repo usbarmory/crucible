@@ -1,0 +1,26 @@
+---
+# crucible
+# One-Time-Programmable (OTP) fusing tool
+#
+# Copyright (c) WithSecure Corporation
+#
+# Use of this source code is governed by the license
+# that can be found in the LICENSE file.
+
+processor: IMX6UL
+reference: 1
+
+driver: nvmem-imx-ocotp
+bank_size: 8
+
+# USB armory Mk II boards shipped by WithSecure burns model information in the
+# MSB of OTP fuses bank 4 word 2 (OCOTP_MAC0).
+
+registers:
+  OCOTP_MAC0:
+    bank: 4
+    word: 2
+    fuses:
+      USBARMORY_REV:
+        offset: 24
+        len: 8

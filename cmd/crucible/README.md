@@ -33,7 +33,7 @@ Introduction
 
 The `crucible` utility provides user space support for reading, and writing,
 One-Time-Programmable (OTP) fuses of System-on-Chip (SoC) application
-processors through the [Linux NVMEM framework](https://github.com/torvalds/linux/blob/master/Documentation/nvmem/nvmem.txt).
+processors through the [Linux NVMEM framework](https://github.com/torvalds/linux/blob/master/Documentation/driver-api/nvmem.rst).
 
 The current support targets application processors from the NXP i.MX series
 (see _Supported drivers_).
@@ -84,7 +84,9 @@ Usage: crucible [options] [read|blow] [fuse/register name] [value]
   -e string
     	value endianness (big,little)
   -f string
-    	YAML fusemaps directory (default "fusemaps")
+    	reference fusemap directory
+  -i string
+    	vendor fusemap file
   -l	list fusemaps
     	visualize fusemap      (with -m and -r)
     	visualize read value   (with read operation on a register)
@@ -240,6 +242,33 @@ and ensure correct reads (writes are unaffected). Such driver limitation
 however does not allow for the entire fusemap to be read as its maximum size is
 computed without accounting for the gaps, see comments within the fusemap for
 affected registers.
+
+Vendor overrides
+================
+
+The `-i` option allows to overlay a vendor/board specific fusemap against an
+SoC reference one, to support vendor/board specific interpretation of available
+fuses.
+
+The overlay is allowed to define additional fuses for existing registers of a
+reference fusemap matching the processor and reference fields.
+
+Example use:
+
+```
+crucible -l -i fusemaps/usbarmory/UA-MKII-IMX6ULZ.yaml
+...
+ 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00  OCOTP_MAC0
+┏━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┳━━┓ Bank:4 Word:2
+┃USBARMORY_REV          ┃                                                                       ┃ R: 0x00000088
+┗━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━╋━━┻━━┻━━┻━━┻━━┻━━┻━━┻━━┛ W: 0x00000088
+ 31 ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ 00  MAC1_ADDR[31:0]
+ 31 ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ 00  MAC1_ADDR
+ 31 ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ ┄┄ 24 ───────────────────────────────────────────────────────────────────────  USBARMORY_REV
+...
+```
+
+See the `fusemaps` directory for examples.
 
 License
 =======

@@ -10,7 +10,6 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"embed"
 	"errors"
 	"flag"
@@ -18,15 +17,9 @@ import (
 	"io/fs"
 	"log"
 	"log/syslog"
-	"math/big"
 	"os"
-	"path/filepath"
-	"strings"
-	"text/tabwriter"
 
 	"github.com/usbarmory/crucible/fusemap"
-	"github.com/usbarmory/crucible/otp"
-	"github.com/usbarmory/crucible/util"
 )
 
 type Config struct {
@@ -37,6 +30,7 @@ type Config struct {
 	endianness string
 	device     string
 	fusemaps   string
+	fusemap    string
 	processor  string
 	reference  string
 
@@ -44,6 +38,7 @@ type Config struct {
 }
 
 // Bundled fusemaps
+//
 //go:embed fusemaps
 var fusemaps embed.FS
 
@@ -111,9 +106,12 @@ func init() {
 	flag.IntVar(&conf.base, "b", 0, "value base/format (2,10,16)")
 	flag.StringVar(&conf.endianness, "e", "", "value endianness (big,little)")
 	flag.StringVar(&conf.device, "n", "/sys/bus/nvmem/devices/imx-ocotp0/nvmem", "NVMEM device")
-	flag.StringVar(&conf.fusemaps, "f", "", "YAML fusemaps directory")
+	flag.StringVar(&conf.fusemaps, "f", "", "reference fusemap directory")
+	flag.StringVar(&conf.fusemap, "i", "", "vendor fusemap file")
 	flag.StringVar(&conf.processor, "m", "", "processor model")
 	flag.StringVar(&conf.reference, "r", "", "reference manual revision")
+
+	flag.Parse()
 }
 
 func confirm() bool {
@@ -122,75 +120,6 @@ func confirm() bool {
 	text, _ := reader.ReadString('\n')
 
 	return text == "YES\n"
-}
-
-func listFusemapRegisters() {
-	f, err := fusemap.Find(conf.fusemapDir, conf.processor, conf.reference)
-
-	if err != nil {
-		log.Fatalf("error: could not open fusemap, %v", err)
-	}
-
-	var res []byte
-
-	for _, reg := range f.RegistersByWriteAddress() {
-		if flag.Arg(0) == "read" {
-			res, _, _, _, err = otp.ReadNVMEM(conf.device, f, reg.Name)
-
-			if err != nil {
-				log.Fatalf("error: could not read fusemap, %v", err)
-			}
-
-			n := new(big.Int)
-			n.SetBytes(res)
-		}
-
-		fmt.Print(reg.BitMap(res))
-		fmt.Println()
-	}
-}
-
-func listFusemaps() {
-	var list bytes.Buffer
-
-	_, _ = fmt.Fprintf(&list, "Model (-m)\tReference (-r)\tDriver\n")
-
-	t := tabwriter.NewWriter(&list, 16, 8, 0, '\t', tabwriter.TabIndent)
-
-	_ = fs.WalkDir(conf.fusemapDir, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if d.IsDir() {
-			return nil
-		}
-
-		if filepath.Ext(path) != ".yaml" {
-			return nil
-		}
-
-		y, err := fs.ReadFile(conf.fusemapDir, path)
-
-		if err != nil {
-			return err
-		}
-
-		f, err := fusemap.Parse(y)
-
-		if err != nil {
-			log.Printf("skipping %s (%v)", path, err)
-			return nil
-		}
-
-		_, _ = fmt.Fprintf(t, "%s\t%s\t%s\n", f.Processor, f.Reference, f.Driver)
-
-		return nil
-	})
-
-	_ = t.Flush()
-
-	fmt.Print(list.String())
 }
 
 func checkArguments() error {
@@ -219,116 +148,48 @@ func checkArguments() error {
 	return nil
 }
 
-func read(tag string, f *fusemap.FuseMap, name string) (err error) {
-	res, addr, off, size, err := otp.ReadNVMEM(conf.device, f, name)
+func op(f *fusemap.FuseMap) {
+	if err := checkArguments(); err != nil {
+		flag.Usage()
+		log.Fatalf("error: %v", err)
+	}
+
+	stat, err := os.Stat(conf.device)
+
+	if err != nil || stat.IsDir() {
+		log.Fatalf("error: could not open NVMEM device %s", conf.device)
+	}
+
+	op := flag.Arg(0)
+	name := flag.Arg(1)
+	tag := fmt.Sprintf("soc:%s ref:%s otp:%s op:%s", conf.processor, conf.reference, name, op)
+
+	switch op {
+	case "read":
+		err = read(tag, f, name)
+	case "blow":
+		if len(flag.Args()) != 3 {
+			log.Fatal("error: missing arguments")
+		}
+
+		if conf.syslog && !conf.force {
+			log.Fatalf("error: forced operation is required when using syslog output")
+		}
+
+		err = blow(tag, f, name, flag.Arg(2))
+	default:
+		log.Fatal("error: invalid operation")
+	}
 
 	if err != nil {
-		return
+		log.Fatalf("error: %v", err)
 	}
-
-	tag = fmt.Sprintf("%s addr:%#x off:%d len:%d", tag, addr, off, size)
-
-	if conf.endianness == "little" {
-		res = util.SwitchEndianness(res)
-	}
-
-	n := new(big.Int)
-	n.SetBytes(res)
-
-	var base string
-	var format string
-	var value string
-
-	switch conf.base {
-	case 2:
-		base = "0b"
-		format = "%0" + fmt.Sprintf("%d", size) + "b"
-		value = fmt.Sprintf(format, n)
-	case 10:
-		value = fmt.Sprintf("%d", n)
-	case 16:
-		base = "0x"
-		format = "%0" + fmt.Sprintf("%d", (size+3)/4) + "x"
-		value = fmt.Sprintf(format, n)
-	default:
-		return errors.New("internal error, invalid base")
-	}
-
-	log.Printf("%s val:%s%s", tag, base, value)
-
-	if conf.syslog {
-		fmt.Println(value)
-	} else if conf.list {
-		if reg, ok := f.Registers[name]; ok {
-			if conf.endianness == "little" {
-				res = util.SwitchEndianness(res)
-			}
-
-			log.Println()
-			log.Print(reg.BitMap(res))
-		}
-	}
-
-	return
-}
-
-func blow(tag string, f *fusemap.FuseMap, name string, val string) (err error) {
-	base := ""
-	n := new(big.Int)
-
-	switch conf.base {
-	case 2:
-		base = "0b"
-	case 10:
-	case 16:
-		base = "0x"
-	default:
-		return errors.New("internal error, invalid base")
-	}
-
-	val = strings.TrimPrefix(val, base)
-	n, ok := n.SetString(val, conf.base)
-
-	if !ok {
-		return errors.New("invalid value argument")
-	}
-
-	switch conf.endianness {
-	case "big":
-	case "little":
-		n = n.SetBytes(util.SwitchEndianness(n.Bytes()))
-	default:
-		return errors.New("you must specify a valid endianness")
-	}
-
-	if !conf.force {
-		log.Print(warning)
-		log.Printf("%s reg:%s base:%d val:%s %s-endian\n\n", tag, name, conf.base, val, conf.endianness)
-
-		if !confirm() {
-			log.Fatal("you are not ready...")
-		}
-	}
-
-	res, addr, off, size, err := otp.BlowNVMEM(conf.device, f, name, n.Bytes())
-
-	if err != nil {
-		return err
-	}
-
-	log.Printf("%s addr:%#x off:%d len:%d val:%s%s res:%#x", tag, addr, off, size, base, val, res)
-
-	if conf.syslog {
-		fmt.Printf("%#x\n", res)
-	}
-
-	return
 }
 
 func main() {
+	var f *fusemap.FuseMap
+	var v *fusemap.FuseMap
 	var err error
-
-	flag.Parse()
 
 	if conf.syslog {
 		if logwriter, _ := syslog.New(syslog.LOG_INFO, "crucible"); logwriter != nil {
@@ -356,9 +217,30 @@ func main() {
 		}
 	}
 
+	if len(conf.fusemap) > 0 {
+		if v, err = fusemap.Open(conf.fusemap); err != nil {
+			log.Fatalf("error: could not open fusemap, %v", err)
+		}
+
+		conf.processor = v.Processor
+		conf.reference = v.Reference
+	}
+
+	if conf.processor != "" && conf.reference != "" {
+		if f, err = fusemap.Find(conf.fusemapDir, conf.processor, conf.reference); err != nil {
+			log.Fatalf("error: could not open fusemap, %v", err)
+		}
+	}
+
+	if v != nil {
+		if err = f.Merge(v); err != nil {
+			log.Fatalf("error: could not merge vendor and reference fusemaps, %v", err)
+		}
+	}
+
 	if conf.list && len(flag.Args()) < 2 {
 		if conf.processor != "" && conf.reference != "" {
-			listFusemapRegisters()
+			listFusemapRegisters(f)
 		} else {
 			listFusemaps()
 		}
@@ -366,45 +248,5 @@ func main() {
 		return
 	}
 
-	if err = checkArguments(); err != nil {
-		flag.Usage()
-		log.Fatalf("error: %v", err)
-	}
-
-	stat, err := os.Stat(conf.device)
-
-	if err != nil || stat.IsDir() {
-		log.Fatalf("error: could not open NVMEM device %s", conf.device)
-	}
-
-	f, err := fusemap.Find(conf.fusemapDir, conf.processor, conf.reference)
-
-	if err != nil {
-		log.Fatalf("error: could not open fusemap, %v", err)
-	}
-
-	op := flag.Arg(0)
-	name := flag.Arg(1)
-	tag := fmt.Sprintf("soc:%s ref:%s otp:%s op:%s", conf.processor, conf.reference, name, op)
-
-	switch op {
-	case "read":
-		err = read(tag, f, name)
-	case "blow":
-		if len(flag.Args()) != 3 {
-			log.Fatal("error: missing arguments")
-		}
-
-		if conf.syslog && !conf.force {
-			log.Fatalf("error: forced operation is required when using syslog output")
-		}
-
-		err = blow(tag, f, name, flag.Arg(2))
-	default:
-		log.Fatal("error: invalid operation")
-	}
-
-	if err != nil {
-		log.Fatalf("error: %v", err)
-	}
+	op(f)
 }
