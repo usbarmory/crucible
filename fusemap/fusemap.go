@@ -25,7 +25,7 @@ type FuseMap struct {
 	Registers map[string]*Register `json:"registers"`
 	Gaps      map[string]*Gap      `json:"gaps"`
 
-	WordSize  int
+	WordSize int
 
 	valid bool
 }
@@ -240,4 +240,47 @@ func (f *FuseMap) Find(name string) (mapping interface{}, err error) {
 	err = fmt.Errorf("could not find any register/fuse named %s", name)
 
 	return
+}
+
+// Overlay combines two fusemaps with matching processor and reference fields,
+// the argument fusemap must represent a subset specifying additional unique
+// fuses for matching registers.
+func (f *FuseMap) Overlay(overlay *FuseMap) (err error) {
+	if overlay == nil {
+		return
+	}
+
+	if f.Processor != overlay.Processor {
+		return errors.New("processor mismatch")
+	}
+
+	if f.Reference != overlay.Reference {
+		return errors.New("reference mismatch")
+	}
+
+	for _, reg := range overlay.Registers {
+		for _, fuse := range reg.Fuses {
+			r, ok := f.Registers[fuse.Register.Name]
+
+			if !ok {
+				return fmt.Errorf("could not find reference register named %s", fuse.Register.Name)
+			}
+
+			if fuse.Register.Bank != r.Bank {
+				return fmt.Errorf("overlay register %s bank (%d) does not match reference bank (%d)", r.Name, fuse.Register.Bank, r.Bank)
+			}
+
+			if fuse.Register.Word != reg.Word {
+				return fmt.Errorf("overlay register %s word (%d) does not match reference word (%d)", r.Name, fuse.Register.Word, r.Word)
+			}
+
+			if _, ok := r.Fuses[fuse.Name]; ok {
+				return fmt.Errorf("overlay fuse names must be unique, double entry for %s", fuse.Name)
+			}
+
+			r.Fuses[fuse.Name] = fuse
+		}
+	}
+
+	return f.Validate()
 }
