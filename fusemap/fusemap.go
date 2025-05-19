@@ -246,6 +246,10 @@ func (f *FuseMap) Find(name string) (mapping interface{}, err error) {
 // the argument fusemap must represent a subset specifying additional unique
 // fuses for matching registers.
 func (f *FuseMap) Overlay(overlay *FuseMap) (err error) {
+	if overlay == nil {
+		return
+	}
+
 	if f.Processor != overlay.Processor {
 		return errors.New("processor mismatch")
 	}
