@@ -233,37 +233,37 @@ registers:
 ...
 `
 
-	fusemap, err := Parse([]byte(y))
+	f, err := Parse([]byte(y))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = fusemap.Find("REG2")
+	_, err = f.Find("REG2")
 
 	if err == nil {
 		t.Error("fusemap search with missing register name should raise an error")
 	}
 
-	mapping, err := fusemap.Find("REG1")
+	m, err := f.Find("REG1")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	switch mapping.(type) {
+	switch m.(type) {
 	case *Register:
 	default:
 		t.Error("fusemap search with register name should return a register mapping")
 	}
 
-	mapping, err = fusemap.Find("OTP1")
+	m, err = f.Find("OTP1")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	switch mapping.(type) {
+	switch m.(type) {
 	case *Fuse:
 	default:
 		t.Error("fusemap search with OTP name should return a fuse mapping")
@@ -371,20 +371,20 @@ registers:
 ...
 `
 
-	fusemap, err := Parse([]byte(y))
+	f, err := Parse([]byte(y))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	gap := fusemap.Registers["REG2"].ReadAddress - fusemap.Registers["REG1"].ReadAddress
+	gap := f.Registers["REG2"].ReadAddress - f.Registers["REG1"].ReadAddress
 	expGap := 4 + uint32(0x100)/4
 
 	if gap != expGap {
 		t.Errorf("unexpected gap, %x != %x", gap, expGap)
 	}
 
-	gap2 := fusemap.Registers["REG3"].ReadAddress - fusemap.Registers["REG2"].ReadAddress
+	gap2 := f.Registers["REG3"].ReadAddress - f.Registers["REG2"].ReadAddress
 	expGap2 := 4 + uint32(0x40)/4
 
 	if gap2 != expGap2 {

@@ -51,13 +51,13 @@ registers:
 ...
 `
 
-	v, err := Parse([]byte(y))
+	o, err := Parse([]byte(y))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = f.Overlay(v)
+	err = f.Overlay(o)
 
 	if err == nil {
 		t.Error("fusemap overlay with invalid register should raise an error")
@@ -79,13 +79,13 @@ registers:
 ...
 `
 
-	v, err = Parse([]byte(y))
+	o, err = Parse([]byte(y))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = f.Overlay(v)
+	err = f.Overlay(o)
 
 	if err == nil {
 		t.Error("fusemap overlay with invalid register should raise an error")
@@ -107,13 +107,13 @@ registers:
 ...
 `
 
-	v, err = Parse([]byte(y))
+	o, err = Parse([]byte(y))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = f.Overlay(v)
+	err = f.Overlay(o)
 
 	if err == nil {
 		t.Error("fusemap overlay with duplicate fuse should raise an error")
@@ -159,15 +159,23 @@ registers:
 ...
 `
 
-	v, err := Parse([]byte(y))
+	o, err := Parse([]byte(y))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = f.Overlay(v)
+	err = f.Overlay(o)
 
 	if err != nil {
 		t.Error("fusemap overlay with valid fuse should not raise an error")
+	}
+
+	if _, err = f.Find("OTP1"); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err = f.Find("OTP1A"); err != nil {
+		t.Fatal(err)
 	}
 }
