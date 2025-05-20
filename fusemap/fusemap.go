@@ -278,6 +278,10 @@ func (f *FuseMap) Overlay(overlay *FuseMap) (err error) {
 				return fmt.Errorf("overlay fuse names must be unique, double entry for %s", fuse.Name)
 			}
 
+			if r.Fuses == nil {
+				r.Fuses = make(map[string]*Fuse)
+			}
+
 			r.Fuses[fuse.Name] = fuse
 		}
 	}
