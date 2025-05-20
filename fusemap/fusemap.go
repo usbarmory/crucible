@@ -270,12 +270,16 @@ func (f *FuseMap) Overlay(overlay *FuseMap) (err error) {
 				return fmt.Errorf("overlay register %s bank (%d) does not match reference bank (%d)", r.Name, fuse.Register.Bank, r.Bank)
 			}
 
-			if fuse.Register.Word != reg.Word {
+			if fuse.Register.Word != r.Word {
 				return fmt.Errorf("overlay register %s word (%d) does not match reference word (%d)", r.Name, fuse.Register.Word, r.Word)
 			}
 
 			if _, ok := r.Fuses[fuse.Name]; ok {
 				return fmt.Errorf("overlay fuse names must be unique, double entry for %s", fuse.Name)
+			}
+
+			if r.Fuses == nil {
+				r.Fuses = make(map[string]*Fuse)
 			}
 
 			r.Fuses[fuse.Name] = fuse

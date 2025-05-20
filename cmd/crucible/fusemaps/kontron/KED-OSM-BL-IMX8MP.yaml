@@ -1,0 +1,55 @@
+---
+# crucible
+# One-Time-Programmable (OTP) fusing tool
+#
+# Copyright (c) WithSecure Corporation
+# Copyright (c) 2025 Kontron Electronics GmbH
+#
+# Use of this source code is governed by the license
+# that can be found in the LICENSE file.
+
+processor: IMX8MP
+reference: 0
+
+driver: nvmem-imx-ocotp
+bank_size: 4
+
+# Kontron Electronics GmbH modules and boards (OSM-S/BL/AL/DL i.MX6UL) are
+# shipped with UIDs for module and board in the GP1/GP2 registers.
+
+registers:
+  OCOTP_GP10:
+    bank: 14
+    word: 0
+    fuses:
+      KED_UID_SOM:
+        offset: 0
+        len: 64
+      KED_UID_SOM[31:0]:
+        offset: 0
+        len: 32
+  OCOTP_GP11:
+    bank: 14
+    word: 1
+    fuses:
+      KED_UID_SOM[63:32]:
+        offset: 0
+        len: 32
+
+  OCOTP_GP20:
+    bank: 14
+    word: 2
+    fuses:
+      KED_UID_BOARD:
+        offset: 0
+        len: 64
+      KED_UID_BOARD[31:0]:
+        offset: 0
+        len: 32
+  OCOTP_GP21:
+    bank: 14
+    word: 3
+    fuses:
+      KED_UID_BOARD[63:32]:
+        offset: 0
+        len: 32

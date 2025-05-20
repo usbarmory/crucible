@@ -1,0 +1,90 @@
+---
+# crucible
+# One-Time-Programmable (OTP) fusing tool
+#
+# Copyright (c) WithSecure Corporation
+# Copyright (c) 2025 Kontron Electronics GmbH
+#
+# Use of this source code is governed by the license
+# that can be found in the LICENSE file.
+
+processor: IMX8MM
+reference: 3
+
+driver: nvmem-imx-ocotp
+bank_size: 4
+
+# Kontron Electronics GmbH modules and boards (SL/OSM-S/BL/AL/DL i.MX6UL) are
+# shipped with UIDs for module and board in the GP1/GP2 registers. There's
+# also a second MAC address for the USB ethernet adapter programmed to the
+# unused slot in the OCOTP_MAC_ADDR1 and OCOTP_MAC_ADDR2 registers. This also
+# adds an alias for the first MAC address to make them distinguishable more
+# easily.
+
+registers:
+  OCOTP_MAC_ADDR0:
+    bank: 9
+    word: 0
+    fuses:
+      MAC_0_ADDR:
+        offset: 0
+        len: 48
+      MAC_0_ADDR[31:0]:
+        offset: 0
+        len: 32
+  OCOTP_MAC_ADDR1:
+    bank: 9
+    word: 1
+    fuses:
+      MAC_0_ADDR[47:32]:
+        offset: 0
+        len: 16
+      MAC_1_ADDR:
+        offset: 16
+        len: 48
+      MAC_1_ADDR[15:0]:
+        offset: 16
+        len: 16
+  OCOTP_MAC_ADDR2:
+    bank: 9
+    word: 2
+    fuses:
+      MAC_1_ADDR[47:16]:
+        offset: 0
+        len: 32
+
+  OCOTP_GP10:
+    bank: 14
+    word: 0
+    fuses:
+      KED_UID_SOM:
+        offset: 0
+        len: 64
+      KED_UID_SOM[31:0]:
+        offset: 0
+        len: 32
+  OCOTP_GP11:
+    bank: 14
+    word: 1
+    fuses:
+      KED_UID_SOM[63:32]:
+        offset: 0
+        len: 32
+
+  OCOTP_GP20:
+    bank: 14
+    word: 2
+    fuses:
+      KED_UID_BOARD:
+        offset: 0
+        len: 64
+      KED_UID_BOARD[31:0]:
+        offset: 0
+        len: 32
+  OCOTP_GP21:
+    bank: 14
+    word: 3
+    fuses:
+      KED_UID_BOARD[63:32]:
+        offset: 0
+        len: 32
