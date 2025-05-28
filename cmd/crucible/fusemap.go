@@ -10,6 +10,7 @@ package main
 
 import (
 	"bytes"
+	"embed"
 	"flag"
 	"fmt"
 	"io/fs"
@@ -21,6 +22,11 @@ import (
 	"github.com/usbarmory/crucible/fusemap"
 	"github.com/usbarmory/crucible/otp"
 )
+
+// Bundled fusemaps
+//
+//go:embed fusemaps/*.yaml
+var fusemaps embed.FS
 
 func listFusemapRegisters(f *fusemap.FuseMap) {
 	var res []byte

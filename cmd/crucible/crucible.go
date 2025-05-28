@@ -10,7 +10,6 @@ package main
 
 import (
 	"bufio"
-	"embed"
 	"errors"
 	"flag"
 	"fmt"
@@ -36,11 +35,6 @@ type Config struct {
 
 	fusemapDir fs.FS
 }
-
-// Bundled fusemaps
-//
-//go:embed fusemaps
-var fusemaps embed.FS
 
 // build information, initialized at compile time (see Makefile)
 var Revision string
