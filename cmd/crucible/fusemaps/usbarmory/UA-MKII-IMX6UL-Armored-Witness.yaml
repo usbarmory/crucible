@@ -14,7 +14,7 @@ driver: nvmem-imx-ocotp
 bank_size: 8
 
 registers:
-  # USB armory Mk II boards shipped by F-Secure and WithSecure have model
+  # USB armory Mk II boards manufactured by F-Secure and WithSecure have model
   # information fused in the MSB of OTP bank 4 word 2 (OCOTP_MAC0).
   OCOTP_MAC0:
     bank: 4
