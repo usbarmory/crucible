@@ -2,7 +2,7 @@ One-Time-Programmable (OTP) fusing tool
 =======================================
 
 crucible | https://github.com/usbarmory/crucible  
-Copyright (c) WithSecure Corporation
+Copyright (c) The crucible authors. All Rights Reserved.
 
 ```
  ▄████▄   ██▀███   █    ██  ▄████▄   ██▓ ▄▄▄▄    ██▓    ▓█████
@@ -274,7 +274,7 @@ License
 =======
 
 crucible | https://github.com/usbarmory/crucible  
-Copyright (c) WithSecure Corporation
+Copyright (c) The crucible authors. All Rights Reserved.
 
 This project is distributed under the BSD-style license found in the
 [LICENSE](https://github.com/usbarmory/crucible/blob/master/LICENSE) file.
