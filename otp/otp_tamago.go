@@ -12,6 +12,7 @@ package otp
 
 import (
 	"encoding/binary"
+	"errors"
 	"time"
 
 	"github.com/usbarmory/crucible/util"
@@ -39,6 +40,10 @@ func BlowOCOTP(otp *ocotp.OCOTP, bank int, word int, off int, bitLen int, val []
 
 	val = util.Pad4(val)
 
+	if otp == nil {
+		return errors.New("missing OCOTP instance")
+	}
+
 	// write one complete OTP word write at the time
 	for i := 0; i < len(val); i += ocotp.WordSize {
 		w := word + (i / ocotp.WordSize)
@@ -64,6 +69,10 @@ func ReadOCOTP(otp *ocotp.OCOTP, bank int, word int, off int, bitLen int) (res [
 	}
 
 	res = make([]byte, numRegisters*ocotp.WordSize)
+
+	if otp == nil {
+		return nil, errors.New("missing OCOTP instance")
+	}
 
 	// read one complete OTP word write at the time
 	for i := 0; i < len(res); i += ocotp.WordSize {
