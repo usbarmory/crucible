@@ -215,7 +215,7 @@ func (f *FuseMap) Validate() (err error) {
 }
 
 // Find a fusemap entry and return its corresponding Register or Fuse mapping.
-func (f *FuseMap) Find(name string) (mapping interface{}, err error) {
+func (f *FuseMap) Find(name string) (mapping any, err error) {
 	if !f.valid {
 		err = errors.New("fusemap has not been validated yet")
 		return

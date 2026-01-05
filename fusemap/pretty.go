@@ -61,7 +61,7 @@ func genRegMap(size int) (s string) {
 // Convert a byte array to a bit map compatible binary string representation
 // (e.g. []byte{0x55, 0x55} => []byte("0  1  0  1  0  1  0  1  0  1  0  1  0  1 0  1")
 func byteArrayToBitMap(val []byte, off int, size int) (m []byte) {
-	m = []byte(fmt.Sprintf("%.8b", util.ConvertReadValue(off, size, util.SwitchEndianness(val))))
+	m = fmt.Appendf(nil, "%.8b", util.ConvertReadValue(off, size, util.SwitchEndianness(val)))
 	m = bytes.Replace(m[1:len(m)-1], []byte(" "), nil, -1)
 	m = bytes.Replace(m[len(m)-size:], []byte("0"), []byte("0  "), -1)
 	m = bytes.Replace(m, []byte("1"), []byte("1  "), -1)

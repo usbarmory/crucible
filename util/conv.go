@@ -28,7 +28,7 @@ func Pad4(val []byte) (res []byte) {
 
 	pad := numRegisters*4 - len(val)
 
-	for i := 0; i < pad; i++ {
+	for range pad {
 		val = append(val, 0x00)
 	}
 
@@ -49,7 +49,7 @@ func PadBigInt(val *big.Int, bitLen int) (res []byte) {
 	pad := numBytes - len(val.Bytes())
 	res = val.Bytes()
 
-	for i := 0; i < pad; i++ {
+	for range pad {
 		res = append([]byte{0x00}, res...)
 	}
 

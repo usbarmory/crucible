@@ -245,7 +245,7 @@ registers:
 
 	var nvram []byte
 
-	for i := 0; i < 33; i++ {
+	for range 33 {
 		nvram = append(nvram, 0xaa)
 	}
 
